@@ -26,7 +26,11 @@ jobs:
       
       - run: npm install
       
-      - run: npm run build:web
+      - run: EXPO_PUBLIC_PATH=/TestValeriaNuevo npm run build:web
+      
+      - run: |
+          sed -i 's|href="/|href="/TestValeriaNuevo/|g' dist/index.html
+          sed -i 's|src="/|src="/TestValeriaNuevo/|g' dist/index.html
       
       - uses: actions/upload-pages-artifact@v3
         with:
