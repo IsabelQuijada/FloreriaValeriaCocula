@@ -15,6 +15,8 @@ import {
   letterSpacing,
   radius,
   spacing,
+  webBerryGradient,
+  webTransition,
 } from '../theme';
 
 const CONTACT_LINKS = [
@@ -88,6 +90,7 @@ export default function NavBar({ current, onNavigate }: NavBarProps) {
       {...hoverProps('order')}
       style={({ pressed }) => [
         styles.orderButton,
+        webTransition,
         isHovered('order') && styles.orderButtonHovered,
         pressed && styles.orderButtonPressed,
       ]}
@@ -142,7 +145,7 @@ export default function NavBar({ current, onNavigate }: NavBarProps) {
   return (
     <View style={styles.container}>
       {/* Ribbon superior con teléfonos */}
-      <View style={styles.ribbon}>
+      <View style={[styles.ribbon, webBerryGradient]}>
         <View style={[styles.ribbonInner, isMobile && styles.ribbonInnerMobile]}>
           {ribbonLinks.map((link, index) => (
             <React.Fragment key={link.id}>
@@ -154,6 +157,7 @@ export default function NavBar({ current, onNavigate }: NavBarProps) {
                 {...hoverProps(link.id)}
                 style={[
                   styles.phoneButton,
+                  webTransition,
                   isMobile && styles.phoneButtonMobile,
                   isHovered(link.id) && styles.phoneButtonHovered,
                 ]}

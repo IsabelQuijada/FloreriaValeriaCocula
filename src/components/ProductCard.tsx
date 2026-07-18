@@ -1,5 +1,14 @@
 import React from 'react';
-import { Image, Pressable, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import {
+  Image,
+  ImageStyle,
+  Pressable,
+  StyleProp,
+  StyleSheet,
+  Text,
+  View,
+  ViewStyle,
+} from 'react-native';
 import { ProductCardData } from '../data/catalog';
 import { useHover } from '../hooks/useHover';
 import {
@@ -11,6 +20,8 @@ import {
   radius,
   spacing,
   textPresets,
+  webGlassBlur,
+  webTransition,
 } from '../theme';
 import Button from './Button';
 import Card from './Card';
@@ -69,12 +80,22 @@ export default function ProductCard({
       >
         <Image
           source={{ uri: product.image }}
-          style={[styles.image, hovered && onPress != null && styles.imageHovered]}
+          style={[
+            styles.image,
+            webTransition as ImageStyle,
+            hovered && onPress != null && styles.imageHovered,
+          ]}
           resizeMode="cover"
           accessible
           accessibilityLabel={`Foto de ${product.name}`}
         />
-        <View style={[styles.badge, (compactMobile || compactGrid) && styles.badgeCompact]}>
+        <View
+          style={[
+            styles.badge,
+            webGlassBlur,
+            (compactMobile || compactGrid) && styles.badgeCompact,
+          ]}
+        >
           <Text
             numberOfLines={1}
             style={[
@@ -150,7 +171,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: spacing.md,
     left: spacing.md,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    backgroundColor: 'rgba(255, 255, 255, 0.78)',
     borderRadius: radius.pill,
     paddingVertical: spacing.xs,
     paddingHorizontal: spacing.md,

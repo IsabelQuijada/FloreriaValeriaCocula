@@ -1,4 +1,4 @@
-import { StyleSheet, TextStyle } from 'react-native';
+import { Platform, StyleSheet, TextStyle, ViewStyle } from 'react-native';
 
 /**
  * Design tokens de Florería Valeria.
@@ -31,7 +31,7 @@ export const colors = {
   backgroundBlush: '#F4E4E1', // rosado empolvado — secciones destacadas
   surface: '#FFFFFF', // superficies de cards y formularios
   surfaceMuted: '#F8EEEC', // superficies secundarias (placeholders, mapas)
-  heroPanel: 'rgba(255, 255, 255, 0.76)', // panel translúcido y legible sobre el hero
+  heroPanel: 'rgba(255, 255, 255, 0.72)', // panel translúcido y legible sobre el hero (glass en web)
   secondaryButton: 'rgba(251, 245, 244, 0.82)', // fondo elegante para acciones secundarias
 
   // Texto
@@ -136,9 +136,9 @@ export const spacing = {
 };
 
 export const radius = {
-  sm: 6,
-  md: 12,
-  lg: 20,
+  sm: 10,
+  md: 16,
+  lg: 24,
   pill: 999,
 };
 
@@ -171,30 +171,77 @@ export const textPresets = {
   } as TextStyle,
 };
 
-/** Niveles de elevación reutilizables (sombra iOS/web + elevation Android). */
+/**
+ * Niveles de elevación reutilizables (sombra iOS/web + elevation Android).
+ * Sombras difusas teñidas de ciruela: más suaves y cálidas que el negro puro.
+ */
 export const shadows = {
   sm: {
-    shadowColor: colors.text,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
+    shadowColor: colors.primaryDark,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
     elevation: 1,
   },
   md: {
-    shadowColor: colors.text,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
+    shadowColor: colors.primaryDark,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
     elevation: 3,
   },
   lg: {
-    shadowColor: colors.text,
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.12,
-    shadowRadius: 24,
+    shadowColor: colors.primaryDark,
+    shadowOffset: { width: 0, height: 16 },
+    shadowOpacity: 0.16,
+    shadowRadius: 36,
     elevation: 6,
   },
 };
+
+/**
+ * Detalles modernos disponibles solo en web (objetos vacíos en nativo).
+ * Se añaden al final del array de estilos del componente; TypeScript los ve
+ * como ViewStyle aunque internamente sean CSS que react-native-web pasa
+ * directo al DOM.
+ */
+
+/** Transición suave para estados hover/pressed. */
+export const webTransition = Platform.select({
+  web: {
+    transitionProperty: 'transform, box-shadow, background-color, border-color, opacity',
+    transitionDuration: '220ms',
+    transitionTimingFunction: 'ease-out',
+  } as unknown as ViewStyle,
+  default: {} as ViewStyle,
+}) as ViewStyle;
+
+/** Desenfoque de fondo tipo "glass" para paneles translúcidos. */
+export const webGlassBlur = Platform.select({
+  web: {
+    backdropFilter: 'blur(14px)',
+    WebkitBackdropFilter: 'blur(14px)',
+  } as unknown as ViewStyle,
+  default: {} as ViewStyle,
+}) as ViewStyle;
+
+/** Degradado berry sutil para franjas destacadas (fallback: color sólido). */
+export const webBerryGradient = Platform.select({
+  web: {
+    backgroundImage: 'linear-gradient(100deg, #7E3450 0%, #9C4463 55%, #B24A63 100%)',
+  } as unknown as ViewStyle,
+  default: {} as ViewStyle,
+}) as ViewStyle;
+
+/** Scrim degradado inferior para cards con foto (nativo usa velo plano). */
+export const webPhotoScrim = Platform.select({
+  web: {
+    backgroundColor: 'transparent',
+    backgroundImage:
+      'linear-gradient(180deg, rgba(50, 11, 33, 0) 32%, rgba(50, 11, 33, 0.42) 62%, rgba(50, 11, 33, 0.82) 100%)',
+  } as unknown as ViewStyle,
+  default: {} as ViewStyle,
+}) as ViewStyle;
 
 export const layout = {
   /** Anchura máxima del contenido centrado en pantallas grandes. */

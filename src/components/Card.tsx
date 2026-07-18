@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { useBreakpoint } from '../hooks/useBreakpoint';
-import { borderWidth, colors, radius, shadows, spacing } from '../theme';
+import { borderWidth, colors, radius, shadows, spacing, webTransition } from '../theme';
 
 interface CardProps {
   children: ReactNode;
@@ -30,6 +30,7 @@ export default function Card({
     <View
       style={[
         styles.card,
+        webTransition,
         padded && styles.padded,
         shadow !== 'none' && shadows[shadow],
         flexBasis != null && { flexGrow: 1, flexBasis },
