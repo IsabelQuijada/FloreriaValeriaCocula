@@ -21,7 +21,10 @@
     "web": {
       "favicon": "./assets/floreria-valeria-logo.png",
       "bundler": "metro",
-      "homepage": "/TestValeriaNuevo/"
+      "output": "single"
+    },
+    "experiments": {
+      "baseUrl": "/TestValeriaNuevo"
     },
     "plugins": [
       "expo-font"
