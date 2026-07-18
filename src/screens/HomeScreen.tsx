@@ -1,11 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import { ImageBackground, Linking, StyleSheet, Text, View } from 'react-native';
+import React, { useMemo } from 'react';
+import { ImageBackground, StyleSheet, Text, View } from 'react-native';
 import Button from '../components/Button';
 import CardGrid from '../components/CardGrid';
+import CtaRibbon from '../components/CtaRibbon';
 import FeatureCard from '../components/FeatureCard';
+import FloralServiceIcon from '../components/FloralServiceIcon';
 import OccasionsGallery from '../components/OccasionsGallery';
 import ProductCarousel from '../components/ProductCarousel';
+import ProductModal from '../components/ProductModal';
 import Section from '../components/Section';
 import SectionTitle from '../components/SectionTitle';
 import {
@@ -15,9 +18,12 @@ import {
   SERVICES,
   whatsappProductUrl,
 } from '../data/content';
-import { FAVORITE_PRODUCTS } from '../data/favorites';
+import { getRandomFavorites } from '../data/favorites';
 import { useBreakpoint } from '../hooks/useBreakpoint';
+import { useProductQuickView } from '../hooks/useProductQuickView';
+import { openExternalUrl } from '../utils/links';
 import {
+  borderWidth,
   colors,
   fonts,
   fontSizes,
@@ -25,16 +31,15 @@ import {
   layout,
   letterSpacing,
   lineHeights,
+  radius,
   shadows,
   spacing,
 } from '../theme';
 
 interface HomeScreenProps {
   onNavigate: (screen: ScreenName) => void;
-  /** Abre la página de la categoría elegida en el catálogo. */
+  /** Abre el catálogo filtrado por la categoría elegida. */
   onSelectCategory: (categorySlug: string) => void;
-  /** Reporta la posición vertical de la sección de catálogo para el scroll del navbar. */
-  onCatalogLayout: (y: number) => void;
   /** Reporta la posición vertical de la sección de favoritas para el scroll del navbar. */
   onFavoritesLayout: (y: number) => void;
 }
@@ -42,20 +47,27 @@ interface HomeScreenProps {
 export default function HomeScreen({
   onNavigate,
   onSelectCategory,
-  onCatalogLayout,
   onFavoritesLayout,
 }: HomeScreenProps) {
   const { isMobile, isTablet } = useBreakpoint();
   const highlights = ['s2', 's1', 's3'].map(
     (serviceId) => SERVICES.find((service) => service.id === serviceId)!,
   );
+  const favorites = useMemo(() => getRandomFavorites(15), []);
+  const quickView = useProductQuickView(favorites);
+
+  const handleFavoriteContact = (productName: string) => {
+    quickView.close();
+    openExternalUrl(whatsappProductUrl(productName));
+  };
 
   return (
-    <View>
+    <View style={styles.screen}>
       {/* Hero */}
       <ImageBackground
         source={require('../../assets/hero-floral.jpg')}
         style={[styles.hero, isTablet && styles.heroWide]}
+        imageStyle={styles.heroImage}
         resizeMode="cover"
         accessible
         accessibilityLabel="Flores frescas de Florería Valeria"
@@ -84,9 +96,9 @@ export default function HomeScreen({
                   style={isMobile && styles.heroButtonMobile}
                 />
                 <Button
-                  label="Visítanos"
+                  label="Contáctanos"
                   variant="outline"
-                  onPress={() => onNavigate('Contact')}
+                  onPress={() => openExternalUrl(CONTACT_INFO.whatsappUrl)}
                   style={isMobile && styles.heroButtonMobile}
                 />
               </View>
@@ -96,90 +108,154 @@ export default function HomeScreen({
       </ImageBackground>
 
       {/* Banner de entrega a domicilio */}
-      <View style={styles.banner}>
+      <View style={[styles.banner, isMobile && styles.bannerMobile]}>
         <Ionicons
           name="car-outline"
-          size={20}
+          size={isMobile ? 18 : 20}
           color={colors.textOnDark}
           accessibilityElementsHidden
           importantForAccessibility="no"
         />
-        <Text style={styles.bannerText}>
-          Entrega a domicilio en Cocula · Todos los días, 9:00 AM–6:00 PM
+        <Text
+          style={[styles.bannerText, isMobile && styles.bannerTextMobile]}
+          numberOfLines={isMobile ? 1 : undefined}
+          accessibilityLabel="Entrega a domicilio en Cocula, todos los días de 9:00 AM a 6:00 PM"
+        >
+          {isMobile
+            ? 'Entrega en Cocula · 9 AM–6 PM'
+            : 'Entrega a domicilio en Cocula · Todos los días, 9:00 AM–6:00 PM'}
         </Text>
       </View>
 
       {/* Servicios destacados */}
-      <Section>
+      <Section wide style={isMobile && styles.servicesSectionMobile}>
         <SectionTitle
           kicker="Nuestros servicios"
           title="Flores para cada ocasión"
           subtitle="Diseñamos cada arreglo a mano y te acompañamos desde la elección de las flores hasta la entrega."
+          compact={isMobile}
         />
-        <CardGrid>
-          {highlights.map((service) => (
-            <FeatureCard
-              key={service.id}
-              icon={service.icon}
-              title={service.title}
-              description={service.description}
-            />
-          ))}
-        </CardGrid>
+        {isMobile ? (
+          <View style={styles.mobileBenefits} accessibilityLabel="Nuestros servicios destacados">
+            {highlights.map((service, index) => (
+              <View
+                key={service.id}
+                style={[
+                  styles.mobileBenefitRow,
+                  index < highlights.length - 1 && styles.mobileBenefitRowBorder,
+                ]}
+              >
+                <FloralServiceIcon name={service.icon} compact />
+                <View style={styles.mobileBenefitCopy}>
+                  <Text style={styles.mobileBenefitTitle}>{service.title}</Text>
+                  <Text style={styles.mobileBenefitDescription}>{service.description}</Text>
+                </View>
+              </View>
+            ))}
+          </View>
+        ) : (
+          <CardGrid>
+            {highlights.map((service) => (
+              <FeatureCard
+                key={service.id}
+                icon={service.icon}
+                title={service.title}
+                description={service.description}
+              />
+            ))}
+          </CardGrid>
+        )}
       </Section>
 
       {/* Productos favoritos */}
       <View onLayout={(event) => onFavoritesLayout(event.nativeEvent.layout.y)}>
-        <Section background="blush">
+        <Section background="blush" wide style={isMobile && styles.favoritesSectionMobile}>
           <SectionTitle
             kicker="Los más queridos"
             title="Nuestras favoritas"
             subtitle="Descubre los arreglos, plantas y detalles preferidos de nuestros clientes."
+            compact={isMobile}
           />
           <ProductCarousel
-            products={FAVORITE_PRODUCTS}
-            onContact={(product) => Linking.openURL(whatsappProductUrl(product.name))}
+            products={favorites}
+            onContact={(product) => handleFavoriteContact(product.name)}
+            onSelectProduct={(_, index) => quickView.open(index)}
           />
         </Section>
+        <ProductModal
+          product={quickView.selected}
+          onClose={quickView.close}
+          onContact={(product) => handleFavoriteContact(product.name)}
+          onPrev={quickView.goPrev}
+          onNext={quickView.goNext}
+          canPrev={quickView.canPrev}
+          canNext={quickView.canNext}
+        />
       </View>
 
       {/* Catálogo por ocasiones */}
-      <View onLayout={(event) => onCatalogLayout(event.nativeEvent.layout.y)}>
-        <OccasionsGallery onSelect={onSelectCategory} />
-      </View>
+      <OccasionsGallery onSelect={onSelectCategory} />
 
       {/* Llamada a la acción final */}
-      <Section background="blush">
-        <View style={styles.cta}>
-          <Text accessibilityRole="header" style={styles.ctaTitle}>
-            ¿A quién quieres sorprender hoy?
-          </Text>
-          <Text style={styles.ctaText}>
-            Escríbenos por WhatsApp y te ayudamos a elegir el arreglo perfecto, o explora el
-            catálogo a tu ritmo.
-          </Text>
-          <View style={[styles.heroButtons, styles.ctaButtons, isMobile && styles.heroButtonsMobile]}>
-            <Button
-              label="Pedir por WhatsApp"
-              onPress={() => Linking.openURL(CONTACT_INFO.whatsappUrl)}
-              style={isMobile && styles.heroButtonMobile}
-            />
-            <Button
-              label="Ver catálogo"
-              variant="outline"
-              onPress={() => onNavigate('Shop')}
-              style={isMobile && styles.heroButtonMobile}
-            />
-          </View>
-        </View>
-      </Section>
+      <CtaRibbon onNavigate={onNavigate} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  screen: {
+    width: '100%',
+    alignSelf: 'stretch',
+  },
+  servicesSectionMobile: {
+    paddingVertical: spacing.lg,
+  },
+  favoritesSectionMobile: {
+    paddingVertical: spacing.lg,
+  },
+  mobileBenefits: {
+    width: '100%',
+    backgroundColor: colors.surface,
+    borderWidth: borderWidth.thin,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+    ...shadows.sm,
+  },
+  mobileBenefitRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    paddingVertical: spacing.md,
+  },
+  mobileBenefitRowBorder: {
+    borderBottomWidth: borderWidth.hairline,
+    borderBottomColor: colors.border,
+  },
+  mobileBenefitCopy: {
+    flex: 1,
+  },
+  mobileBenefitTitle: {
+    color: colors.text,
+    fontSize: fontSizes.body,
+    fontWeight: fontWeights.bold,
+    lineHeight: lineHeights.body,
+    marginBottom: spacing.xxs,
+  },
+  mobileBenefitDescription: {
+    color: colors.textMuted,
+    fontSize: fontSizes.small,
+    lineHeight: lineHeights.small,
+  },
   hero: {
+    width: '100%',
+    alignSelf: 'stretch',
     minHeight: 520,
+    overflow: 'hidden',
+  },
+  heroImage: {
+    width: '100%',
+    height: '100%',
   },
   heroWide: {
     minHeight: 650,
@@ -197,7 +273,7 @@ const styles = StyleSheet.create({
   },
   heroContentBoundary: {
     width: '100%',
-    maxWidth: layout.contentMaxWidth,
+    maxWidth: layout.navigationMaxWidth,
     alignSelf: 'center',
   },
   heroContentCard: {
@@ -216,18 +292,18 @@ const styles = StyleSheet.create({
   },
   heroKicker: {
     color: colors.primary,
-    fontSize: fontSizes.small,
-    fontWeight: fontWeights.bold,
-    letterSpacing: letterSpacing.widest,
+    fontFamily: fonts.accentItalic,
+    fontSize: fontSizes.subtitle,
+    lineHeight: lineHeights.subtitle,
+    letterSpacing: letterSpacing.slight,
     marginBottom: spacing.sm,
     textAlign: 'left',
   },
   heroTitle: {
     color: colors.primaryDark,
-    fontFamily: fonts.heading,
+    fontFamily: fonts.headingBold,
     fontSize: fontSizes.titleLarge,
     lineHeight: lineHeights.titleLarge,
-    fontWeight: fontWeights.bold,
     textAlign: 'left',
     marginBottom: spacing.md,
   },
@@ -273,29 +349,13 @@ const styles = StyleSheet.create({
     letterSpacing: letterSpacing.slight,
     textAlign: 'center',
   },
-  cta: {
-    alignItems: 'center',
-    alignSelf: 'center',
-    width: '100%',
-    maxWidth: layout.textMaxWidth,
+  bannerMobile: {
+    minHeight: layout.minTouchTarget,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
   },
-  ctaTitle: {
-    color: colors.accent,
-    fontFamily: fonts.heading,
-    fontSize: fontSizes.title,
-    lineHeight: lineHeights.title,
-    fontWeight: fontWeights.bold,
-    textAlign: 'center',
-    marginBottom: spacing.sm,
-  },
-  ctaText: {
-    color: colors.textMuted,
-    fontSize: fontSizes.bodyLarge,
-    lineHeight: lineHeights.bodyLarge,
-    textAlign: 'center',
-    marginBottom: spacing.lg,
-  },
-  ctaButtons: {
-    justifyContent: 'center',
+  bannerTextMobile: {
+    fontSize: fontSizes.small,
+    flexShrink: 1,
   },
 });

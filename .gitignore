@@ -30,8 +30,17 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# local env files
-.env*.local
+# Environment variables and private credentials
+.env
+.env.*
+!.env.example
+cloudinary.env
+.cloudinaryrc
+cloudinary-credentials.json
+cloudinary-credentials.*.json
+
+# Expo variables prefixed with EXPO_PUBLIC_ are bundled into the client.
+# Never store API secrets in an EXPO_PUBLIC_ variable.
 
 # typescript
 *.tsbuildinfo

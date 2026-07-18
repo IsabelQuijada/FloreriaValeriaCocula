@@ -1,8 +1,10 @@
-import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { BRAND, CONTACT_INFO, NAV_ITEMS, ScreenName } from '../data/content';
 import { useBreakpoint } from '../hooks/useBreakpoint';
+import { useHoverKey } from '../hooks/useHover';
+import { openExternalUrl } from '../utils/links';
 import {
   borderWidth,
   colors,
@@ -15,10 +17,28 @@ import {
   spacing,
 } from '../theme';
 
-const SOCIAL_LINKS = [
-  { icon: 'instagram', label: 'Instagram de Florería Valeria', url: CONTACT_INFO.instagramUrl },
-  { icon: 'facebook', label: 'Facebook de Florería Valeria', url: CONTACT_INFO.facebookUrl },
-  { icon: 'whatsapp', label: 'WhatsApp de Florería Valeria', url: CONTACT_INFO.whatsappUrl },
+const CONTACT_LINKS = [
+  {
+    id: 'phone1',
+    label: CONTACT_INFO.phoneDisplay,
+    accessibility: `Llamar al ${CONTACT_INFO.phoneDisplay}`,
+    url: CONTACT_INFO.phoneHref,
+    icon: 'call-outline',
+  },
+  {
+    id: 'phone2',
+    label: CONTACT_INFO.phone2Display,
+    accessibility: `Llamar al ${CONTACT_INFO.phone2Display}`,
+    url: CONTACT_INFO.phone2Href,
+    icon: 'call-outline',
+  },
+  {
+    id: 'whatsapp',
+    label: 'WhatsApp',
+    accessibility: `Escribir por WhatsApp al ${CONTACT_INFO.whatsappDisplay}`,
+    url: CONTACT_INFO.whatsappUrl,
+    icon: 'logo-whatsapp',
+  },
 ] as const;
 
 interface NavBarProps {
@@ -28,7 +48,7 @@ interface NavBarProps {
 
 export default function NavBar({ current, onNavigate }: NavBarProps) {
   const { isMobile, isDesktop } = useBreakpoint();
-  const [hovered, setHovered] = useState<string | null>(null);
+  const { isHovered, hoverProps } = useHoverKey();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const navigate = (screen: ScreenName) => {
@@ -41,12 +61,20 @@ export default function NavBar({ current, onNavigate }: NavBarProps) {
       onPress={() => navigate('Home')}
       accessibilityRole="button"
       accessibilityLabel={`${BRAND.name}, ir al inicio`}
-      onHoverIn={() => setHovered('brand')}
-      onHoverOut={() => setHovered(null)}
-      style={[styles.brand, hovered === 'brand' && styles.brandHovered]}
+      {...hoverProps('brand')}
+      style={[styles.brand, isHovered('brand') && styles.brandHovered]}
     >
-      <Ionicons name="flower-outline" size={26} color={colors.accent} style={styles.brandIcon} />
-      <Text style={styles.brandName} numberOfLines={1}>
+      <Image
+        source={require('../../assets/floreria-valeria-logo.png')}
+        style={[styles.brandLogo, isDesktop && styles.brandLogoDesktop]}
+        resizeMode="contain"
+        accessibilityElementsHidden
+        importantForAccessibility="no"
+      />
+      <Text
+        style={[styles.brandName, isDesktop && styles.brandNameDesktop]}
+        numberOfLines={1}
+      >
         {BRAND.name}
       </Text>
     </Pressable>
@@ -54,18 +82,17 @@ export default function NavBar({ current, onNavigate }: NavBarProps) {
 
   const orderButton = (
     <Pressable
-      onPress={() => navigate('Shop')}
+      onPress={() => openExternalUrl(CONTACT_INFO.whatsappUrl)}
       accessibilityRole="button"
-      accessibilityLabel="Pedir ahora, ir al catálogo"
-      onHoverIn={() => setHovered('order')}
-      onHoverOut={() => setHovered(null)}
+      accessibilityLabel="Contactarnos por WhatsApp"
+      {...hoverProps('order')}
       style={({ pressed }) => [
         styles.orderButton,
-        hovered === 'order' && styles.orderButtonHovered,
+        isHovered('order') && styles.orderButtonHovered,
         pressed && styles.orderButtonPressed,
       ]}
     >
-      <Text style={styles.orderLabel}>Pedir Ahora</Text>
+      <Text style={styles.orderLabel}>Contáctanos</Text>
     </Pressable>
   );
 
@@ -85,14 +112,14 @@ export default function NavBar({ current, onNavigate }: NavBarProps) {
             accessibilityRole="button"
             accessibilityLabel={item.label}
             accessibilityState={{ selected: active }}
-            onHoverIn={() => setHovered(`nav-${item.screen}`)}
-            onHoverOut={() => setHovered(null)}
+            {...hoverProps(`nav-${item.screen}`)}
             style={styles.item}
           >
             <Text
               style={[
                 styles.itemLabel,
-                (active || hovered === `nav-${item.screen}`) && styles.itemLabelActive,
+                isDesktop && styles.itemLabelDesktop,
+                (active || isHovered(`nav-${item.screen}`)) && styles.itemLabelActive,
               ]}
             >
               {item.label}
@@ -100,7 +127,7 @@ export default function NavBar({ current, onNavigate }: NavBarProps) {
             <View
               style={[
                 styles.itemUnderline,
-                (active || hovered === `nav-${item.screen}`) && styles.itemUnderlineActive,
+                (active || isHovered(`nav-${item.screen}`)) && styles.itemUnderlineActive,
               ]}
             />
           </Pressable>
@@ -109,31 +136,52 @@ export default function NavBar({ current, onNavigate }: NavBarProps) {
     </ScrollView>
   );
 
+  const ribbonLinks = CONTACT_LINKS;
+
   return (
     <View style={styles.container}>
-      {/* Ribbon superior con redes sociales */}
+      {/* Ribbon superior con teléfonos */}
       <View style={styles.ribbon}>
-        <View style={styles.ribbonInner}>
-          {SOCIAL_LINKS.map((social) => (
-            <Pressable
-              key={social.icon}
-              onPress={() => Linking.openURL(social.url)}
-              accessibilityRole="link"
-              accessibilityLabel={social.label}
-              hitSlop={spacing.sm}
-              onHoverIn={() => setHovered(`social-${social.icon}`)}
-              onHoverOut={() => setHovered(null)}
-              style={[
-                styles.socialButton,
-                hovered === `social-${social.icon}` && styles.socialButtonHovered,
-              ]}
-            >
-              <FontAwesome
-                name={social.icon}
-                size={16}
-                color={hovered === `social-${social.icon}` ? colors.primaryDark : colors.textOnDark}
-              />
-            </Pressable>
+        <View style={[styles.ribbonInner, isMobile && styles.ribbonInnerMobile]}>
+          {ribbonLinks.map((link, index) => (
+            <React.Fragment key={link.id}>
+              <Pressable
+                onPress={() => openExternalUrl(link.url)}
+                accessibilityRole="link"
+                accessibilityLabel={link.accessibility}
+                hitSlop={spacing.sm}
+                {...hoverProps(link.id)}
+                style={[
+                  styles.phoneButton,
+                  isMobile && styles.phoneButtonMobile,
+                  isHovered(link.id) && styles.phoneButtonHovered,
+                ]}
+              >
+                {!(isMobile && link.id === 'phone2') ? (
+                  <Ionicons
+                    name={link.icon as any}
+                    size={isMobile && link.id === 'whatsapp' ? 19 : 14}
+                    color={isHovered(link.id) ? colors.primaryDark : colors.textOnDark}
+                  />
+                ) : null}
+                {!(isMobile && link.id === 'whatsapp') ? (
+                  <Text
+                    style={[
+                      styles.phoneLabel,
+                      isMobile && styles.phoneLabelMobile,
+                      isHovered(link.id) && styles.phoneLabelHovered,
+                    ]}
+                  >
+                    {link.label}
+                  </Text>
+                ) : null}
+              </Pressable>
+              {index < ribbonLinks.length - 1 && (
+                <Text style={[styles.separator, isMobile && styles.separatorMobile]}>
+                  |
+                </Text>
+              )}
+            </React.Fragment>
           ))}
         </View>
       </View>
@@ -218,20 +266,53 @@ const styles = StyleSheet.create({
     maxWidth: layout.navigationMaxWidth,
     alignSelf: 'center',
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     alignItems: 'center',
     gap: spacing.md,
   },
-  socialButton: {
+  ribbonInnerMobile: {
+    gap: 0,
+    justifyContent: 'space-between',
+  },
+  phoneButton: {
     minHeight: 36,
-    minWidth: 36,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: spacing.xs,
+    paddingHorizontal: spacing.sm,
   },
-  socialButtonHovered: {
+  phoneButtonMobile: {
+    minHeight: layout.minTouchTarget,
+    paddingHorizontal: spacing.xs,
+    gap: spacing.xxs,
+  },
+  phoneButtonHovered: {
     backgroundColor: colors.sand,
     borderRadius: radius.pill,
     transform: [{ translateY: -2 }],
+  },
+  phoneLabel: {
+    color: colors.textOnDark,
+    fontSize: fontSizes.caption,
+    fontWeight: fontWeights.semibold,
+    letterSpacing: letterSpacing.slight,
+  },
+  phoneLabelHovered: {
+    color: colors.primaryDark,
+  },
+  phoneLabelMobile: {
+    fontSize: 12,
+    letterSpacing: 0,
+  },
+  separator: {
+    color: colors.textOnDark,
+    fontSize: fontSizes.caption,
+    marginHorizontal: spacing.xs,
+  },
+  separatorMobile: {
+    marginHorizontal: 0,
+    opacity: 0.72,
   },
   bar: {
     width: '100%',
@@ -265,14 +346,25 @@ const styles = StyleSheet.create({
   brandHovered: {
     opacity: 0.78,
   },
-  brandIcon: {
+  brandLogo: {
+    width: 91,
+    height: 48,
     marginRight: spacing.sm,
+  },
+  brandLogoDesktop: {
+    width: 104,
+    height: 54,
+    marginRight: spacing.md,
   },
   brandName: {
     color: colors.text,
     fontSize: fontSizes.subtitle,
     fontFamily: fonts.heading,
     letterSpacing: letterSpacing.wide,
+  },
+  brandNameDesktop: {
+    fontSize: fontSizes.titleSmall,
+    letterSpacing: letterSpacing.slight,
   },
   menuButton: {
     width: layout.minTouchTarget,
@@ -304,7 +396,7 @@ const styles = StyleSheet.create({
   mobileItemLabel: {
     color: colors.text,
     fontFamily: fonts.heading,
-    fontSize: fontSizes.body,
+    fontSize: fontSizes.bodyLarge,
   },
   mobileOrder: {
     marginTop: spacing.sm,
@@ -320,7 +412,8 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   menuDesktop: {
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
+    gap: spacing.xl,
   },
   item: {
     alignItems: 'center',
@@ -329,10 +422,13 @@ const styles = StyleSheet.create({
   },
   itemLabel: {
     color: colors.text,
-    fontSize: fontSizes.small,
+    fontSize: fontSizes.bodyLarge,
     fontFamily: fonts.heading,
-    textTransform: 'uppercase',
-    letterSpacing: letterSpacing.wide,
+    letterSpacing: letterSpacing.slight,
+  },
+  itemLabelDesktop: {
+    fontSize: 24,
+    letterSpacing: letterSpacing.slight,
   },
   itemLabelActive: {
     color: colors.accent,
@@ -363,9 +459,8 @@ const styles = StyleSheet.create({
   },
   orderLabel: {
     color: colors.textOnDark,
-    fontSize: fontSizes.small,
-    fontWeight: fontWeights.bold,
-    textTransform: 'uppercase',
-    letterSpacing: letterSpacing.wide,
+    fontSize: fontSizes.body,
+    fontWeight: fontWeights.semibold,
+    letterSpacing: letterSpacing.slight,
   },
 });

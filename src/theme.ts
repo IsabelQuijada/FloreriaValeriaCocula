@@ -1,4 +1,4 @@
-import { Platform, StyleSheet } from 'react-native';
+import { StyleSheet, TextStyle } from 'react-native';
 
 /**
  * Design tokens de Florería Valeria.
@@ -21,7 +21,7 @@ export const colors = {
   ribbon: '#9C4463', // berry — franja superior de navegación
   accentSoft: '#F4E4E1', // rosado pálido — chips y fondos suaves
   champagne: '#F7C466', // dorado — texto destacado sobre fondos oscuros
-  gold: '#A78645', // dorado profundo — kickers legibles sobre fondos claros
+  gold: '#8A6A2E', // dorado profundo — kickers legibles sobre fondos claros (AA ≥4.5:1)
   sand: '#EBE7C0', // arena — botones claros sobre fondos oscuros (uk-button-primary)
   mauve: '#8A5F6A', // malva — acentos secundarios
 
@@ -35,7 +35,7 @@ export const colors = {
   secondaryButton: 'rgba(251, 245, 244, 0.82)', // fondo elegante para acciones secundarias
 
   // Texto
-  text: '#320B21', // texto principal — ciruela oscura
+  text: '#4A2638', // texto principal — ciruela cacao, cálido y de alto contraste
   textMuted: '#8A5F6A', // texto secundario — malva
   textOnDark: '#FBF5F4', // texto sobre fondos oscuros
   textOnDarkMuted: '#AD9DA6', // texto secundario sobre fondos oscuros
@@ -71,11 +71,16 @@ export const colors = {
 };
 
 export const fonts = {
-  // Serif decorativa para la marca y los encabezados
-  heading: Platform.select({
-    android: 'serif',
-    default: 'Georgia',
-  }),
+  /**
+   * Serif de marca (Cormorant Garamond) para títulos y la marca.
+   * Cargada en App.tsx con expo-font; cada peso es una familia propia,
+   * por lo que los estilos que la usan NO deben añadir fontWeight
+   * (evita el bold sintético del navegador).
+   */
+  heading: 'CormorantGaramond_600SemiBold',
+  headingBold: 'CormorantGaramond_700Bold',
+  // Itálica de acento para taglines y frases emotivas
+  accentItalic: 'CormorantGaramond_500Medium_Italic',
   // Fuente del sistema para cuerpo de texto (undefined = default de la plataforma)
   body: undefined as string | undefined,
 };
@@ -86,9 +91,11 @@ export const fontSizes = {
   body: 16,
   bodyLarge: 18,
   subtitle: 22,
-  title: 28,
-  titleLarge: 34,
-  hero: 40,
+  titleSmall: 28,
+  // Los tamaños de título compensan la altura-x reducida de Cormorant Garamond
+  title: 32,
+  titleLarge: 40,
+  hero: 46,
 };
 
 export const lineHeights = {
@@ -97,9 +104,10 @@ export const lineHeights = {
   body: 24,
   bodyLarge: 28,
   subtitle: 30,
-  title: 36,
-  titleLarge: 42,
-  hero: 48,
+  titleSmall: 36,
+  title: 40,
+  titleLarge: 48,
+  hero: 54,
 };
 
 export const fontWeights = {
@@ -138,6 +146,29 @@ export const borderWidth = {
   hairline: StyleSheet.hairlineWidth,
   thin: 1,
   thick: 2,
+};
+
+/**
+ * Presets tipográficos para textos utilitarios que se repiten en varios
+ * componentes. Los estilos locales solo deben añadir márgenes/alineación.
+ */
+export const textPresets = {
+  /** Etiqueta corta dorada sobre títulos de sección (kicker). */
+  kicker: {
+    color: colors.gold,
+    fontSize: fontSizes.caption,
+    fontWeight: fontWeights.bold,
+    letterSpacing: letterSpacing.wider,
+    textTransform: 'uppercase',
+  } as TextStyle,
+  /** Texto de badge de categoría en cards y vista rápida de producto. */
+  badge: {
+    color: colors.primary,
+    fontSize: fontSizes.caption,
+    fontWeight: fontWeights.bold,
+    letterSpacing: letterSpacing.wide,
+    textTransform: 'uppercase',
+  } as TextStyle,
 };
 
 /** Niveles de elevación reutilizables (sombra iOS/web + elevation Android). */

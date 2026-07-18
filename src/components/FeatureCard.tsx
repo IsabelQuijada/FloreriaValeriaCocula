@@ -11,6 +11,8 @@ interface FeatureCardProps {
   description: string;
   /** Centra icono y textos (destacados de Home); por defecto alineado a la izquierda. */
   centered?: boolean;
+  /** Reduce el espaciado vertical para secciones de menor altura. */
+  compact?: boolean;
 }
 
 /** Card de servicio o valor: icono, título y descripción. */
@@ -19,10 +21,15 @@ export default function FeatureCard({
   title,
   description,
   centered = false,
+  compact = false,
 }: FeatureCardProps) {
   return (
-    <Card flexBasis={260} maxWidth={400} style={centered && styles.centered}>
-      <View style={styles.icon}>
+    <Card
+      flexBasis={260}
+      maxWidth={400}
+      style={[centered && styles.centered, compact && styles.compactCard]}
+    >
+      <View style={[styles.icon, compact && styles.iconCompact]}>
         <FloralServiceIcon name={icon} />
       </View>
       <Text style={[styles.title, centered && styles.textCentered]}>{title}</Text>
@@ -32,6 +39,9 @@ export default function FeatureCard({
 }
 
 const styles = StyleSheet.create({
+  compactCard: {
+    padding: spacing.md,
+  },
   centered: {
     alignItems: 'center',
   },
@@ -40,6 +50,9 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginBottom: spacing.md,
+  },
+  iconCompact: {
+    marginBottom: spacing.sm,
   },
   title: {
     color: colors.text,

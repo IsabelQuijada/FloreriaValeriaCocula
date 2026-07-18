@@ -3100,13 +3100,18 @@ export const ALL_PRODUCTS: Product[] = [
 ];
 
 import { getDetailedDescription } from './productDescriptions';
+import { createCommercialProductNameMap } from './productNames';
 import { formatProductName } from '../utils/formatProductName';
+
+const COMMERCIAL_PRODUCT_NAMES = createCommercialProductNameMap(ALL_PRODUCTS);
 
 function enhanceProductWithDescription(product: Product): Product {
   const detailedDescription = getDetailedDescription(product.cloudinaryId);
   return {
     ...product,
-    name: formatProductName(product.cloudinaryId, product.subcategory),
+    name:
+      COMMERCIAL_PRODUCT_NAMES.get(product.cloudinaryId) ??
+      formatProductName(product.cloudinaryId, product.subcategory),
     ...(detailedDescription && { description: detailedDescription }),
   };
 }
@@ -3125,6 +3130,10 @@ function deduplicateProductNames(products: Product[]): Product[] {
 
   const result: Product[] = [];
   for (const [key, group] of groups) {
+    if (group.length === 1) {
+      result.push(group[0]);
+      continue;
+    }
     const baseName = key.split('|').slice(1).join('|');
     const sorted = [...group].sort((a, b) => {
       const fa = a.cloudinaryId.split('/').pop() ?? '';

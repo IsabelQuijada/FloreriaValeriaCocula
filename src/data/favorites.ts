@@ -3,28 +3,24 @@
  * tomada del catálogo real de Cloudinary (ramos elegantes y clásicos).
  */
 
-import { getCategoryBySlug } from './categories';
+import { ProductCardData, toProductCardData } from './catalog';
 import { getProductsByCategory, Product } from './productsData';
 
-export interface FavoriteProduct {
-  id: string;
-  name: string;
-  image: string;
-  badge: string;
-  description: string;
-}
+export type FavoriteProduct = ProductCardData;
 
-function toFavorite(product: Product): FavoriteProduct {
-  return {
+const FAVORITES_POOL: Product[] = [
+  ...getProductsByCategory('ramos-elegantes'),
+  ...getProductsByCategory('ramos-clasicos'),
+];
+
+/**
+ * Selección aleatoria de favoritas para el carrusel de la portada,
+ * igual que `getRandomFavoritas` en el sitio original.
+ */
+export function getRandomFavorites(count = 15): FavoriteProduct[] {
+  const shuffled = [...FAVORITES_POOL].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count).map((product) => ({
+    ...toProductCardData(product),
     id: `favorita-${product.id}`,
-    name: product.name,
-    image: product.cloudinaryUrl,
-    badge: getCategoryBySlug(product.category)?.name ?? product.category,
-    description: product.description,
-  };
+  }));
 }
-
-export const FAVORITE_PRODUCTS: FavoriteProduct[] = [
-  ...getProductsByCategory('ramos-elegantes').slice(0, 5),
-  ...getProductsByCategory('ramos-clasicos').slice(0, 5),
-].map(toFavorite);

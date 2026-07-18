@@ -1,15 +1,14 @@
-import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import React from 'react';
 import {
-  ImageBackground,
+  Image,
   ImageSourcePropType,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
 import { useBreakpoint } from '../hooks/useBreakpoint';
+import { useHover } from '../hooks/useHover';
 import {
   borderWidth,
   colors,
@@ -94,60 +93,68 @@ interface OccasionCardProps {
   occasion: Occasion;
   isTablet: boolean;
   isDesktop: boolean;
-  mobileWidth: number;
   onSelect: () => void;
 }
 
-function OccasionCard({ occasion, isTablet, isDesktop, mobileWidth, onSelect }: OccasionCardProps) {
-  const [isHovered, setIsHovered] = useState(false);
+function OccasionCard({ occasion, isTablet, isDesktop, onSelect }: OccasionCardProps) {
+  const { hovered: isHovered, hoverProps } = useHover();
 
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`${occasion.title}. ${occasion.subtitle}. Ver galería`}
+      accessibilityLabel={`${occasion.title}. ${occasion.subtitle}. Ver productos en el catálogo`}
       onPress={onSelect}
-      onHoverIn={() => setIsHovered(true)}
-      onHoverOut={() => setIsHovered(false)}
+      {...hoverProps}
       style={({ pressed }) => [
         styles.card,
-        !isTablet && { width: mobileWidth },
+        !isTablet && styles.cardMobile,
         isTablet && styles.cardTablet,
         isDesktop && styles.cardDesktop,
         isHovered && styles.cardHovered,
         pressed && styles.cardPressed,
       ]}
     >
-      <ImageBackground
-        source={occasion.image}
-        resizeMode="cover"
-        style={[styles.image, isHovered && styles.imageHovered]}
-      >
+      <View style={styles.image}>
+        <Image
+          source={occasion.image}
+          resizeMode="cover"
+          style={[styles.imageAsset, isHovered && styles.imageAssetHovered]}
+          accessible
+          accessibilityLabel={`Arreglo floral para ${occasion.title.toLowerCase()}`}
+        />
         <View style={[styles.overlay, isHovered && styles.overlayHovered]} />
-        <View style={styles.cardContent}>
-          <Text style={styles.cardTitle}>{occasion.title}</Text>
-          <Text style={styles.cardSubtitle}>{occasion.subtitle}</Text>
-          <View style={[styles.cardAction, isHovered && styles.cardActionHovered]}>
-            <Text style={[styles.cardActionText, isHovered && styles.cardActionTextHovered]}>
-              Ver galería
+        <View style={[styles.cardContent, !isTablet && styles.cardContentMobile]}>
+          <Text style={[styles.cardTitle, !isTablet && styles.cardTitleMobile]}>
+            {occasion.title}
+          </Text>
+          <Text style={[styles.cardSubtitle, !isTablet && styles.cardSubtitleMobile]}>
+            {occasion.subtitle}
+          </Text>
+          <View
+            style={[
+              styles.cardAction,
+              !isTablet && styles.cardActionMobile,
+              isHovered && styles.cardActionHovered,
+            ]}
+          >
+            <Text
+              style={[
+                styles.cardActionText,
+                !isTablet && styles.cardActionTextMobile,
+                isHovered && styles.cardActionTextHovered,
+              ]}
+            >
+              Ver catálogo
             </Text>
-            <Ionicons
-              name="arrow-forward"
-              size={16}
-              color={isHovered ? colors.white : colors.textOnDark}
-              style={[styles.actionIcon, isHovered && styles.actionIconHovered]}
-              accessibilityElementsHidden
-              importantForAccessibility="no"
-            />
           </View>
         </View>
-      </ImageBackground>
+      </View>
     </Pressable>
   );
 }
 
 export default function OccasionsGallery({ onSelect }: OccasionsGalleryProps) {
-  const { width, isTablet, isDesktop } = useBreakpoint();
-  const mobileCardWidth = Math.min(300, width - spacing.xl);
+  const { isTablet, isDesktop } = useBreakpoint();
 
   const cards = OCCASIONS.map((occasion) => (
     <OccasionCard
@@ -155,46 +162,35 @@ export default function OccasionsGallery({ onSelect }: OccasionsGalleryProps) {
       occasion={occasion}
       isTablet={isTablet}
       isDesktop={isDesktop}
-      mobileWidth={mobileCardWidth}
       onSelect={() => onSelect(occasion.id)}
     />
   ));
 
   return (
-    <Section>
+    <Section wide style={!isTablet && styles.sectionMobile}>
       <SectionTitle
         kicker="Catálogo"
         title="Ocasiones especiales"
-        subtitle="Explora el catálogo por ocasión: elige una galería para ver todos sus arreglos."
+        subtitle="Explora el catálogo por ocasión y descubre todos sus arreglos."
+        compact={!isTablet}
       />
 
-      {isTablet ? (
-        <View style={styles.grid}>{cards}</View>
-      ) : (
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          decelerationRate="fast"
-          snapToInterval={mobileCardWidth + spacing.md}
-          contentContainerStyle={styles.carousel}
-          accessibilityLabel="Galería de ocasiones especiales"
-        >
-          {cards}
-        </ScrollView>
-      )}
+      <View style={[styles.grid, !isTablet && styles.gridMobile]}>{cards}</View>
     </Section>
   );
 }
 
 const styles = StyleSheet.create({
+  sectionMobile: {
+    paddingVertical: spacing.lg,
+  },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.lg,
   },
-  carousel: {
-    gap: spacing.md,
-    paddingBottom: spacing.md,
+  gridMobile: {
+    gap: spacing.sm,
   },
   card: {
     width: 280,
@@ -208,11 +204,16 @@ const styles = StyleSheet.create({
     width: undefined,
     flexBasis: '47%',
     flexGrow: 1,
-    maxWidth: (layout.contentMaxWidth - spacing.lg * 3 - layout.gutterWide * 2) / 2,
+  },
+  cardMobile: {
+    width: undefined,
+    flexBasis: '47%',
+    flexGrow: 1,
+    aspectRatio: 4 / 5,
+    borderRadius: radius.sm,
   },
   cardDesktop: {
     flexBasis: '22%',
-    maxWidth: (layout.contentMaxWidth - spacing.lg * 3 - layout.gutterWide * 2) / 4,
   },
   cardPressed: {
     opacity: 0.92,
@@ -227,8 +228,18 @@ const styles = StyleSheet.create({
   image: {
     flex: 1,
     justifyContent: 'flex-end',
+    overflow: 'hidden',
   },
-  imageHovered: {
+  imageAsset: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+  },
+  imageAssetHovered: {
     transform: [{ scale: 1.025 }],
   },
   overlay: {
@@ -248,15 +259,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: spacing.lg,
   },
+  cardContentMobile: {
+    alignItems: 'center',
+    padding: spacing.sm,
+  },
   cardTitle: {
     color: colors.white,
     fontFamily: fonts.heading,
     fontSize: fontSizes.subtitle,
     lineHeight: lineHeights.subtitle,
-    fontWeight: fontWeights.bold,
     letterSpacing: letterSpacing.slight,
     textAlign: 'center',
     marginBottom: spacing.xs,
+  },
+  cardTitleMobile: {
+    fontSize: fontSizes.bodyLarge,
+    lineHeight: lineHeights.bodyLarge,
+    textAlign: 'center',
+    marginBottom: spacing.xxs,
   },
   cardSubtitle: {
     color: colors.textOnDark,
@@ -264,6 +284,12 @@ const styles = StyleSheet.create({
     lineHeight: lineHeights.small,
     textAlign: 'center',
     marginBottom: spacing.md,
+  },
+  cardSubtitleMobile: {
+    fontSize: fontSizes.caption,
+    lineHeight: lineHeights.caption,
+    textAlign: 'center',
+    marginBottom: spacing.sm,
   },
   cardAction: {
     minHeight: layout.minTouchTarget,
@@ -281,6 +307,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     borderColor: colors.primary,
   },
+  cardActionMobile: {
+    width: '100%',
+    minWidth: 0,
+    minHeight: 40,
+    paddingHorizontal: spacing.sm,
+  },
   cardActionText: {
     color: colors.white,
     fontSize: fontSizes.caption,
@@ -291,10 +323,8 @@ const styles = StyleSheet.create({
   cardActionTextHovered: {
     color: colors.white,
   },
-  actionIcon: {
-    transform: [{ translateX: 0 }],
-  },
-  actionIconHovered: {
-    transform: [{ translateX: 4 }],
+  cardActionTextMobile: {
+    fontSize: 10,
+    letterSpacing: letterSpacing.wide,
   },
 });

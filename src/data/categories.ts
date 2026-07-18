@@ -19,37 +19,6 @@ export interface SubcategoryMetadata {
 
 export const CATEGORIES: CategoryMetadata[] = [
   {
-    id: 'bodas-de-ensueno',
-    name: 'Bodas de Ensueño',
-    slug: 'bodas-de-ensueno',
-    subtitle: 'Tu día perfecto merece flores únicas',
-    description: 'Arreglos florales exclusivos para bodas que transforman tu celebración en un cuento de hadas.',
-    image: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&h=800&fit=crop',
-    subcategories: [
-      {
-        id: 'ramos-novia',
-        name: 'Ramos de Novia',
-        slug: 'ramos-novia',
-        description: 'Ramos de novia únicos y especiales, diseñados con las flores más hermosas para el día más importante de tu vida.',
-        folder: 'ramosNovia'
-      },
-      {
-        id: 'arreglos-centros-mesa',
-        name: 'Arreglos y Centros de Mesa',
-        slug: 'arreglos-centros-mesa',
-        description: 'Arreglos elegantes y centros de mesa sofisticados que crean la atmósfera perfecta para tu celebración de boda.',
-        folder: 'arreglosCentrosDeMesa'
-      },
-      {
-        id: 'templo',
-        name: 'Decoración de Templo',
-        slug: 'templo',
-        description: 'Decoraciones especiales para templo y ceremonia que transforman el espacio sagrado en un ambiente mágico y memorable.',
-        folder: 'templo'
-      }
-    ]
-  },
-  {
     id: 'ramos-elegantes',
     name: 'Ramos Elegantes',
     slug: 'ramos-elegantes',
@@ -108,6 +77,37 @@ export const CATEGORIES: CategoryMetadata[] = [
         slug: 'ramo-tulipanes',
         description: 'Ramos delicados de tulipanes que aportan frescura y sofisticación a cualquier ocasión.',
         folder: 'ramo-tulipanes'
+      }
+    ]
+  },
+  {
+    id: 'bodas-de-ensueno',
+    name: 'Bodas de Ensueño',
+    slug: 'bodas-de-ensueno',
+    subtitle: 'Tu día perfecto merece flores únicas',
+    description: 'Arreglos florales exclusivos para bodas que transforman tu celebración en un cuento de hadas.',
+    image: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&h=800&fit=crop',
+    subcategories: [
+      {
+        id: 'ramos-novia',
+        name: 'Ramos de Novia',
+        slug: 'ramos-novia',
+        description: 'Ramos de novia únicos y especiales, diseñados con las flores más hermosas para el día más importante de tu vida.',
+        folder: 'ramosNovia'
+      },
+      {
+        id: 'arreglos-centros-mesa',
+        name: 'Arreglos y Centros de Mesa',
+        slug: 'arreglos-centros-mesa',
+        description: 'Arreglos elegantes y centros de mesa sofisticados que crean la atmósfera perfecta para tu celebración de boda.',
+        folder: 'arreglosCentrosDeMesa'
+      },
+      {
+        id: 'templo',
+        name: 'Decoración de Templo',
+        slug: 'templo',
+        description: 'Decoraciones especiales para templo y ceremonia que transforman el espacio sagrado en un ambiente mágico y memorable.',
+        folder: 'templo'
       }
     ]
   },

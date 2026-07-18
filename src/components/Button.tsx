@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Pressable, StyleProp, StyleSheet, Text, ViewStyle } from 'react-native';
+import { useHover } from '../hooks/useHover';
 import {
   borderWidth,
   colors,
@@ -33,7 +34,7 @@ export default function Button({
   accessibilityHint,
   style,
 }: ButtonProps) {
-  const [hovered, setHovered] = useState(false);
+  const { hovered, hoverProps } = useHover();
 
   return (
     <Pressable
@@ -43,8 +44,7 @@ export default function Button({
       accessibilityLabel={label}
       accessibilityHint={accessibilityHint}
       accessibilityState={{ disabled }}
-      onHoverIn={() => setHovered(true)}
-      onHoverOut={() => setHovered(false)}
+      {...hoverProps}
       style={({ pressed }) => [
         styles.base,
         variantStyles[variant],
@@ -117,10 +117,9 @@ const styles = StyleSheet.create({
     borderColor: colors.disabledBg,
   },
   label: {
-    fontSize: fontSizes.small,
-    fontWeight: fontWeights.bold,
-    letterSpacing: letterSpacing.wide,
-    textTransform: 'uppercase',
+    fontSize: fontSizes.body,
+    fontWeight: fontWeights.semibold,
+    letterSpacing: letterSpacing.slight,
   },
   labelDisabled: {
     color: colors.disabledText,

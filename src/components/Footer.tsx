@@ -1,8 +1,10 @@
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
-import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { BRAND, CONTACT_INFO, HERO, ScreenName } from '../data/content';
 import { useBreakpoint } from '../hooks/useBreakpoint';
+import { useHover, useHoverKey } from '../hooks/useHover';
+import { openExternalUrl } from '../utils/links';
 import {
   borderWidth,
   colors,
@@ -29,6 +31,18 @@ const QUICK_LINKS: { icon: React.ComponentProps<typeof Ionicons>['name']; label:
   { icon: 'chatbubble-outline', label: 'Contáctanos', screen: 'Contact' },
 ];
 
+const MOBILE_INFO_LINKS: { label: string; screen: ScreenName }[] = [
+  { label: 'Catálogo', screen: 'Shop' },
+  { label: 'Favoritas', screen: 'Favorites' },
+  { label: 'Preguntas frecuentes', screen: 'FAQ' },
+  { label: 'Blog y consejos', screen: 'Blog' },
+];
+
+const MOBILE_ABOUT_LINKS: { label: string; screen: ScreenName }[] = [
+  { label: 'Nuestra historia', screen: 'About' },
+  { label: 'Contáctanos', screen: 'Contact' },
+];
+
 interface FooterProps {
   onNavigate: (screen: ScreenName) => void;
 }
@@ -40,7 +54,7 @@ interface ContactLinkProps {
 }
 
 function ContactLink({ icon, label, onPress }: ContactLinkProps) {
-  const [hovered, setHovered] = useState(false);
+  const { hovered, hoverProps } = useHover();
   const content = (
     <>
       <Ionicons name={icon} size={20} color={hovered ? colors.primaryDark : colors.primary} />
@@ -55,8 +69,7 @@ function ContactLink({ icon, label, onPress }: ContactLinkProps) {
       onPress={onPress}
       accessibilityRole="link"
       accessibilityLabel={label}
-      onHoverIn={() => setHovered(true)}
-      onHoverOut={() => setHovered(false)}
+      {...hoverProps}
       style={({ pressed }) => [
         styles.contactRow,
         hovered && styles.contactRowHovered,
@@ -70,7 +83,94 @@ function ContactLink({ icon, label, onPress }: ContactLinkProps) {
 
 export default function Footer({ onNavigate }: FooterProps) {
   const { isMobile, isDesktop } = useBreakpoint();
-  const [hovered, setHovered] = useState<string | null>(null);
+  const { isHovered, hoverProps } = useHoverKey();
+
+  if (isMobile) {
+    return (
+      <View style={styles.mobileContainer}>
+        <View style={styles.mobileFooter}>
+          <View style={styles.mobileGrid}>
+            <View style={styles.mobileGridSection}>
+              <Text style={styles.mobileSectionTitle}>Información</Text>
+              <View style={styles.mobileTitleAccent} />
+              {MOBILE_INFO_LINKS.map((item) => (
+                <Pressable
+                  key={item.screen}
+                  onPress={() => onNavigate(item.screen)}
+                  accessibilityRole="button"
+                  accessibilityLabel={item.label}
+                  style={({ pressed }) => [styles.mobileTextLink, pressed && styles.pressed]}
+                >
+                  <Text style={styles.mobileQuickLinkText}>{item.label}</Text>
+                </Pressable>
+              ))}
+            </View>
+
+            <View style={styles.mobileGridSection}>
+              <Text style={styles.mobileSectionTitle}>Nosotros</Text>
+              <View style={styles.mobileTitleAccent} />
+              {MOBILE_ABOUT_LINKS.map((item) => (
+                <Pressable
+                  key={item.screen}
+                  onPress={() => onNavigate(item.screen)}
+                  accessibilityRole="button"
+                  accessibilityLabel={item.label}
+                  style={({ pressed }) => [styles.mobileTextLink, pressed && styles.pressed]}
+                >
+                  <Text style={styles.mobileQuickLinkText}>{item.label}</Text>
+                </Pressable>
+              ))}
+            </View>
+
+            <View style={styles.mobileGridSection}>
+              <Text style={styles.mobileSectionTitle}>Contacto</Text>
+              <View style={styles.mobileTitleAccent} />
+              {[
+                { label: CONTACT_INFO.phoneDisplay, href: CONTACT_INFO.phoneHref },
+                { label: CONTACT_INFO.phone2Display, href: CONTACT_INFO.phone2Href },
+              ].map((phone) => (
+                <Pressable
+                  key={phone.href}
+                  onPress={() => openExternalUrl(phone.href)}
+                  accessibilityRole="link"
+                  accessibilityLabel={`Llamar al ${phone.label}`}
+                  style={({ pressed }) => [styles.mobileContactLink, pressed && styles.pressed]}
+                >
+                  <Ionicons name="call" size={17} color={colors.primary} />
+                  <Text style={styles.mobileQuickLinkText}>{phone.label}</Text>
+                </Pressable>
+              ))}
+            </View>
+
+            <View style={styles.mobileGridSection}>
+              <Text style={styles.mobileSectionTitle}>Síguenos</Text>
+              <View style={styles.mobileTitleAccent} />
+              <View style={styles.mobileSocials}>
+                {SOCIAL_LINKS.filter((social) => social.label !== 'WhatsApp').map((social) => (
+                  <Pressable
+                    key={social.label}
+                    onPress={() => openExternalUrl(social.url)}
+                    accessibilityRole="link"
+                    accessibilityLabel={`${social.label} de ${BRAND.name}`}
+                    style={({ pressed }) => [
+                      styles.mobileSocialButton,
+                      pressed && styles.pressed,
+                    ]}
+                  >
+                    <FontAwesome name={social.icon} size={19} color={colors.primary} />
+                  </Pressable>
+                ))}
+              </View>
+            </View>
+          </View>
+        </View>
+
+        <Text style={styles.mobileCopyright}>
+          © {new Date().getFullYear()} {BRAND.name} · {BRAND.location}
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -110,17 +210,17 @@ export default function Footer({ onNavigate }: FooterProps) {
           <ContactLink
             icon="home-outline"
             label={CONTACT_INFO.addressMain}
-            onPress={() => Linking.openURL(CONTACT_INFO.mapsUrl)}
+            onPress={() => openExternalUrl(CONTACT_INFO.mapsUrl)}
           />
           <ContactLink
             icon="call-outline"
             label={CONTACT_INFO.phoneDisplay}
-            onPress={() => Linking.openURL(CONTACT_INFO.phoneHref)}
+            onPress={() => openExternalUrl(CONTACT_INFO.phoneHref)}
           />
           <ContactLink
             icon="logo-whatsapp"
             label={CONTACT_INFO.whatsappDisplay}
-            onPress={() => Linking.openURL(CONTACT_INFO.whatsappUrl)}
+            onPress={() => openExternalUrl(CONTACT_INFO.whatsappUrl)}
           />
           <ContactLink icon="time-outline" label={CONTACT_INFO.hours} />
         </View>
@@ -140,21 +240,20 @@ export default function Footer({ onNavigate }: FooterProps) {
             {SOCIAL_LINKS.map((social) => (
               <Pressable
                 key={social.label}
-                onPress={() => Linking.openURL(social.url)}
+                onPress={() => openExternalUrl(social.url)}
                 accessibilityRole="link"
                 accessibilityLabel={`${social.label} de ${BRAND.name}`}
-                onHoverIn={() => setHovered(`social-${social.label}`)}
-                onHoverOut={() => setHovered(null)}
+                {...hoverProps(`social-${social.label}`)}
                 style={({ pressed }) => [
                   styles.socialButton,
-                  hovered === `social-${social.label}` && styles.socialButtonHovered,
+                  isHovered(`social-${social.label}`) && styles.socialButtonHovered,
                   pressed && styles.pressed,
                 ]}
               >
                 <FontAwesome
                   name={social.icon}
                   size={20}
-                  color={hovered === `social-${social.label}` ? colors.white : colors.primary}
+                  color={isHovered(`social-${social.label}`) ? colors.white : colors.primary}
                 />
               </Pressable>
             ))}
@@ -176,23 +275,22 @@ export default function Footer({ onNavigate }: FooterProps) {
               onPress={() => onNavigate(item.screen)}
               accessibilityRole="button"
               accessibilityLabel={item.label}
-              onHoverIn={() => setHovered(`link-${item.screen}`)}
-              onHoverOut={() => setHovered(null)}
+              {...hoverProps(`link-${item.screen}`)}
               style={({ pressed }) => [
                 styles.quickLink,
-                hovered === `link-${item.screen}` && styles.quickLinkHovered,
+                isHovered(`link-${item.screen}`) && styles.quickLinkHovered,
                 pressed && styles.pressed,
               ]}
             >
               <Ionicons
                 name={item.icon}
                 size={20}
-                color={hovered === `link-${item.screen}` ? colors.primary : colors.primaryDark}
+                color={isHovered(`link-${item.screen}`) ? colors.primary : colors.primaryDark}
               />
               <Text
                 style={[
                   styles.quickLinkText,
-                  hovered === `link-${item.screen}` && styles.quickLinkTextHovered,
+                  isHovered(`link-${item.screen}`) && styles.quickLinkTextHovered,
                 ]}
               >
                 {item.label}
@@ -214,6 +312,160 @@ export default function Footer({ onNavigate }: FooterProps) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.sand,
+  },
+  mobileContainer: {
+    backgroundColor: colors.sand,
+  },
+  mobileFooter: {
+    backgroundColor: colors.sand,
+    borderTopLeftRadius: radius.lg,
+    borderTopRightRadius: radius.lg,
+    borderTopWidth: borderWidth.thin,
+    borderTopColor: colors.champagne,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.xl,
+    overflow: 'hidden',
+  },
+  mobileGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    columnGap: spacing.lg,
+    rowGap: spacing.xl,
+  },
+  mobileGridSection: {
+    flexBasis: '46%',
+    flexGrow: 1,
+  },
+  mobileSectionTitle: {
+    color: colors.primary,
+    fontFamily: fonts.heading,
+    fontSize: fontSizes.subtitle,
+    lineHeight: lineHeights.subtitle,
+    letterSpacing: letterSpacing.slight,
+  },
+  mobileTitleAccent: {
+    width: spacing.lg,
+    height: borderWidth.thin,
+    backgroundColor: colors.champagne,
+    marginTop: spacing.xxs,
+    marginBottom: spacing.sm,
+  },
+  mobileTextLink: {
+    minHeight: layout.minTouchTarget,
+    justifyContent: 'center',
+  },
+  mobileContactLink: {
+    minHeight: layout.minTouchTarget,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  mobileSocials: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  mobileSocialButton: {
+    width: layout.minTouchTarget,
+    height: layout.minTouchTarget,
+    borderWidth: borderWidth.thin,
+    borderColor: colors.champagne,
+    borderRadius: radius.pill,
+    backgroundColor: colors.secondaryButton,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mobileCopyright: {
+    color: colors.textOnDark,
+    backgroundColor: colors.primary,
+    fontSize: fontSizes.caption,
+    lineHeight: lineHeights.caption,
+    textAlign: 'center',
+    paddingVertical: spacing.sm,
+    paddingHorizontal: layout.gutter,
+  },
+  mobileBrand: {
+    alignItems: 'center',
+  },
+  mobileTagline: {
+    color: colors.primary,
+    fontFamily: fonts.accentItalic,
+    fontSize: fontSizes.body,
+    lineHeight: lineHeights.body,
+  },
+  mobileActions: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  mobileAction: {
+    flex: 1,
+    minHeight: layout.minTouchTarget,
+    borderWidth: borderWidth.thin,
+    borderColor: colors.primary,
+    borderRadius: radius.pill,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+  },
+  mobileActionPrimary: {
+    backgroundColor: colors.primary,
+  },
+  mobileActionText: {
+    color: colors.primary,
+    fontSize: fontSizes.small,
+    fontWeight: fontWeights.semibold,
+  },
+  mobileActionTextPrimary: {
+    color: colors.textOnDark,
+    fontSize: fontSizes.small,
+    fontWeight: fontWeights.semibold,
+  },
+  mobileDetails: {
+    borderTopWidth: borderWidth.thin,
+    borderBottomWidth: borderWidth.thin,
+    borderColor: colors.borderStrong,
+    paddingVertical: spacing.xs,
+  },
+  mobileDetailRow: {
+    minHeight: layout.minTouchTarget,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  mobileDetailText: {
+    flex: 1,
+    color: colors.textMuted,
+    fontSize: fontSizes.small,
+    lineHeight: lineHeights.small,
+  },
+  mobileQuickLinks: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.xs,
+  },
+  mobileExploreLabel: {
+    color: colors.primaryDark,
+    fontSize: fontSizes.caption,
+    fontWeight: fontWeights.bold,
+    letterSpacing: letterSpacing.wider,
+    textTransform: 'uppercase',
+    marginBottom: spacing.xs,
+  },
+  mobileQuickLink: {
+    flexBasis: '48%',
+    flexGrow: 1,
+    minHeight: layout.minTouchTarget,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: spacing.xs,
+    paddingHorizontal: spacing.sm,
+  },
+  mobileQuickLinkText: {
+    color: colors.textMuted,
+    fontSize: fontSizes.small,
+    lineHeight: lineHeights.small,
+    flexShrink: 1,
   },
   footerContent: {
     width: '100%',
@@ -276,9 +528,9 @@ const styles = StyleSheet.create({
   },
   brandTagline: {
     color: colors.primary,
-    fontSize: fontSizes.small,
-    fontWeight: fontWeights.semibold,
-    fontStyle: 'italic',
+    fontFamily: fonts.accentItalic,
+    fontSize: fontSizes.bodyLarge,
+    lineHeight: lineHeights.bodyLarge,
     marginBottom: spacing.sm,
   },
   brandDescription: {
@@ -376,6 +628,21 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     paddingHorizontal: layout.gutter,
     alignItems: 'center',
+  },
+  bottomBarMobile: {
+    paddingVertical: spacing.sm,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: spacing.sm,
+  },
+  mobileBottomSocials: {
+    flexDirection: 'row',
+  },
+  mobileBottomSocialButton: {
+    width: layout.minTouchTarget,
+    height: layout.minTouchTarget,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   copyright: {
     color: colors.textOnDark,

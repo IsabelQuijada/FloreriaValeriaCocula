@@ -13,7 +13,13 @@ export const BRAND = {
     'Arreglos florales artesanales, flores frescas y detalles únicos, hechos con cariño en el corazón de Cocula desde el año 2000.',
 };
 
-export type ScreenName = 'Home' | 'Shop' | 'About' | 'Blog' | 'FAQ' | 'Contact' | 'Favorites';
+/**
+ * El tipo de pantalla vive en la capa de navegación; se re-exporta aquí
+ * por compatibilidad con los imports existentes.
+ */
+import type { ScreenName } from '../navigation/routes';
+
+export type { ScreenName };
 
 /**
  * Navegación principal reducida a las secciones de mayor intención de

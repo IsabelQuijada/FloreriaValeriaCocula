@@ -1,25 +1,43 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useRef, useState } from 'react';
-import { NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import {
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
 import { useBreakpoint } from '../hooks/useBreakpoint';
-import { colors, layout, radius, shadows, spacing } from '../theme';
+import { borderWidth, colors, layout, radius, shadows, spacing } from '../theme';
 import ProductCard, { ProductCardData } from './ProductCard';
 
 interface ProductCarouselProps {
   products: ProductCardData[];
   onContact: (product: ProductCardData) => void;
+  onSelectProduct?: (product: ProductCardData, index: number) => void;
 }
 
-export default function ProductCarousel({ products, onContact }: ProductCarouselProps) {
+export default function ProductCarousel({
+  products,
+  onContact,
+  onSelectProduct,
+}: ProductCarouselProps) {
   const scrollRef = useRef<ScrollView>(null);
   const scrollX = useRef(0);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [hoveredArrow, setHoveredArrow] = useState<-1 | 1 | null>(null);
-  const { width, isMobile, isTablet } = useBreakpoint();
-  const cardWidth = isTablet ? 272 : Math.min(280, width - spacing.xl);
-  const scrollStep = (cardWidth + spacing.lg) * (isTablet ? 2 : 1);
+  const { width, isMobile, isTablet, isDesktop } = useBreakpoint();
+  const cardWidth = isDesktop ? 240 : isTablet ? 272 : Math.min(320, width * 0.82);
+  const visibleCardsPerStep = isDesktop ? 5 : isTablet ? 2 : 1;
+  const scrollStep = (cardWidth + spacing.lg) * visibleCardsPerStep;
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     scrollX.current = event.nativeEvent.contentOffset.x;
+    if (isMobile) {
+      const index = Math.round(scrollX.current / (cardWidth + spacing.md));
+      setActiveIndex(Math.min(Math.max(index, 0), products.length - 1));
+    }
   };
 
   const move = (direction: -1 | 1) => {
@@ -42,15 +60,64 @@ export default function ProductCarousel({ products, onContact }: ProductCarousel
         contentContainerStyle={[styles.content, isMobile && styles.contentMobile]}
         accessibilityLabel="Productos favoritos"
       >
-        {products.map((product) => (
+        {products.map((product, index) => (
           <ProductCard
             key={product.id}
             product={product}
             onContact={onContact}
-            style={{ width: cardWidth, minHeight: isTablet ? 510 : 480 }}
+            onPress={onSelectProduct ? () => onSelectProduct(product, index) : undefined}
+            compactMobile={isMobile}
+            style={{ width: cardWidth, minHeight: isTablet ? 434 : undefined }}
           />
         ))}
       </ScrollView>
+
+      {isMobile ? (
+        <View
+          pointerEvents="box-none"
+          style={[styles.mobileControls, { top: cardWidth * (3 / 8) - layout.minTouchTarget / 2 }]}
+          accessibilityLabel="Controles del carrusel"
+        >
+          <Pressable
+            onPress={() => move(-1)}
+            disabled={activeIndex === 0}
+            accessibilityRole="button"
+            accessibilityLabel="Ver producto anterior"
+            accessibilityState={{ disabled: activeIndex === 0 }}
+            style={({ pressed }) => [
+              styles.mobileArrow,
+              activeIndex === 0 && styles.mobileArrowDisabled,
+              pressed && activeIndex > 0 && styles.mobileArrowPressed,
+            ]}
+          >
+            <Ionicons
+              name="arrow-back"
+              size={20}
+              color={activeIndex === 0 ? colors.disabledText : colors.primary}
+            />
+          </Pressable>
+          <Pressable
+            onPress={() => move(1)}
+            disabled={activeIndex >= products.length - 1}
+            accessibilityRole="button"
+            accessibilityLabel="Ver producto siguiente"
+            accessibilityState={{ disabled: activeIndex >= products.length - 1 }}
+            style={({ pressed }) => [
+              styles.mobileArrow,
+              activeIndex >= products.length - 1 && styles.mobileArrowDisabled,
+              pressed && activeIndex < products.length - 1 && styles.mobileArrowPressed,
+            ]}
+          >
+            <Ionicons
+              name="arrow-forward"
+              size={20}
+              color={
+                activeIndex >= products.length - 1 ? colors.disabledText : colors.primary
+              }
+            />
+          </Pressable>
+        </View>
+      ) : null}
 
       {!isMobile ? <Pressable
         onPress={() => move(-1)}
@@ -108,6 +175,33 @@ const styles = StyleSheet.create({
   contentMobile: {
     paddingHorizontal: spacing.lg,
     gap: spacing.md,
+  },
+  mobileControls: {
+    position: 'absolute',
+    left: spacing.sm,
+    right: spacing.sm,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    zIndex: 3,
+  },
+  mobileArrow: {
+    width: layout.minTouchTarget,
+    height: layout.minTouchTarget,
+    borderWidth: borderWidth.thin,
+    borderColor: colors.primary,
+    borderRadius: radius.pill,
+    backgroundColor: colors.secondaryButton,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...shadows.sm,
+  },
+  mobileArrowDisabled: {
+    borderColor: colors.borderStrong,
+    backgroundColor: colors.heroPanel,
+    opacity: 0.55,
+  },
+  mobileArrowPressed: {
+    backgroundColor: colors.heroPanel,
   },
   arrow: {
     position: 'absolute',

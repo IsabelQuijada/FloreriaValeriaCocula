@@ -9,11 +9,11 @@ import {
   fontSizes,
   fontWeights,
   layout,
-  letterSpacing,
   lineHeights,
   radius,
   shadows,
   spacing,
+  textPresets,
 } from '../theme';
 
 interface ProductModalProps {
@@ -86,42 +86,44 @@ export default function ProductModal({
             </View>
           </ScrollView>
 
-          <View style={styles.navRow}>
-            <Pressable
-              onPress={onPrev}
-              disabled={!canPrev}
-              accessibilityRole="button"
-              accessibilityLabel="Producto anterior"
-              style={({ pressed }) => [
-                styles.navButton,
-                pressed && styles.navButtonPressed,
-                !canPrev && styles.navButtonDisabled,
-              ]}
-            >
-              <Ionicons
-                name="chevron-back"
-                size={24}
-                color={canPrev ? colors.primary : colors.disabledText}
-              />
-            </Pressable>
-            <Pressable
-              onPress={onNext}
-              disabled={!canNext}
-              accessibilityRole="button"
-              accessibilityLabel="Producto siguiente"
-              style={({ pressed }) => [
-                styles.navButton,
-                pressed && styles.navButtonPressed,
-                !canNext && styles.navButtonDisabled,
-              ]}
-            >
-              <Ionicons
-                name="chevron-forward"
-                size={24}
-                color={canNext ? colors.primary : colors.disabledText}
-              />
-            </Pressable>
-          </View>
+          <Pressable
+            onPress={onPrev}
+            disabled={!canPrev}
+            accessibilityRole="button"
+            accessibilityLabel="Producto anterior"
+            accessibilityState={{ disabled: !canPrev }}
+            style={({ pressed }) => [
+              styles.navButton,
+              styles.navButtonLeft,
+              pressed && canPrev && styles.navButtonPressed,
+              !canPrev && styles.navButtonDisabled,
+            ]}
+          >
+            <Ionicons
+              name="chevron-back"
+              size={24}
+              color={canPrev ? colors.primary : colors.disabledText}
+            />
+          </Pressable>
+          <Pressable
+            onPress={onNext}
+            disabled={!canNext}
+            accessibilityRole="button"
+            accessibilityLabel="Producto siguiente"
+            accessibilityState={{ disabled: !canNext }}
+            style={({ pressed }) => [
+              styles.navButton,
+              styles.navButtonRight,
+              pressed && canNext && styles.navButtonPressed,
+              !canNext && styles.navButtonDisabled,
+            ]}
+          >
+            <Ionicons
+              name="chevron-forward"
+              size={24}
+              color={canNext ? colors.primary : colors.disabledText}
+            />
+          </Pressable>
         </Pressable>
       </Pressable>
     </Modal>
@@ -177,11 +179,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   badgeText: {
-    color: colors.primary,
-    fontSize: fontSizes.caption,
-    fontWeight: fontWeights.bold,
-    letterSpacing: letterSpacing.wide,
-    textTransform: 'uppercase',
+    ...textPresets.badge,
   },
   name: {
     color: colors.primary,
@@ -212,25 +210,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     ...shadows.md,
   },
-  navRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: spacing.sm,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-  },
   navButton: {
+    position: 'absolute',
+    top: '50%',
+    transform: [{ translateY: -layout.minTouchTarget / 2 }],
     width: layout.minTouchTarget,
     height: layout.minTouchTarget,
+    borderWidth: 1,
+    borderColor: colors.primary,
     borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.backgroundAlt,
+    backgroundColor: colors.secondaryButton,
+    zIndex: 3,
+    ...shadows.sm,
+  },
+  navButtonLeft: {
+    left: spacing.sm,
+  },
+  navButtonRight: {
+    right: spacing.sm,
   },
   navButtonPressed: {
-    backgroundColor: colors.accentSoft,
+    backgroundColor: colors.heroPanel,
   },
   navButtonDisabled: {
-    opacity: 0.4,
+    borderColor: colors.borderStrong,
+    backgroundColor: colors.heroPanel,
+    opacity: 0.55,
   },
 });

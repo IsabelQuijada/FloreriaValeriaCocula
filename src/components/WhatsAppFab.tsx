@@ -1,47 +1,70 @@
 import { FontAwesome } from '@expo/vector-icons';
-import React, { useState } from 'react';
-import { Linking, Pressable, StyleSheet } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Pressable, StyleSheet } from 'react-native';
 import { CONTACT_INFO } from '../data/content';
+import { useHover } from '../hooks/useHover';
 import { colors, radius, shadows, spacing } from '../theme';
+import { openExternalUrl } from '../utils/links';
 
 /**
  * Botón flotante de WhatsApp, siempre visible sobre el contenido.
  * Es el canal de pedido principal de la florería, por eso vive fuera
- * del flujo de scroll.
+ * del flujo de scroll. Al cargar la página pulsa dos veces de forma
+ * discreta para invitar al contacto sin ser intrusivo.
  */
 export default function WhatsAppFab() {
-  const [hovered, setHovered] = useState(false);
+  const { hovered, hoverProps } = useHover();
+  const pulse = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    const animation = Animated.sequence([
+      Animated.delay(1600),
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulse, { toValue: 1.12, duration: 320, useNativeDriver: true }),
+          Animated.timing(pulse, { toValue: 1, duration: 320, useNativeDriver: true }),
+          Animated.delay(240),
+        ]),
+        { iterations: 2 },
+      ),
+    ]);
+    animation.start();
+    return () => animation.stop();
+  }, [pulse]);
 
   return (
-    <Pressable
-      onPress={() => Linking.openURL(CONTACT_INFO.whatsappUrl)}
-      accessibilityRole="link"
-      accessibilityLabel="Escríbenos por WhatsApp"
-      onHoverIn={() => setHovered(true)}
-      onHoverOut={() => setHovered(false)}
-      style={({ pressed }) => [
-        styles.fab,
-        hovered && styles.fabHovered,
-        pressed && styles.fabPressed,
-      ]}
-    >
-      <FontAwesome name="whatsapp" size={30} color={colors.white} />
-    </Pressable>
+    <Animated.View style={[styles.wrapper, { transform: [{ scale: pulse }] }]}>
+      <Pressable
+        onPress={() => openExternalUrl(CONTACT_INFO.whatsappUrl)}
+        accessibilityRole="link"
+        accessibilityLabel="Escríbenos por WhatsApp"
+        {...hoverProps}
+        style={({ pressed }) => [
+          styles.fab,
+          hovered && styles.fabHovered,
+          pressed && styles.fabPressed,
+        ]}
+      >
+        <FontAwesome name="whatsapp" size={30} color={colors.white} />
+      </Pressable>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  fab: {
+  wrapper: {
     position: 'absolute',
     right: spacing.md,
     bottom: spacing.md,
+    zIndex: 10,
+  },
+  fab: {
     width: 56,
     height: 56,
     borderRadius: radius.pill,
     backgroundColor: colors.whatsapp,
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 10,
     ...shadows.lg,
   },
   fabHovered: {

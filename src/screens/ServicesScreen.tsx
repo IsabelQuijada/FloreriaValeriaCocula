@@ -5,7 +5,8 @@ import CardGrid from '../components/CardGrid';
 import FeatureCard from '../components/FeatureCard';
 import Section from '../components/Section';
 import SectionTitle from '../components/SectionTitle';
-import { ScreenName, SERVICES } from '../data/content';
+import { CONTACT_INFO, ScreenName, SERVICES } from '../data/content';
+import { openExternalUrl } from '../utils/links';
 import {
   colors,
   fontSizes,
@@ -47,7 +48,11 @@ export default function ServicesScreen({ onNavigate }: ServicesScreenProps) {
           Entregamos a domicilio en todo el municipio de Cocula,{'\n'}
           todos los días de 9:00 AM a 6:00 PM.
         </Text>
-        <Button label="Pedir Ahora" variant="soft" onPress={() => onNavigate('Shop')} />
+        <Button
+          label="Contáctanos"
+          variant="soft"
+          onPress={() => openExternalUrl(CONTACT_INFO.whatsappUrl)}
+        />
       </View>
     </Section>
   );

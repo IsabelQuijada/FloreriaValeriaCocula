@@ -19,7 +19,10 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/favicon.png"
-    }
+      "favicon": "./assets/floreria-valeria-logo.png"
+    },
+    "plugins": [
+      "expo-font"
+    ]
   }
 }

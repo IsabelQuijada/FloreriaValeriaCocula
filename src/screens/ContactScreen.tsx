@@ -1,23 +1,26 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
-import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
-import Button from '../components/Button';
+import React from 'react';
+import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import Card from '../components/Card';
 import CardGrid from '../components/CardGrid';
+import CtaRibbon from '../components/CtaRibbon';
+import FaqAccordion from '../components/FaqAccordion';
 import FeatureCard from '../components/FeatureCard';
-import FormField from '../components/FormField';
-import Notice from '../components/Notice';
 import Section from '../components/Section';
 import SectionTitle from '../components/SectionTitle';
-import { CONTACT_INFO, whatsappUrl } from '../data/content';
+import { CONTACT_INFO, ScreenName } from '../data/content';
 import { useBreakpoint } from '../hooks/useBreakpoint';
+import { openExternalUrl } from '../utils/links';
 import {
+  borderWidth,
   colors,
   fontSizes,
   fontWeights,
+  layout,
   letterSpacing,
   lineHeights,
   radius,
+  shadows,
   spacing,
 } from '../theme';
 
@@ -28,6 +31,8 @@ const BRANCHES = [
     tag: 'Principal',
     addressLines: ['5 de Mayo 59,', 'Col. Centro, Cocula, Jal., México', 'C.P. 48500'],
     mapsUrl: CONTACT_INFO.mapsUrl,
+    mapEmbedUrl:
+      'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3751.4567824529895!2d-103.9995!3d20.4591!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x842f5c3c5c3c5c3d%3A0x2b2b2b2b2b2b2b2b!2s5%20de%20Mayo%2059%2C%20Centro%2C%2048500%20Cocula%2C%20Jal.!5e0!3m2!1ses!2smx!4v1700000000001!5m2!1ses!2smx',
   },
   {
     id: 'ocampo',
@@ -35,6 +40,8 @@ const BRANCHES = [
     tag: 'Sucursal',
     addressLines: ['Ocampo 35,', 'Col. Centro, Cocula, Jal., México', 'C.P. 48500'],
     mapsUrl: CONTACT_INFO.mapsUrlOcampo,
+    mapEmbedUrl:
+      'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3751.4567824529895!2d-103.99892938507397!3d20.458925086378775!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x842f5c3c5c3c5c3d%3A0x1a1a1a1a1a1a1a1a!2sOcampo%2035%2C%20Centro%2C%2048500%20Cocula%2C%20Jal.!5e0!3m2!1ses!2smx!4v1700000000000!5m2!1ses!2smx',
   },
 ];
 
@@ -54,7 +61,7 @@ const INFO_CARDS = [
     title: 'Atención Personalizada',
     text: 'Nuestro equipo te ayudará a crear el arreglo perfecto para cada ocasión especial.',
   },
-];
+] as const;
 
 /** Card de contacto rápido: icono, título y uno o más enlaces. */
 function QuickCard({
@@ -67,7 +74,7 @@ function QuickCard({
   children: React.ReactNode;
 }) {
   return (
-    <Card flexBasis={260} maxWidth={360} style={styles.quickCard}>
+    <Card flexBasis={300} maxWidth={420} style={styles.quickCard}>
       <View style={styles.quickIcon}>
         <Ionicons name={icon} size={26} color={colors.primary} />
       </View>
@@ -79,77 +86,134 @@ function QuickCard({
   );
 }
 
-export default function ContactScreen() {
-  const { isMobile } = useBreakpoint();
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [message, setMessage] = useState('');
-  const [sent, setSent] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+interface ContactScreenProps {
+  onNavigate: (screen: ScreenName) => void;
+  onFaqLayout?: (y: number) => void;
+}
 
-  const handleSend = () => {
-    if (!name.trim() || !phone.trim() || !message.trim()) {
-      setError('Por favor completa todos los campos antes de enviar.');
-      return;
-    }
-    setError(null);
-    setSent(true);
-    Linking.openURL(
-      whatsappUrl(
-        `Hola, soy ${name.trim()}. ${message.trim()} — Mi teléfono: ${phone.trim()}`,
-      ),
-    );
-  };
+function MapEmbed({
+  src,
+  title,
+  compact = false,
+}: {
+  src: string;
+  title: string;
+  compact?: boolean;
+}) {
+  if (Platform.OS !== 'web') {
+    return null;
+  }
+
+  return React.createElement('iframe', {
+    src,
+    title,
+    style: StyleSheet.flatten([styles.mapIframe, compact && styles.mapIframeMobile]),
+    loading: 'lazy',
+    allowFullScreen: true,
+    referrerPolicy: 'no-referrer-when-downgrade',
+  });
+}
+
+export default function ContactScreen({ onNavigate, onFaqLayout }: ContactScreenProps) {
+  const { isMobile } = useBreakpoint();
 
   return (
     <View>
       {/* Contacto rápido */}
-      <Section>
+      <Section wide style={styles.quickSection}>
         <SectionTitle
           kicker="Contacto"
           title="Contáctanos"
           subtitle="Cuéntanos cómo imaginas tu evento y nosotros lo haremos realidad."
+          compact
         />
 
-        <CardGrid>
-          <QuickCard icon="call-outline" title="Teléfonos">
+        {isMobile ? (
+          <View style={styles.mobileQuickPanel}>
             <Pressable
-              onPress={() => Linking.openURL(CONTACT_INFO.phoneHref)}
-              accessibilityRole="link"
-              accessibilityLabel={`Llamar al ${CONTACT_INFO.phoneDisplay}`}
-              style={styles.linkRow}
-            >
-              <Text style={styles.quickLink}>{CONTACT_INFO.phoneDisplay}</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => Linking.openURL(CONTACT_INFO.phone2Href)}
-              accessibilityRole="link"
-              accessibilityLabel={`Llamar al ${CONTACT_INFO.phone2Display}`}
-              style={styles.linkRow}
-            >
-              <Text style={styles.quickLink}>{CONTACT_INFO.phone2Display}</Text>
-            </Pressable>
-          </QuickCard>
-
-          <QuickCard icon="logo-whatsapp" title="WhatsApp">
-            <Pressable
-              onPress={() => Linking.openURL(CONTACT_INFO.whatsappUrl)}
+              onPress={() => openExternalUrl(CONTACT_INFO.whatsappUrl)}
               accessibilityRole="link"
               accessibilityLabel={`Escribir por WhatsApp al ${CONTACT_INFO.whatsappDisplay}`}
-              style={styles.linkRow}
+              style={({ pressed }) => [
+                styles.mobileWhatsapp,
+                pressed && styles.mobileActionPressed,
+              ]}
             >
-              <Text style={styles.quickLink}>{CONTACT_INFO.whatsappDisplay}</Text>
+              <Ionicons name="logo-whatsapp" size={22} color={colors.textOnDark} />
+              <Text style={styles.mobileWhatsappText}>Contáctanos</Text>
             </Pressable>
-          </QuickCard>
+            <View style={styles.mobilePhoneRow}>
+              {[
+                [CONTACT_INFO.phoneDisplay, CONTACT_INFO.phoneHref],
+                [CONTACT_INFO.phone2Display, CONTACT_INFO.phone2Href],
+              ].map(([phone, href], index) => (
+                <React.Fragment key={phone}>
+                  {index > 0 ? <View style={styles.mobilePhoneSeparator} /> : null}
+                  <Pressable
+                    onPress={() => openExternalUrl(href)}
+                    accessibilityRole="link"
+                    accessibilityLabel={`Llamar al ${phone}`}
+                    style={({ pressed }) => [
+                      styles.mobilePhone,
+                      pressed && styles.mobileActionPressed,
+                    ]}
+                  >
+                    <View style={styles.mobilePhoneIcon}>
+                      <Ionicons name="call-outline" size={17} color={colors.primary} />
+                    </View>
+                    <Text numberOfLines={1} style={styles.mobilePhoneText}>
+                      {phone}
+                    </Text>
+                  </Pressable>
+                </React.Fragment>
+              ))}
+            </View>
+            <View style={styles.mobileHours}>
+              <Ionicons name="time-outline" size={18} color={colors.primary} />
+              <Text style={styles.mobileHoursText}>{CONTACT_INFO.hours}</Text>
+            </View>
+          </View>
+        ) : (
+          <CardGrid>
+            <QuickCard icon="call-outline" title="Teléfonos">
+              <Pressable
+                onPress={() => openExternalUrl(CONTACT_INFO.phoneHref)}
+                accessibilityRole="link"
+                accessibilityLabel={`Llamar al ${CONTACT_INFO.phoneDisplay}`}
+                style={styles.linkRow}
+              >
+                <Text style={styles.quickLink}>{CONTACT_INFO.phoneDisplay}</Text>
+              </Pressable>
+              <Pressable
+                onPress={() => openExternalUrl(CONTACT_INFO.phone2Href)}
+                accessibilityRole="link"
+                accessibilityLabel={`Llamar al ${CONTACT_INFO.phone2Display}`}
+                style={styles.linkRow}
+              >
+                <Text style={styles.quickLink}>{CONTACT_INFO.phone2Display}</Text>
+              </Pressable>
+            </QuickCard>
 
-          <QuickCard icon="time-outline" title="Horarios">
-            <Text style={styles.quickText}>{CONTACT_INFO.hours}</Text>
-          </QuickCard>
-        </CardGrid>
+            <QuickCard icon="logo-whatsapp" title="WhatsApp">
+              <Pressable
+                onPress={() => openExternalUrl(CONTACT_INFO.whatsappUrl)}
+                accessibilityRole="link"
+                accessibilityLabel={`Escribir por WhatsApp al ${CONTACT_INFO.whatsappDisplay}`}
+                style={styles.linkRow}
+              >
+                <Text style={styles.quickLink}>{CONTACT_INFO.whatsappDisplay}</Text>
+              </Pressable>
+            </QuickCard>
+
+            <QuickCard icon="time-outline" title="Horarios">
+              <Text style={styles.quickText}>{CONTACT_INFO.hours}</Text>
+            </QuickCard>
+          </CardGrid>
+        )}
       </Section>
 
       {/* Sucursales */}
-      <Section background="alt">
+      <Section background="alt" wide style={isMobile ? styles.mobileSection : undefined}>
         <SectionTitle
           kicker="Visítanos"
           title="Nuestras sucursales"
@@ -157,7 +221,12 @@ export default function ContactScreen() {
         />
         <CardGrid>
           {BRANCHES.map((branch) => (
-            <Card key={branch.id} flexBasis={300} maxWidth={440} style={styles.branchCard}>
+            <Card
+              key={branch.id}
+              flexBasis={420}
+              maxWidth={640}
+              style={[styles.branchCard, isMobile && styles.branchCardMobile]}
+            >
               <View style={styles.branchHeader}>
                 <Text accessibilityRole="header" style={styles.branchName}>
                   {branch.name}
@@ -171,18 +240,39 @@ export default function ContactScreen() {
                   {line}
                 </Text>
               ))}
-              <View style={styles.mapBox}>
-                <Text style={styles.mapIcon} accessibilityElementsHidden>
-                  📍
-                </Text>
-                <Pressable
-                  onPress={() => Linking.openURL(branch.mapsUrl)}
-                  accessibilityRole="link"
-                  accessibilityLabel={`Ver ${branch.name} en Google Maps`}
-                  style={styles.linkRow}
-                >
-                  <Text style={styles.mapLink}>Ver en Google Maps ›</Text>
-                </Pressable>
+              <View style={[styles.mapBox, isMobile && styles.mapBoxMobile]}>
+                {Platform.OS === 'web' ? (
+                  <>
+                    <MapEmbed
+                      src={branch.mapEmbedUrl}
+                      title={`${branch.name} en Google Maps`}
+                      compact={isMobile}
+                    />
+                    {isMobile ? (
+                      <Pressable
+                        onPress={() => openExternalUrl(branch.mapsUrl)}
+                        accessibilityRole="link"
+                        accessibilityLabel={`Cómo llegar a ${branch.name}`}
+                        style={styles.mobileMapLink}
+                      >
+                        <Ionicons name="location-outline" size={18} color={colors.primary} />
+                        <Text style={styles.mapLink}>Cómo llegar</Text>
+                        <Ionicons name="arrow-forward" size={16} color={colors.primary} />
+                      </Pressable>
+                    ) : null}
+                  </>
+                ) : (
+                  <Pressable
+                    onPress={() => openExternalUrl(branch.mapsUrl)}
+                    accessibilityRole="link"
+                    accessibilityLabel={`Cómo llegar a ${branch.name}`}
+                    style={styles.mobileMapLink}
+                  >
+                    <Ionicons name="location-outline" size={18} color={colors.primary} />
+                    <Text style={styles.mapLink}>Cómo llegar</Text>
+                    <Ionicons name="arrow-forward" size={16} color={colors.primary} />
+                  </Pressable>
+                )}
               </View>
             </Card>
           ))}
@@ -190,74 +280,140 @@ export default function ContactScreen() {
       </Section>
 
       {/* Información útil */}
-      <Section>
-        <CardGrid>
-          {INFO_CARDS.map((card) => (
-            <FeatureCard
-              key={card.title}
-              icon={card.icon}
-              title={card.title}
-              description={card.text}
-              centered
-            />
-          ))}
-        </CardGrid>
-      </Section>
-
-      {/* Formulario por WhatsApp */}
-      <Section background="blush">
-        <View style={styles.formWrap}>
-          <Card maxWidth={560} style={[styles.formCard, isMobile && styles.formCardMobile]}>
-            <Text accessibilityRole="header" style={styles.formTitle}>
-              Envíanos un mensaje
-            </Text>
-
-            {sent ? (
-              <Notice variant="success" style={styles.formNotice}>
-                {`Abrimos WhatsApp con tu mensaje listo para enviar. ¿No se abrió? Escríbenos al ${CONTACT_INFO.whatsappDisplay} o llámanos al ${CONTACT_INFO.phoneDisplay}.`}
-              </Notice>
-            ) : null}
-            {error ? (
-              <Notice variant="error" style={styles.formNotice}>
-                {error}
-              </Notice>
-            ) : null}
-
-            <FormField
-              label="Nombre"
-              value={name}
-              onChangeText={setName}
-              placeholder="Tu nombre"
-              autoComplete="name"
-            />
-            <FormField
-              label="Teléfono"
-              value={phone}
-              onChangeText={setPhone}
-              placeholder="Tu número de contacto"
-              keyboardType="phone-pad"
-              autoComplete="tel"
-            />
-            <FormField
-              label="Mensaje"
-              value={message}
-              onChangeText={setMessage}
-              placeholder="¿Cómo podemos ayudarte?"
-              multiline
-              numberOfLines={5}
-            />
-
-            <Button label="Enviar por WhatsApp" onPress={handleSend} style={styles.sendButton} />
+      <Section wide style={styles.infoSection}>
+        {isMobile ? (
+          <Card style={styles.mobileInfoPanel}>
+            {INFO_CARDS.map((card, index) => (
+              <View
+                key={card.title}
+                style={[styles.mobileInfoRow, index > 0 && styles.mobileInfoRowBorder]}
+              >
+                <View style={styles.mobileInfoIcon}>
+                  <Ionicons name={card.icon} size={20} color={colors.primary} />
+                </View>
+                <View style={styles.mobileInfoContent}>
+                  <Text style={styles.mobileInfoTitle}>{card.title}</Text>
+                  <Text style={styles.mobileInfoText}>{card.text}</Text>
+                </View>
+              </View>
+            ))}
           </Card>
-        </View>
+        ) : (
+          <CardGrid>
+            {INFO_CARDS.map((card) => (
+              <FeatureCard
+                key={card.title}
+                icon={card.icon}
+                title={card.title}
+                description={card.text}
+                centered
+                compact
+              />
+            ))}
+          </CardGrid>
+        )}
       </Section>
+
+      {/* Preguntas frecuentes */}
+      <View onLayout={(event) => onFaqLayout?.(event.nativeEvent.layout.y)}>
+        <Section background="blush" wide style={isMobile ? styles.mobileSection : undefined}>
+          <SectionTitle
+            kicker="Preguntas frecuentes"
+            title="¿En qué te ayudamos?"
+            subtitle={`¿No encuentras tu respuesta? Llámanos al ${CONTACT_INFO.phoneDisplay} — con gusto te atendemos.`}
+          />
+          <FaqAccordion compact={isMobile} />
+        </Section>
+      </View>
+
+      {/* Llamada a la acción final */}
+      <CtaRibbon onNavigate={onNavigate} background="alt" />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  quickSection: {
+    paddingVertical: spacing.lg,
+  },
+  mobileSection: {
+    paddingVertical: spacing.lg,
+  },
+  mobileQuickPanel: {
+    gap: spacing.md,
+  },
+  mobileWhatsapp: {
+    minHeight: layout.minTouchTarget,
+    borderRadius: radius.pill,
+    backgroundColor: colors.primary,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.md,
+    ...shadows.sm,
+  },
+  mobileWhatsappText: {
+    color: colors.textOnDark,
+    fontSize: fontSizes.body,
+    fontWeight: fontWeights.bold,
+  },
+  mobilePhoneRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  mobilePhone: {
+    minHeight: layout.minTouchTarget,
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.sm,
+  },
+  mobilePhoneText: {
+    color: colors.primary,
+    fontSize: fontSizes.caption,
+    fontWeight: fontWeights.semibold,
+  },
+  mobilePhoneIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: radius.pill,
+    backgroundColor: colors.accentSoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mobilePhoneSeparator: {
+    width: borderWidth.thin,
+    height: 32,
+    backgroundColor: colors.champagne,
+  },
+  mobileHours: {
+    minHeight: layout.minTouchTarget,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    borderRadius: radius.md,
+    backgroundColor: colors.accentSoft,
+    paddingHorizontal: spacing.sm,
+  },
+  mobileHoursText: {
+    color: colors.textMuted,
+    fontSize: fontSizes.small,
+    lineHeight: lineHeights.small,
+    textAlign: 'center',
+  },
+  mobileActionPressed: {
+    opacity: 0.82,
+  },
+  infoSection: {
+    paddingVertical: spacing.md,
+  },
   quickCard: {
     alignItems: 'center',
+    padding: spacing.md,
   },
   quickIcon: {
     width: 56,
@@ -292,6 +448,9 @@ const styles = StyleSheet.create({
   },
   branchCard: {
     padding: spacing.xl,
+  },
+  branchCardMobile: {
+    padding: spacing.md,
   },
   branchHeader: {
     flexDirection: 'row',
@@ -331,36 +490,80 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: spacing.md,
   },
+  mapBoxMobile: {
+    padding: 0,
+    alignItems: 'stretch',
+    overflow: 'hidden',
+  },
   mapIcon: {
     fontSize: fontSizes.title,
     marginBottom: spacing.xs,
   },
+  mapIframe: {
+    width: '100%',
+    height: 220,
+    borderWidth: 0,
+    borderRadius: radius.md,
+    overflow: 'hidden',
+    minHeight: 220,
+  },
+  mapIframeMobile: {
+    height: 150,
+    minHeight: 150,
+    borderRadius: 0,
+    pointerEvents: 'none',
+  },
   mapLink: {
     color: colors.primary,
-    fontSize: fontSizes.body,
+    fontSize: fontSizes.small,
     fontWeight: fontWeights.semibold,
   },
-  formWrap: {
+  mobileMapLink: {
+    minHeight: layout.minTouchTarget,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.md,
   },
-  formCard: {
-    width: '100%',
-    padding: spacing.xl,
+  mobileInfoPanel: {
+    padding: spacing.md,
   },
-  formCardMobile: {
-    padding: spacing.lg,
+  mobileInfoRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.md,
+    paddingVertical: spacing.sm,
   },
-  formTitle: {
+  mobileInfoRowBorder: {
+    borderTopWidth: borderWidth.thin,
+    borderTopColor: colors.border,
+    paddingTop: spacing.md,
+    marginTop: spacing.xs,
+  },
+  mobileInfoIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: radius.pill,
+    backgroundColor: colors.accentSoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+    ...shadows.sm,
+  },
+  mobileInfoContent: {
+    flex: 1,
+  },
+  mobileInfoTitle: {
     color: colors.text,
-    fontSize: fontSizes.subtitle,
+    fontSize: fontSizes.small,
+    lineHeight: lineHeights.small,
     fontWeight: fontWeights.bold,
-    marginBottom: spacing.lg,
+    marginBottom: spacing.xs,
   },
-  formNotice: {
-    marginBottom: spacing.md,
-  },
-  sendButton: {
-    alignSelf: 'stretch',
-    marginTop: spacing.sm,
+  mobileInfoText: {
+    color: colors.textMuted,
+    fontSize: fontSizes.caption,
+    lineHeight: lineHeights.caption,
   },
 });

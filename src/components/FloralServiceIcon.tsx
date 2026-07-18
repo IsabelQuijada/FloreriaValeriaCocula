@@ -6,6 +6,8 @@ import { colors, radius } from '../theme';
 
 interface FloralServiceIconProps {
   name: string;
+  /** Reduce el medallón para listas informativas compactas. */
+  compact?: boolean;
 }
 
 const svgProps = {
@@ -67,7 +69,7 @@ function FloralArchIcon() {
   );
 }
 
-export default function FloralServiceIcon({ name }: FloralServiceIconProps) {
+export default function FloralServiceIcon({ name, compact = false }: FloralServiceIconProps) {
   let icon: React.ReactNode;
 
   if (name === 'bouquet-custom') icon = <BouquetIcon />;
@@ -85,7 +87,7 @@ export default function FloralServiceIcon({ name }: FloralServiceIconProps) {
 
   return (
     <View
-      style={styles.medallion}
+      style={[styles.medallion, compact && styles.medallionCompact]}
       accessibilityElementsHidden
       importantForAccessibility="no"
     >
@@ -102,5 +104,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.accentSoft,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  medallionCompact: {
+    width: 56,
+    height: 56,
   },
 });

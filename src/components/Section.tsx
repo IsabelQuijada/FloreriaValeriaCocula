@@ -9,6 +9,8 @@ interface SectionProps {
   children: ReactNode;
   /** Fondo de la sección: marfil (default), crema, rosado o verde oscuro. */
   background?: SectionBackground;
+  /** Usa la anchura amplia de navegación (catálogo con sidebar). */
+  wide?: boolean;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -16,13 +18,20 @@ interface SectionProps {
  * Contenedor de sección: aplica el ritmo vertical, el gutter horizontal
  * y centra el contenido con la anchura máxima del layout.
  */
-export default function Section({ children, background = 'default', style }: SectionProps) {
+export default function Section({
+  children,
+  background = 'default',
+  wide = false,
+  style,
+}: SectionProps) {
   const { isTablet } = useBreakpoint();
   return (
     <View
       style={[styles.outer, isTablet && styles.outerWide, backgroundStyles[background], style]}
     >
-      <View style={[styles.inner, isTablet && styles.innerWide]}>{children}</View>
+      <View style={[styles.inner, isTablet && styles.innerWide, wide && styles.innerWideMax]}>
+        {children}
+      </View>
     </View>
   );
 }
@@ -49,5 +58,8 @@ const styles = StyleSheet.create({
   },
   innerWide: {
     paddingHorizontal: layout.gutterWide,
+  },
+  innerWideMax: {
+    maxWidth: layout.navigationMaxWidth,
   },
 });
