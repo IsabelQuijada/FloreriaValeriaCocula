@@ -19,7 +19,9 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/floreria-valeria-logo.png"
+      "favicon": "./assets/floreria-valeria-logo.png",
+      "bundler": "metro",
+      "homepage": "/TestValeriaNuevo/"
     },
     "plugins": [
       "expo-font"
