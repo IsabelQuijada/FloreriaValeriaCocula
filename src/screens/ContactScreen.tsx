@@ -120,58 +120,68 @@ export default function ContactScreen({ onNavigate, onFaqLayout }: ContactScreen
   return (
     <View>
       {/* Contacto rápido */}
-      <Section wide style={styles.quickSection}>
+      <Section wide style={[styles.quickSection, isMobile && styles.quickSectionMobile]}>
         <SectionTitle
-          kicker="Contacto"
+          kicker={isMobile ? undefined : 'Contacto'}
           title="Contáctanos"
-          subtitle="Cuéntanos cómo imaginas tu evento y nosotros lo haremos realidad."
+          subtitle={
+            isMobile
+              ? 'Hacemos realidad el arreglo que imaginas.'
+              : 'Cuéntanos cómo imaginas tu evento y nosotros lo haremos realidad.'
+          }
           compact
         />
 
         {isMobile ? (
-          <View style={styles.mobileQuickPanel}>
-            <Pressable
-              onPress={() => openExternalUrl(CONTACT_INFO.whatsappUrl)}
-              accessibilityRole="link"
-              accessibilityLabel={`Escribir por WhatsApp al ${CONTACT_INFO.whatsappDisplay}`}
-              style={({ pressed }) => [
-                styles.mobileWhatsapp,
-                pressed && styles.mobileActionPressed,
-              ]}
-            >
-              <Ionicons name="logo-whatsapp" size={22} color={colors.textOnDark} />
-              <Text style={styles.mobileWhatsappText}>Contáctanos</Text>
-            </Pressable>
-            <View style={styles.mobilePhoneRow}>
-              {[
-                [CONTACT_INFO.phoneDisplay, CONTACT_INFO.phoneHref],
-                [CONTACT_INFO.phone2Display, CONTACT_INFO.phone2Href],
-              ].map(([phone, href], index) => (
-                <React.Fragment key={phone}>
-                  {index > 0 ? <View style={styles.mobilePhoneSeparator} /> : null}
-                  <Pressable
-                    onPress={() => openExternalUrl(href)}
-                    accessibilityRole="link"
-                    accessibilityLabel={`Llamar al ${phone}`}
-                    style={({ pressed }) => [
-                      styles.mobilePhone,
-                      pressed && styles.mobileActionPressed,
-                    ]}
-                  >
-                    <View style={styles.mobilePhoneIcon}>
-                      <Ionicons name="call-outline" size={17} color={colors.primary} />
-                    </View>
-                    <Text numberOfLines={1} style={styles.mobilePhoneText}>
-                      {phone}
-                    </Text>
-                  </Pressable>
-                </React.Fragment>
+          <View style={styles.mobileQuickCards}>
+            <Card padded={false} style={styles.mobileQuickCard}>
+              <View style={styles.mobileQuickIcon}>
+                <Ionicons name="call-outline" size={20} color={colors.primary} />
+              </View>
+              <Text style={styles.mobileQuickTitle}>Teléfonos</Text>
+              {[CONTACT_INFO.phoneDisplay, CONTACT_INFO.phone2Display].map((phone, index) => (
+                <Pressable
+                  key={phone}
+                  onPress={() =>
+                    openExternalUrl(index === 0 ? CONTACT_INFO.phoneHref : CONTACT_INFO.phone2Href)
+                  }
+                  accessibilityRole="link"
+                  accessibilityLabel={`Llamar al ${phone}`}
+                  style={({ pressed }) => [
+                    styles.mobileQuickLink,
+                    pressed && styles.mobileActionPressed,
+                  ]}
+                >
+                  <Text style={styles.mobileQuickLinkText}>{phone}</Text>
+                </Pressable>
               ))}
-            </View>
-            <View style={styles.mobileHours}>
-              <Ionicons name="time-outline" size={18} color={colors.primary} />
-              <Text style={styles.mobileHoursText}>{CONTACT_INFO.hours}</Text>
-            </View>
+            </Card>
+
+            <Card padded={false} style={styles.mobileQuickCard}>
+              <View style={styles.mobileQuickIcon}>
+                <Ionicons name="logo-whatsapp" size={20} color={colors.primary} />
+              </View>
+              <Text style={styles.mobileQuickTitle}>WhatsApp</Text>
+              <Pressable
+                onPress={() => openExternalUrl(CONTACT_INFO.whatsappUrl)}
+                accessibilityRole="link"
+                accessibilityLabel={`Escribir por WhatsApp al ${CONTACT_INFO.whatsappDisplay}`}
+                style={({ pressed }) => [
+                  styles.mobileQuickLink,
+                  pressed && styles.mobileActionPressed,
+                ]}
+              >
+                <Text style={styles.mobileQuickLinkText}>{CONTACT_INFO.whatsappDisplay}</Text>
+              </Pressable>
+            </Card>
+
+            <Card padded={false} style={styles.mobileQuickCard}>
+              <View style={styles.mobileQuickIcon}>
+                <Ionicons name="time-outline" size={20} color={colors.primary} />
+              </View>
+              <Text style={styles.mobileQuickTitle}>Horarios</Text>
+              <Text style={styles.mobileQuickText}>{CONTACT_INFO.hours}</Text>
+            </Card>
           </View>
         ) : (
           <CardGrid>
@@ -319,8 +329,9 @@ export default function ContactScreen({ onNavigate, onFaqLayout }: ContactScreen
         <Section background="blush" wide style={isMobile ? styles.mobileSection : undefined}>
           <SectionTitle
             kicker="Preguntas frecuentes"
-            title="¿En qué te ayudamos?"
-            subtitle={`¿No encuentras tu respuesta? Llámanos al ${CONTACT_INFO.phoneDisplay} — con gusto te atendemos.`}
+            title="Resolvemos tus dudas"
+            subtitle="Encuentra información sobre pedidos, entregas, formas de pago y atención personalizada."
+            compact
           />
           <FaqAccordion compact={isMobile} />
         </Section>
@@ -336,74 +347,59 @@ const styles = StyleSheet.create({
   quickSection: {
     paddingVertical: spacing.lg,
   },
+  quickSectionMobile: {
+    paddingVertical: spacing.md,
+  },
   mobileSection: {
     paddingVertical: spacing.lg,
   },
-  mobileQuickPanel: {
-    gap: spacing.md,
-  },
-  mobileWhatsapp: {
-    minHeight: layout.minTouchTarget,
-    borderRadius: radius.pill,
-    backgroundColor: colors.primary,
+  mobileQuickCards: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
     gap: spacing.sm,
-    paddingHorizontal: spacing.md,
-    ...shadows.sm,
   },
-  mobileWhatsappText: {
-    color: colors.textOnDark,
-    fontSize: fontSizes.body,
-    fontWeight: fontWeights.bold,
-  },
-  mobilePhoneRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  mobilePhone: {
-    minHeight: layout.minTouchTarget,
+  mobileQuickCard: {
     flex: 1,
-    flexDirection: 'row',
+    minWidth: 0,
+    minHeight: 132,
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.sm,
+    paddingHorizontal: spacing.xs,
+    paddingVertical: spacing.sm,
   },
-  mobilePhoneText: {
-    color: colors.primary,
-    fontSize: fontSizes.caption,
-    fontWeight: fontWeights.semibold,
-  },
-  mobilePhoneIcon: {
+  mobileQuickIcon: {
     width: 32,
     height: 32,
     borderRadius: radius.pill,
     backgroundColor: colors.accentSoft,
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: spacing.xs,
   },
-  mobilePhoneSeparator: {
-    width: borderWidth.thin,
-    height: 32,
-    backgroundColor: colors.champagne,
+  mobileQuickTitle: {
+    color: colors.text,
+    fontSize: fontSizes.caption,
+    fontWeight: fontWeights.bold,
+    textAlign: 'center',
+    marginBottom: spacing.xs,
   },
-  mobileHours: {
-    minHeight: layout.minTouchTarget,
-    flexDirection: 'row',
+  mobileQuickLink: {
+    minHeight: 32,
+    width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.sm,
-    borderRadius: radius.md,
-    backgroundColor: colors.accentSoft,
-    paddingHorizontal: spacing.sm,
   },
-  mobileHoursText: {
-    color: colors.textMuted,
-    fontSize: fontSizes.small,
-    lineHeight: lineHeights.small,
+  mobileQuickLinkText: {
+    color: colors.primary,
+    fontSize: 11,
+    lineHeight: 15,
+    fontWeight: fontWeights.semibold,
     textAlign: 'center',
+  },
+  mobileQuickText: {
+    color: colors.textMuted,
+    fontSize: 11,
+    lineHeight: 16,
+    textAlign: 'center',
+    marginTop: spacing.sm,
   },
   mobileActionPressed: {
     opacity: 0.82,

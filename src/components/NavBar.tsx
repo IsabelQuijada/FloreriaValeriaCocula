@@ -83,8 +83,8 @@ export default function NavBar({ current, onNavigate }: NavBarProps) {
   const orderButton = (
     <Pressable
       onPress={() => openExternalUrl(CONTACT_INFO.whatsappUrl)}
-      accessibilityRole="button"
-      accessibilityLabel="Contactarnos por WhatsApp"
+      accessibilityRole="link"
+      accessibilityLabel="Escribirnos por WhatsApp"
       {...hoverProps('order')}
       style={({ pressed }) => [
         styles.orderButton,
@@ -92,7 +92,8 @@ export default function NavBar({ current, onNavigate }: NavBarProps) {
         pressed && styles.orderButtonPressed,
       ]}
     >
-      <Text style={styles.orderLabel}>Contáctanos</Text>
+      <Ionicons name="logo-whatsapp" size={19} color={colors.textOnDark} />
+      <Text style={styles.orderLabel}>WhatsApp</Text>
     </Pressable>
   );
 
@@ -445,7 +446,10 @@ const styles = StyleSheet.create({
   },
   orderButton: {
     minHeight: layout.minTouchTarget,
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'center',
+    gap: spacing.sm,
     backgroundColor: colors.primary,
     paddingHorizontal: spacing.lg,
     borderRadius: radius.pill,
