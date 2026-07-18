@@ -16,6 +16,8 @@ import {
   lineHeights,
   radius,
   spacing,
+  webBerryGradient,
+  webTransition,
 } from '../theme';
 
 const SOCIAL_LINKS = [
@@ -246,6 +248,7 @@ export default function Footer({ onNavigate }: FooterProps) {
                 {...hoverProps(`social-${social.label}`)}
                 style={({ pressed }) => [
                   styles.socialButton,
+                  webTransition,
                   isHovered(`social-${social.label}`) && styles.socialButtonHovered,
                   pressed && styles.pressed,
                 ]}
@@ -300,7 +303,7 @@ export default function Footer({ onNavigate }: FooterProps) {
         </View>
       </View>
 
-      <View style={styles.bottomBar}>
+      <View style={[styles.bottomBar, webBerryGradient]}>
         <Text style={styles.copyright}>
           © {new Date().getFullYear()} {BRAND.name} · {BRAND.location}
         </Text>

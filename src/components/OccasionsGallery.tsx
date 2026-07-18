@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Image,
   ImageSourcePropType,
+  ImageStyle,
   Pressable,
   StyleSheet,
   Text,
@@ -21,6 +22,8 @@ import {
   radius,
   shadows,
   spacing,
+  webPhotoScrim,
+  webTransition,
 } from '../theme';
 import Section from './Section';
 import SectionTitle from './SectionTitle';
@@ -107,6 +110,7 @@ function OccasionCard({ occasion, isTablet, isDesktop, onSelect }: OccasionCardP
       {...hoverProps}
       style={({ pressed }) => [
         styles.card,
+        webTransition,
         !isTablet && styles.cardMobile,
         isTablet && styles.cardTablet,
         isDesktop && styles.cardDesktop,
@@ -118,11 +122,15 @@ function OccasionCard({ occasion, isTablet, isDesktop, onSelect }: OccasionCardP
         <Image
           source={occasion.image}
           resizeMode="cover"
-          style={[styles.imageAsset, isHovered && styles.imageAssetHovered]}
+          style={[
+            styles.imageAsset,
+            webTransition as ImageStyle,
+            isHovered && styles.imageAssetHovered,
+          ]}
           accessible
           accessibilityLabel={`Arreglo floral para ${occasion.title.toLowerCase()}`}
         />
-        <View style={[styles.overlay, isHovered && styles.overlayHovered]} />
+        <View style={[styles.overlay, webPhotoScrim, isHovered && styles.overlayHovered]} />
         <View style={[styles.cardContent, !isTablet && styles.cardContentMobile]}>
           <Text style={[styles.cardTitle, !isTablet && styles.cardTitleMobile]}>
             {occasion.title}

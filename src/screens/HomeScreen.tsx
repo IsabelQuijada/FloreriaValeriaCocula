@@ -34,6 +34,8 @@ import {
   radius,
   shadows,
   spacing,
+  webBerryGradient,
+  webGlassBlur,
 } from '../theme';
 
 interface HomeScreenProps {
@@ -77,6 +79,7 @@ export default function HomeScreen({
             <View
               style={[
                 styles.heroContentCard,
+                webGlassBlur,
                 isMobile && styles.heroContentCardMobile,
                 isTablet && styles.heroContentCardWide,
               ]}
@@ -108,7 +111,7 @@ export default function HomeScreen({
       </ImageBackground>
 
       {/* Banner de entrega a domicilio */}
-      <View style={[styles.banner, isMobile && styles.bannerMobile]}>
+      <View style={[styles.banner, webBerryGradient, isMobile && styles.bannerMobile]}>
         <Ionicons
           name="car-outline"
           size={isMobile ? 18 : 20}
@@ -280,6 +283,9 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 600,
     backgroundColor: colors.heroPanel,
+    borderRadius: radius.lg,
+    borderWidth: borderWidth.thin,
+    borderColor: 'rgba(255, 255, 255, 0.65)',
     padding: spacing.lg,
     alignItems: 'flex-start',
     ...shadows.lg,

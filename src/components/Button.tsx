@@ -11,6 +11,7 @@ import {
   radius,
   shadows,
   spacing,
+  webTransition,
 } from '../theme';
 
 type ButtonVariant = 'primary' | 'outline' | 'soft';
@@ -47,6 +48,7 @@ export default function Button({
       {...hoverProps}
       style={({ pressed }) => [
         styles.base,
+        webTransition,
         variantStyles[variant],
         hovered && !disabled && hoverStyles[variant],
         pressed && pressedStyles[variant],
