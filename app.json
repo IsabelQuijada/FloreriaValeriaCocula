@@ -24,7 +24,7 @@
       "output": "single"
     },
     "experiments": {
-      "baseUrl": "/FloreriaValeriaCocula"
+      "baseUrl": "/"
     },
     "plugins": [
       "expo-font"
