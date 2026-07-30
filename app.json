@@ -24,7 +24,7 @@
       "output": "single"
     },
     "experiments": {
-      "baseUrl": "/TestValeriaNuevo"
+      "baseUrl": "/FloreriaValeriaCocula"
     },
     "plugins": [
       "expo-font"
