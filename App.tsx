@@ -32,7 +32,7 @@ const SCREENS: Record<Exclude<ScreenName, 'Home' | 'Shop' | 'Favorites'>, React.
 };
 
 export default function App() {
-  const [fontsLoaded] = useFonts({
+  useFonts({
     CormorantGaramond_500Medium_Italic,
     CormorantGaramond_600SemiBold,
     CormorantGaramond_700Bold,
@@ -40,10 +40,6 @@ export default function App() {
   const scrollRef = useRef<ScrollView>(null);
   const { route, navigate, openCategory, registerScrollTarget } =
     useHashNavigation(scrollRef);
-
-  if (!fontsLoaded) {
-    return <SafeAreaView style={styles.safeArea} />;
-  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
