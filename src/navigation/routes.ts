@@ -2,8 +2,9 @@
  * Rutas de la aplicación.
  *
  * Módulo puro (sin React) que define los nombres de pantalla y la
- * traducción entre el hash de la URL y la ruta interna. Mantenerlo puro
- * permite probarlo de forma aislada y reutilizarlo desde cualquier capa.
+ * traducción entre la ruta de la URL (History API) y la ruta interna.
+ * Mantenerlo puro permite probarlo de forma aislada y reutilizarlo desde
+ * cualquier capa.
  */
 
 import { Platform } from 'react-native';
@@ -22,45 +23,27 @@ export type Route =
 /** Secciones dentro de una pantalla a las que se puede hacer scroll. */
 export type ScrollTarget = 'favorites' | 'faq';
 
-export type HashRouteResult = {
+export type RouteResult = {
   route: Route;
   scrollTarget: ScrollTarget | null;
 };
 
-export const getHashRoute = (): HashRouteResult => {
-  if (Platform.OS !== 'web') {
-    return { route: { name: 'Home' }, scrollTarget: null };
-  }
-
-  const hash = window.location.hash.replace(/^#\/?/, '');
-  if (!hash) {
-    return { route: { name: 'Home' }, scrollTarget: null };
-  }
-
-  const parts = hash.split('/').filter(Boolean);
+const parsePath = (path: string): RouteResult => {
+  const parts = path.split('/').filter(Boolean);
   const [first, second] = parts;
 
   switch (first) {
-    case 'shop':
+    case 'catalogo':
       return {
         route: { name: 'Shop', categorySlug: second },
         scrollTarget: null,
       };
-    case 'favorites':
+    case 'favoritos':
       return { route: { name: 'Home' }, scrollTarget: 'favorites' };
-    case 'category':
-      // Compatibilidad con enlaces anteriores a las páginas de categoría.
-      return second
-        ? { route: { name: 'Shop', categorySlug: second }, scrollTarget: null }
-        : { route: { name: 'Shop' }, scrollTarget: null };
-    case 'contact':
-      return { route: { name: 'Contact' }, scrollTarget: null };
-    case 'about':
+    case 'nosotros':
       return { route: { name: 'About' }, scrollTarget: null };
-    // Deshabilitado: sección de blog sin uso actualmente. No permitir acceso
-    // directo vía #/blog; cae al caso 'default' y redirige a Home.
-    // case 'blog':
-    //   return { route: { name: 'Blog' }, scrollTarget: null };
+    case 'contacto':
+      return { route: { name: 'Contact' }, scrollTarget: null };
     case 'faq':
       return { route: { name: 'Contact' }, scrollTarget: 'faq' };
     default:
@@ -68,16 +51,71 @@ export const getHashRoute = (): HashRouteResult => {
   }
 };
 
-export const buildHash = (route: Route, target?: ScrollTarget) => {
-  if (target === 'faq') return '#/faq';
+export const getPathRoute = (): RouteResult => {
+  if (Platform.OS !== 'web') {
+    return { route: { name: 'Home' }, scrollTarget: null };
+  }
+
+  return parsePath(window.location.pathname);
+};
+
+export const buildPath = (route: Route, target?: ScrollTarget) => {
+  if (target === 'faq') return '/faq';
   if (route.name === 'Home') {
-    if (target === 'favorites') return '#/favorites';
-    return '#/';
+    if (target === 'favorites') return '/favoritos';
+    return '/';
   }
 
-  if (route.name === 'Shop' && route.categorySlug) {
-    return `#/shop/${route.categorySlug}`;
+  if (route.name === 'Shop') {
+    return route.categorySlug ? `/catalogo/${route.categorySlug}` : '/catalogo';
   }
 
-  return `#/${route.name.toLowerCase()}`;
+  if (route.name === 'About') return '/nosotros';
+  if (route.name === 'Contact') return '/contacto';
+
+  return '/';
+};
+
+/**
+ * Traduce el esquema de hash anterior (`#/shop`, `#/about`, previo a la
+ * migración a URLs limpias en español) a la nueva ruta. Se usa una sola vez,
+ * al cargar la app, para no romper enlaces ya compartidos o indexados con
+ * el esquema anterior.
+ */
+const parseLegacyHash = (hash: string): RouteResult | null => {
+  const cleaned = hash.replace(/^#\/?/, '');
+  if (!cleaned) return null;
+
+  const parts = cleaned.split('/').filter(Boolean);
+  const [first, second] = parts;
+
+  switch (first) {
+    case 'shop':
+      return { route: { name: 'Shop', categorySlug: second }, scrollTarget: null };
+    case 'category':
+      // Compatibilidad con enlaces de dos migraciones atrás.
+      return second
+        ? { route: { name: 'Shop', categorySlug: second }, scrollTarget: null }
+        : { route: { name: 'Shop' }, scrollTarget: null };
+    case 'favorites':
+      return { route: { name: 'Home' }, scrollTarget: 'favorites' };
+    case 'about':
+      return { route: { name: 'About' }, scrollTarget: null };
+    case 'contact':
+      return { route: { name: 'Contact' }, scrollTarget: null };
+    case 'faq':
+      return { route: { name: 'Contact' }, scrollTarget: 'faq' };
+    default:
+      return null;
+  }
+};
+
+/**
+ * Si la URL actual todavía trae el hash del esquema anterior
+ * (`#/shop`, `#/favorites`, etc.), lo traduce a la nueva ruta limpia en
+ * español. Devuelve `null` cuando no hay nada que migrar.
+ */
+export const getLegacyHashRoute = (): RouteResult | null => {
+  if (Platform.OS !== 'web' || !window.location.hash) return null;
+  return parseLegacyHash(window.location.hash);
 };

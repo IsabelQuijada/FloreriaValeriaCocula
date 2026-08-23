@@ -12,7 +12,7 @@ import NavBar from './src/components/NavBar';
 import WhatsAppFab from './src/components/WhatsAppFab';
 import { ThemeProvider, useTheme } from './src/hooks/useTheme';
 import { ScreenName } from './src/navigation/routes';
-import { useHashNavigation } from './src/navigation/useHashNavigation';
+import { usePathNavigation } from './src/navigation/usePathNavigation';
 import AboutScreen from './src/screens/AboutScreen';
 import BlogScreen from './src/screens/BlogScreen';
 import CatalogScreen from './src/screens/CatalogScreen';
@@ -48,7 +48,7 @@ export default function App() {
 function AppShell() {
   const scrollRef = useRef<ScrollView>(null);
   const { route, navigate, openCategory, registerScrollTarget } =
-    useHashNavigation(scrollRef);
+    usePathNavigation(scrollRef);
   const { colors, scheme } = useTheme();
   const styles = useMemo(
     () =>

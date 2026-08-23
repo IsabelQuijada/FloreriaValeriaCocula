@@ -1,25 +1,40 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Platform, ScrollView } from 'react-native';
 import {
-  buildHash,
-  getHashRoute,
+  buildPath,
+  getLegacyHashRoute,
+  getPathRoute,
   Route,
+  RouteResult,
   ScreenName,
   ScrollTarget,
 } from './routes';
 
+const resolveInitialRoute = (): RouteResult => {
+  const legacy = getLegacyHashRoute();
+  if (legacy) {
+    // Enlace con el esquema anterior (`#/shop`, `#/about`, ...): lo
+    // reescribimos a la ruta limpia en español sin dejar rastro del hash.
+    window.history.replaceState(null, '', buildPath(legacy.route, legacy.scrollTarget ?? undefined));
+    return legacy;
+  }
+  return getPathRoute();
+};
+
 /**
  * Estado de navegación de la aplicación.
  *
- * Encapsula la ruta actual, la sincronización con el hash de la URL
+ * Encapsula la ruta actual, la sincronización con el path de la URL
  * (history API + popstate en web) y el scroll a secciones concretas
  * ('favorites' en Home, 'faq' en Contacto). Las pantallas reportan la
  * posición de esas secciones con `registerScrollTarget`.
  */
-export function useHashNavigation(scrollRef: React.RefObject<ScrollView | null>) {
-  const [initialHashRoute] = useState(getHashRoute);
-  const [route, setRoute] = useState<Route>(initialHashRoute.route);
-  const scrollTarget = useRef<ScrollTarget | null>(initialHashRoute.scrollTarget);
+export function usePathNavigation(scrollRef: React.RefObject<ScrollView | null>) {
+  const [initialRoute] = useState<RouteResult>(() =>
+    Platform.OS === 'web' ? resolveInitialRoute() : { route: { name: 'Home' }, scrollTarget: null },
+  );
+  const [route, setRoute] = useState<Route>(initialRoute.route);
+  const scrollTarget = useRef<ScrollTarget | null>(initialRoute.scrollTarget);
   const resetScrollAfterHistoryNavigation = useRef(false);
   const targetPositions = useRef<Record<ScrollTarget, number>>({ favorites: 0, faq: 0 });
 
@@ -34,12 +49,8 @@ export function useHashNavigation(scrollRef: React.RefObject<ScrollView | null>)
   useEffect(() => {
     if (Platform.OS !== 'web') return;
 
-    if (!window.location.hash) {
-      window.history.replaceState(null, '', '#/');
-    }
-
     const onPopState = () => {
-      const next = getHashRoute();
+      const next = getPathRoute();
       scrollTarget.current = next.scrollTarget;
       resetScrollAfterHistoryNavigation.current = next.scrollTarget === null;
       setRoute(next.route);
@@ -69,9 +80,9 @@ export function useHashNavigation(scrollRef: React.RefObject<ScrollView | null>)
   const updateRoute = (nextRoute: Route, target?: ScrollTarget) => {
     setRoute(nextRoute);
     if (Platform.OS === 'web') {
-      const nextHash = buildHash(nextRoute, target);
-      if (window.location.hash !== nextHash) {
-        window.history.pushState(null, '', nextHash);
+      const nextPath = buildPath(nextRoute, target);
+      if (window.location.pathname !== nextPath) {
+        window.history.pushState(null, '', nextPath);
       }
     }
   };

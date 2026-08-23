@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirigiendo…</title>
+    <!--
+      GitHub Pages no soporta rutas limpias del lado del servidor: al abrir
+      o recargar /catalogo directamente, sirve esta página 404. Aquí
+      codificamos la ruta pedida en la query string y redirigimos a index,
+      que la restaura con history.replaceState antes de montar la app.
+      Patrón estándar: https://github.com/rafgraph/spa-github-pages
+    -->
+    <script>
+      var pathSegmentsToKeep = 0;
+      var l = window.location;
+      l.replace(
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
+        l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+        l.hash
+      );
+    </script>
+  </head>
+  <body></body>
+</html>
