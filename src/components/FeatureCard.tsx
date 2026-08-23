@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { colors, fontSizes, fontWeights, lineHeights, spacing } from '../theme';
+import { useTheme } from '../hooks/useTheme';
+import { fontSizes, fontWeights, lineHeights, spacing } from '../theme';
 import Card from './Card';
 import FloralServiceIcon from './FloralServiceIcon';
 
@@ -23,6 +24,39 @@ export default function FeatureCard({
   centered = false,
   compact = false,
 }: FeatureCardProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        compactCard: {
+          padding: spacing.md,
+        },
+        centered: {
+          alignItems: 'center',
+        },
+        textCentered: {
+          textAlign: 'center',
+        },
+        icon: {
+          marginBottom: spacing.md,
+        },
+        iconCompact: {
+          marginBottom: spacing.sm,
+        },
+        title: {
+          color: colors.text,
+          fontSize: fontSizes.bodyLarge,
+          fontWeight: fontWeights.bold,
+          marginBottom: spacing.sm,
+        },
+        description: {
+          color: colors.textMuted,
+          fontSize: fontSizes.body,
+          lineHeight: lineHeights.body,
+        },
+      }),
+    [colors],
+  );
   return (
     <Card
       flexBasis={260}
@@ -37,32 +71,3 @@ export default function FeatureCard({
     </Card>
   );
 }
-
-const styles = StyleSheet.create({
-  compactCard: {
-    padding: spacing.md,
-  },
-  centered: {
-    alignItems: 'center',
-  },
-  textCentered: {
-    textAlign: 'center',
-  },
-  icon: {
-    marginBottom: spacing.md,
-  },
-  iconCompact: {
-    marginBottom: spacing.sm,
-  },
-  title: {
-    color: colors.text,
-    fontSize: fontSizes.bodyLarge,
-    fontWeight: fontWeights.bold,
-    marginBottom: spacing.sm,
-  },
-  description: {
-    color: colors.textMuted,
-    fontSize: fontSizes.body,
-    lineHeight: lineHeights.body,
-  },
-});

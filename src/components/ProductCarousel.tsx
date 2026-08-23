@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -9,7 +9,8 @@ import {
   View,
 } from 'react-native';
 import { useBreakpoint } from '../hooks/useBreakpoint';
-import { borderWidth, colors, layout, radius, shadows, spacing } from '../theme';
+import { useTheme } from '../hooks/useTheme';
+import { borderWidth, layout, radius, spacing } from '../theme';
 import ProductCard, { ProductCardData } from './ProductCard';
 
 interface ProductCarouselProps {
@@ -28,6 +29,80 @@ export default function ProductCarousel({
   const [activeIndex, setActiveIndex] = useState(0);
   const [hoveredArrow, setHoveredArrow] = useState<-1 | 1 | null>(null);
   const { width, isMobile, isTablet, isDesktop } = useBreakpoint();
+  const { colors, shadows } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        shell: {
+          position: 'relative',
+          marginHorizontal: -layout.gutter,
+        },
+        content: {
+          gap: spacing.lg,
+          paddingHorizontal: spacing.xxl,
+          paddingBottom: spacing.md,
+          alignItems: 'stretch',
+        },
+        contentMobile: {
+          paddingHorizontal: spacing.lg,
+          gap: spacing.md,
+        },
+        mobileControls: {
+          position: 'absolute',
+          left: spacing.sm,
+          right: spacing.sm,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          zIndex: 3,
+        },
+        mobileArrow: {
+          width: layout.minTouchTarget,
+          height: layout.minTouchTarget,
+          borderWidth: borderWidth.thin,
+          borderColor: colors.primary,
+          borderRadius: radius.pill,
+          backgroundColor: colors.secondaryButton,
+          alignItems: 'center',
+          justifyContent: 'center',
+          ...shadows.sm,
+        },
+        mobileArrowDisabled: {
+          borderColor: colors.borderStrong,
+          backgroundColor: colors.heroPanel,
+          opacity: 0.55,
+        },
+        mobileArrowPressed: {
+          backgroundColor: colors.heroPanel,
+        },
+        arrow: {
+          position: 'absolute',
+          top: 220,
+          width: layout.minTouchTarget,
+          height: layout.minTouchTarget,
+          borderRadius: radius.pill,
+          backgroundColor: colors.surface,
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 2,
+          ...shadows.md,
+        },
+        arrowLeft: {
+          left: spacing.sm,
+        },
+        arrowRight: {
+          right: spacing.sm,
+        },
+        arrowPressed: {
+          backgroundColor: colors.accentSoft,
+        },
+        arrowHovered: {
+          backgroundColor: colors.primary,
+          transform: [{ scale: 1.06 }],
+          ...shadows.lg,
+        },
+      }),
+    [colors, shadows],
+  );
   const cardWidth = isDesktop ? 240 : isTablet ? 272 : Math.min(320, width * 0.82);
   const visibleCardsPerStep = isDesktop ? 5 : isTablet ? 2 : 1;
   const scrollStep = (cardWidth + spacing.lg) * visibleCardsPerStep;
@@ -160,73 +235,3 @@ export default function ProductCarousel({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  shell: {
-    position: 'relative',
-    marginHorizontal: -layout.gutter,
-  },
-  content: {
-    gap: spacing.lg,
-    paddingHorizontal: spacing.xxl,
-    paddingBottom: spacing.md,
-    alignItems: 'stretch',
-  },
-  contentMobile: {
-    paddingHorizontal: spacing.lg,
-    gap: spacing.md,
-  },
-  mobileControls: {
-    position: 'absolute',
-    left: spacing.sm,
-    right: spacing.sm,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    zIndex: 3,
-  },
-  mobileArrow: {
-    width: layout.minTouchTarget,
-    height: layout.minTouchTarget,
-    borderWidth: borderWidth.thin,
-    borderColor: colors.primary,
-    borderRadius: radius.pill,
-    backgroundColor: colors.secondaryButton,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...shadows.sm,
-  },
-  mobileArrowDisabled: {
-    borderColor: colors.borderStrong,
-    backgroundColor: colors.heroPanel,
-    opacity: 0.55,
-  },
-  mobileArrowPressed: {
-    backgroundColor: colors.heroPanel,
-  },
-  arrow: {
-    position: 'absolute',
-    top: 220,
-    width: layout.minTouchTarget,
-    height: layout.minTouchTarget,
-    borderRadius: radius.pill,
-    backgroundColor: colors.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 2,
-    ...shadows.md,
-  },
-  arrowLeft: {
-    left: spacing.sm,
-  },
-  arrowRight: {
-    right: spacing.sm,
-  },
-  arrowPressed: {
-    backgroundColor: colors.accentSoft,
-  },
-  arrowHovered: {
-    backgroundColor: colors.primary,
-    transform: [{ scale: 1.06 }],
-    ...shadows.lg,
-  },
-});

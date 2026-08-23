@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { FAQS } from '../data/content';
-import { colors, fontSizes, fontWeights, layout, lineHeights, spacing } from '../theme';
+import { useTheme } from '../hooks/useTheme';
+import { fontSizes, fontWeights, layout, lineHeights, spacing } from '../theme';
 import Card from './Card';
 
 interface FaqAccordionProps {
@@ -10,6 +11,60 @@ interface FaqAccordionProps {
 
 export default function FaqAccordion({ compact = false }: FaqAccordionProps) {
   const [openId, setOpenId] = useState<string | null>(null);
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        list: {
+          alignSelf: 'center',
+          width: '100%',
+          maxWidth: 960,
+          gap: spacing.md,
+        },
+        listCompact: {
+          gap: spacing.sm,
+        },
+        cardCompact: {
+          padding: spacing.md,
+        },
+        questionRow: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: spacing.md,
+          minHeight: layout.minTouchTarget,
+        },
+        question: {
+          color: colors.text,
+          fontSize: fontSizes.bodyLarge,
+          fontWeight: fontWeights.bold,
+          lineHeight: lineHeights.bodyLarge,
+          flexShrink: 1,
+        },
+        questionCompact: {
+          fontSize: fontSizes.small,
+          lineHeight: lineHeights.small,
+        },
+        chevron: {
+          color: colors.accent,
+          fontSize: fontSizes.title,
+          fontWeight: fontWeights.bold,
+          lineHeight: lineHeights.title,
+        },
+        answer: {
+          color: colors.textMuted,
+          fontSize: fontSizes.body,
+          lineHeight: lineHeights.body,
+          marginTop: spacing.md,
+        },
+        answerCompact: {
+          fontSize: fontSizes.small,
+          lineHeight: lineHeights.small,
+          marginTop: spacing.sm,
+        },
+      }),
+    [colors],
+  );
 
   return (
     <View style={[styles.list, compact && styles.listCompact]}>
@@ -41,53 +96,3 @@ export default function FaqAccordion({ compact = false }: FaqAccordionProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  list: {
-    alignSelf: 'center',
-    width: '100%',
-    maxWidth: 960,
-    gap: spacing.md,
-  },
-  listCompact: {
-    gap: spacing.sm,
-  },
-  cardCompact: {
-    padding: spacing.md,
-  },
-  questionRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: spacing.md,
-    minHeight: layout.minTouchTarget,
-  },
-  question: {
-    color: colors.text,
-    fontSize: fontSizes.bodyLarge,
-    fontWeight: fontWeights.bold,
-    lineHeight: lineHeights.bodyLarge,
-    flexShrink: 1,
-  },
-  questionCompact: {
-    fontSize: fontSizes.small,
-    lineHeight: lineHeights.small,
-  },
-  chevron: {
-    color: colors.accent,
-    fontSize: fontSizes.title,
-    fontWeight: fontWeights.bold,
-    lineHeight: lineHeights.title,
-  },
-  answer: {
-    color: colors.textMuted,
-    fontSize: fontSizes.body,
-    lineHeight: lineHeights.body,
-    marginTop: spacing.md,
-  },
-  answerCompact: {
-    fontSize: fontSizes.small,
-    lineHeight: lineHeights.small,
-    marginTop: spacing.sm,
-  },
-});

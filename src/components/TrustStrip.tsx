@@ -1,16 +1,9 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { BRAND } from '../data/content';
 import { useBreakpoint } from '../hooks/useBreakpoint';
-import {
-  colors,
-  fonts,
-  fontSizes,
-  fontWeights,
-  letterSpacing,
-  lineHeights,
-  spacing,
-} from '../theme';
+import { useTheme } from '../hooks/useTheme';
+import { fonts, fontSizes, fontWeights, letterSpacing, lineHeights, spacing } from '../theme';
 import Section from './Section';
 
 const YEARS = new Date().getFullYear() - BRAND.foundedYear;
@@ -42,6 +35,73 @@ const STATS = [
  */
 export default function TrustStrip() {
   const { isMobile } = useBreakpoint();
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        section: {
+          paddingVertical: spacing.lg,
+        },
+        sectionMobile: {
+          paddingVertical: spacing.md,
+        },
+        row: {
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'stretch',
+          gap: spacing.xl,
+        },
+        rowMobile: {
+          flexDirection: 'row',
+          alignItems: 'stretch',
+          gap: spacing.sm,
+        },
+        stat: {
+          alignItems: 'center',
+          maxWidth: 220,
+        },
+        statMobile: {
+          flex: 1,
+          maxWidth: undefined,
+          justifyContent: 'center',
+        },
+        separator: {
+          width: 1,
+          backgroundColor: colors.borderStrong,
+          alignSelf: 'stretch',
+        },
+        separatorMobile: {
+          width: 1,
+          height: 'auto',
+          alignSelf: 'stretch',
+          backgroundColor: colors.borderStrong,
+        },
+        figure: {
+          color: colors.accent,
+          fontFamily: fonts.heading,
+          fontSize: fontSizes.titleLarge,
+          lineHeight: lineHeights.titleLarge,
+        },
+        figureMobile: {
+          fontSize: fontSizes.titleSmall,
+          lineHeight: lineHeights.titleSmall,
+        },
+        label: {
+          color: colors.textMuted,
+          fontSize: fontSizes.small,
+          lineHeight: lineHeights.small,
+          fontWeight: fontWeights.medium,
+          letterSpacing: letterSpacing.slight,
+          textAlign: 'center',
+        },
+        labelMobile: {
+          fontSize: fontSizes.caption,
+          lineHeight: lineHeights.caption,
+          letterSpacing: letterSpacing.normal,
+        },
+      }),
+    [colors],
+  );
 
   return (
     <Section
@@ -69,66 +129,3 @@ export default function TrustStrip() {
     </Section>
   );
 }
-
-const styles = StyleSheet.create({
-  section: {
-    paddingVertical: spacing.lg,
-  },
-  sectionMobile: {
-    paddingVertical: spacing.md,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'stretch',
-    gap: spacing.xl,
-  },
-  rowMobile: {
-    flexDirection: 'row',
-    alignItems: 'stretch',
-    gap: spacing.sm,
-  },
-  stat: {
-    alignItems: 'center',
-    maxWidth: 220,
-  },
-  statMobile: {
-    flex: 1,
-    maxWidth: undefined,
-    justifyContent: 'center',
-  },
-  separator: {
-    width: 1,
-    backgroundColor: colors.borderStrong,
-    alignSelf: 'stretch',
-  },
-  separatorMobile: {
-    width: 1,
-    height: 'auto',
-    alignSelf: 'stretch',
-    backgroundColor: colors.borderStrong,
-  },
-  figure: {
-    color: colors.accent,
-    fontFamily: fonts.heading,
-    fontSize: fontSizes.titleLarge,
-    lineHeight: lineHeights.titleLarge,
-  },
-  figureMobile: {
-    fontSize: fontSizes.titleSmall,
-    lineHeight: lineHeights.titleSmall,
-  },
-  label: {
-    color: colors.textMuted,
-    fontSize: fontSizes.small,
-    lineHeight: lineHeights.small,
-    fontWeight: fontWeights.medium,
-    letterSpacing: letterSpacing.slight,
-    textAlign: 'center',
-  },
-  labelMobile: {
-    fontSize: fontSizes.caption,
-    lineHeight: lineHeights.caption,
-    letterSpacing: letterSpacing.normal,
-  },
-});

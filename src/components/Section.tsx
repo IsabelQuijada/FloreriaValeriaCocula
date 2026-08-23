@@ -1,7 +1,8 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useMemo } from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { useBreakpoint } from '../hooks/useBreakpoint';
-import { colors, layout, spacing } from '../theme';
+import { useTheme } from '../hooks/useTheme';
+import { layout, spacing } from '../theme';
 
 type SectionBackground = 'default' | 'alt' | 'blush' | 'dark';
 
@@ -25,6 +26,16 @@ export default function Section({
   style,
 }: SectionProps) {
   const { isTablet } = useBreakpoint();
+  const { colors } = useTheme();
+  const backgroundStyles = useMemo<Record<SectionBackground, ViewStyle>>(
+    () => ({
+      default: { backgroundColor: colors.background },
+      alt: { backgroundColor: colors.backgroundAlt },
+      blush: { backgroundColor: colors.backgroundBlush },
+      dark: { backgroundColor: colors.primaryDark },
+    }),
+    [colors],
+  );
   return (
     <View
       style={[styles.outer, isTablet && styles.outerWide, backgroundStyles[background], style]}
@@ -35,13 +46,6 @@ export default function Section({
     </View>
   );
 }
-
-const backgroundStyles: Record<SectionBackground, ViewStyle> = {
-  default: { backgroundColor: colors.background },
-  alt: { backgroundColor: colors.backgroundAlt },
-  blush: { backgroundColor: colors.backgroundBlush },
-  dark: { backgroundColor: colors.primaryDark },
-};
 
 const styles = StyleSheet.create({
   outer: {

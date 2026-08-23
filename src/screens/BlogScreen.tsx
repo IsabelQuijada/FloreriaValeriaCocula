@@ -1,20 +1,49 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import Card from '../components/Card';
 import CardGrid from '../components/CardGrid';
 import Section from '../components/Section';
 import SectionTitle from '../components/SectionTitle';
 import { BLOG_POSTS } from '../data/content';
-import {
-  colors,
-  fontSizes,
-  fontWeights,
-  letterSpacing,
-  lineHeights,
-  spacing,
-} from '../theme';
+import { useTheme } from '../hooks/useTheme';
+import { fontSizes, fontWeights, letterSpacing, lineHeights, spacing } from '../theme';
 
 export default function BlogScreen() {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        image: {
+          width: '100%',
+          height: 200,
+          backgroundColor: colors.surfaceMuted,
+        },
+        body: {
+          padding: spacing.lg,
+        },
+        date: {
+          color: colors.gold,
+          fontSize: fontSizes.caption,
+          fontWeight: fontWeights.bold,
+          letterSpacing: letterSpacing.wider,
+          textTransform: 'uppercase',
+          marginBottom: spacing.xs,
+        },
+        title: {
+          color: colors.accent,
+          fontSize: fontSizes.bodyLarge,
+          fontWeight: fontWeights.bold,
+          lineHeight: lineHeights.bodyLarge,
+          marginBottom: spacing.sm,
+        },
+        excerpt: {
+          color: colors.textMuted,
+          fontSize: fontSizes.body,
+          lineHeight: lineHeights.body,
+        },
+      }),
+    [colors],
+  );
   return (
     <Section>
       <SectionTitle
@@ -45,34 +74,3 @@ export default function BlogScreen() {
     </Section>
   );
 }
-
-const styles = StyleSheet.create({
-  image: {
-    width: '100%',
-    height: 200,
-    backgroundColor: colors.surfaceMuted,
-  },
-  body: {
-    padding: spacing.lg,
-  },
-  date: {
-    color: colors.gold,
-    fontSize: fontSizes.caption,
-    fontWeight: fontWeights.bold,
-    letterSpacing: letterSpacing.wider,
-    textTransform: 'uppercase',
-    marginBottom: spacing.xs,
-  },
-  title: {
-    color: colors.accent,
-    fontSize: fontSizes.bodyLarge,
-    fontWeight: fontWeights.bold,
-    lineHeight: lineHeights.bodyLarge,
-    marginBottom: spacing.sm,
-  },
-  excerpt: {
-    color: colors.textMuted,
-    fontSize: fontSizes.body,
-    lineHeight: lineHeights.body,
-  },
-});

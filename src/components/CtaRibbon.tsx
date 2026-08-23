@@ -1,19 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { CONTACT_INFO, ScreenName } from '../data/content';
 import { useBreakpoint } from '../hooks/useBreakpoint';
 import { useHover } from '../hooks/useHover';
+import { useTheme } from '../hooks/useTheme';
 import { openExternalUrl } from '../utils/links';
-import {
-  colors,
-  fonts,
-  fontSizes,
-  fontWeights,
-  layout,
-  lineHeights,
-  spacing,
-} from '../theme';
+import { fonts, fontSizes, fontWeights, layout, lineHeights, spacing } from '../theme';
 import Button from './Button';
 import Section from './Section';
 
@@ -36,6 +29,91 @@ export default function CtaRibbon({
   const { isMobile } = useBreakpoint();
   const faqHover = useHover();
   const catalogHover = useHover();
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        section: {
+          paddingVertical: spacing.lg,
+        },
+        sectionMobile: {
+          paddingVertical: spacing.md,
+        },
+        cta: {
+          alignItems: 'center',
+          alignSelf: 'center',
+          width: '100%',
+          maxWidth: layout.textMaxWidth,
+        },
+        title: {
+          color: colors.accent,
+          fontFamily: fonts.heading,
+          fontSize: fontSizes.title,
+          lineHeight: lineHeights.title,
+          textAlign: 'center',
+          marginBottom: spacing.xs,
+        },
+        titleMobile: {
+          fontSize: fontSizes.titleSmall,
+          lineHeight: lineHeights.titleSmall,
+        },
+        text: {
+          color: colors.textMuted,
+          fontSize: fontSizes.body,
+          lineHeight: lineHeights.body,
+          textAlign: 'center',
+          marginBottom: spacing.md,
+        },
+        buttons: {
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          gap: spacing.md,
+          justifyContent: 'center',
+        },
+        buttonsMobile: {
+          width: '100%',
+          gap: spacing.sm,
+        },
+        buttonMobile: {
+          width: '100%',
+          alignSelf: 'stretch',
+        },
+        catalogLink: {
+          minHeight: layout.minTouchTarget,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: spacing.sm,
+          alignSelf: 'center',
+          paddingHorizontal: spacing.md,
+        },
+        catalogLinkText: {
+          color: colors.primary,
+          fontSize: fontSizes.body,
+          fontWeight: fontWeights.semibold,
+        },
+        catalogLinkTextHovered: {
+          color: colors.primaryEmphasis,
+        },
+        faqLink: {
+          minHeight: layout.minTouchTarget,
+          justifyContent: 'center',
+          marginTop: spacing.sm,
+          paddingHorizontal: spacing.md,
+        },
+        faqLinkText: {
+          color: colors.textMuted,
+          fontSize: fontSizes.small,
+          fontWeight: fontWeights.medium,
+          textAlign: 'center',
+          textDecorationLine: 'underline',
+        },
+        faqLinkTextHovered: {
+          color: colors.primary,
+        },
+      }),
+    [colors],
+  );
 
   return (
     <Section
@@ -80,7 +158,7 @@ export default function CtaRibbon({
                 <Ionicons
                   name="arrow-forward"
                   size={18}
-                  color={catalogHover.hovered ? colors.primaryDark : colors.primary}
+                  color={catalogHover.hovered ? colors.primaryEmphasis : colors.primary}
                   accessibilityElementsHidden
                   importantForAccessibility="no"
                 />
@@ -111,84 +189,3 @@ export default function CtaRibbon({
     </Section>
   );
 }
-
-const styles = StyleSheet.create({
-  section: {
-    paddingVertical: spacing.lg,
-  },
-  sectionMobile: {
-    paddingVertical: spacing.md,
-  },
-  cta: {
-    alignItems: 'center',
-    alignSelf: 'center',
-    width: '100%',
-    maxWidth: layout.textMaxWidth,
-  },
-  title: {
-    color: colors.accent,
-    fontFamily: fonts.heading,
-    fontSize: fontSizes.title,
-    lineHeight: lineHeights.title,
-    textAlign: 'center',
-    marginBottom: spacing.xs,
-  },
-  titleMobile: {
-    fontSize: fontSizes.titleSmall,
-    lineHeight: lineHeights.titleSmall,
-  },
-  text: {
-    color: colors.textMuted,
-    fontSize: fontSizes.body,
-    lineHeight: lineHeights.body,
-    textAlign: 'center',
-    marginBottom: spacing.md,
-  },
-  buttons: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.md,
-    justifyContent: 'center',
-  },
-  buttonsMobile: {
-    width: '100%',
-    gap: spacing.sm,
-  },
-  buttonMobile: {
-    width: '100%',
-    alignSelf: 'stretch',
-  },
-  catalogLink: {
-    minHeight: layout.minTouchTarget,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    alignSelf: 'center',
-    paddingHorizontal: spacing.md,
-  },
-  catalogLinkText: {
-    color: colors.primary,
-    fontSize: fontSizes.body,
-    fontWeight: fontWeights.semibold,
-  },
-  catalogLinkTextHovered: {
-    color: colors.primaryDark,
-  },
-  faqLink: {
-    minHeight: layout.minTouchTarget,
-    justifyContent: 'center',
-    marginTop: spacing.sm,
-    paddingHorizontal: spacing.md,
-  },
-  faqLinkText: {
-    color: colors.textMuted,
-    fontSize: fontSizes.small,
-    fontWeight: fontWeights.medium,
-    textAlign: 'center',
-    textDecorationLine: 'underline',
-  },
-  faqLinkTextHovered: {
-    color: colors.primary,
-  },
-});

@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import Card from '../components/Card';
 import CardGrid from '../components/CardGrid';
@@ -10,17 +10,16 @@ import Section from '../components/Section';
 import SectionTitle from '../components/SectionTitle';
 import { CONTACT_INFO, ScreenName } from '../data/content';
 import { useBreakpoint } from '../hooks/useBreakpoint';
+import { useTheme } from '../hooks/useTheme';
 import { openExternalUrl } from '../utils/links';
 import {
   borderWidth,
-  colors,
   fontSizes,
   fontWeights,
   layout,
   letterSpacing,
   lineHeights,
   radius,
-  shadows,
   spacing,
 } from '../theme';
 
@@ -73,6 +72,32 @@ function QuickCard({
   title: string;
   children: React.ReactNode;
 }) {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        quickCard: {
+          alignItems: 'center',
+          padding: spacing.md,
+        },
+        quickIcon: {
+          width: 56,
+          height: 56,
+          borderRadius: radius.pill,
+          backgroundColor: colors.accentSoft,
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: spacing.md,
+        },
+        quickTitle: {
+          color: colors.text,
+          fontSize: fontSizes.bodyLarge,
+          fontWeight: fontWeights.bold,
+          marginBottom: spacing.sm,
+        },
+      }),
+    [colors],
+  );
   return (
     <Card flexBasis={300} maxWidth={420} style={styles.quickCard}>
       <View style={styles.quickIcon}>
@@ -85,6 +110,23 @@ function QuickCard({
     </Card>
   );
 }
+
+const mapEmbedStyles = StyleSheet.create({
+  mapIframe: {
+    width: '100%',
+    height: 220,
+    borderWidth: 0,
+    borderRadius: radius.md,
+    overflow: 'hidden',
+    minHeight: 220,
+  },
+  mapIframeMobile: {
+    height: 150,
+    minHeight: 150,
+    borderRadius: 0,
+    pointerEvents: 'none',
+  },
+});
 
 interface ContactScreenProps {
   onNavigate: (screen: ScreenName) => void;
@@ -107,7 +149,7 @@ function MapEmbed({
   return React.createElement('iframe', {
     src,
     title,
-    style: StyleSheet.flatten([styles.mapIframe, compact && styles.mapIframeMobile]),
+    style: StyleSheet.flatten([mapEmbedStyles.mapIframe, compact && mapEmbedStyles.mapIframeMobile]),
     loading: 'lazy',
     allowFullScreen: true,
     referrerPolicy: 'no-referrer-when-downgrade',
@@ -116,6 +158,198 @@ function MapEmbed({
 
 export default function ContactScreen({ onNavigate, onFaqLayout }: ContactScreenProps) {
   const { isMobile } = useBreakpoint();
+  const { colors, shadows } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        quickSection: {
+          paddingVertical: spacing.lg,
+        },
+        quickSectionMobile: {
+          paddingVertical: spacing.md,
+        },
+        mobileSection: {
+          paddingVertical: spacing.lg,
+        },
+        mobileQuickCards: {
+          flexDirection: 'row',
+          gap: spacing.sm,
+        },
+        mobileQuickCard: {
+          flex: 1,
+          minWidth: 0,
+          minHeight: 132,
+          alignItems: 'center',
+          paddingHorizontal: spacing.xs,
+          paddingVertical: spacing.sm,
+        },
+        mobileQuickIcon: {
+          width: 32,
+          height: 32,
+          borderRadius: radius.pill,
+          backgroundColor: colors.accentSoft,
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: spacing.xs,
+        },
+        mobileQuickTitle: {
+          color: colors.text,
+          fontSize: fontSizes.caption,
+          fontWeight: fontWeights.bold,
+          textAlign: 'center',
+          marginBottom: spacing.xs,
+        },
+        mobileQuickLink: {
+          minHeight: 32,
+          width: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
+        mobileQuickLinkText: {
+          color: colors.primary,
+          fontSize: 11,
+          lineHeight: 15,
+          fontWeight: fontWeights.semibold,
+          textAlign: 'center',
+        },
+        mobileQuickText: {
+          color: colors.textMuted,
+          fontSize: 11,
+          lineHeight: 16,
+          textAlign: 'center',
+          marginTop: spacing.sm,
+        },
+        mobileActionPressed: {
+          opacity: 0.82,
+        },
+        infoSection: {
+          paddingVertical: spacing.md,
+        },
+        quickText: {
+          color: colors.textMuted,
+          fontSize: fontSizes.body,
+          lineHeight: lineHeights.body,
+          textAlign: 'center',
+        },
+        quickLink: {
+          color: colors.primary,
+          fontSize: fontSizes.body,
+          fontWeight: fontWeights.semibold,
+        },
+        linkRow: {
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: 44,
+        },
+        branchCard: {
+          padding: spacing.xl,
+        },
+        branchCardMobile: {
+          padding: spacing.md,
+        },
+        branchHeader: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: spacing.sm,
+          marginBottom: spacing.md,
+        },
+        branchName: {
+          color: colors.primary,
+          fontSize: fontSizes.subtitle,
+          fontWeight: fontWeights.bold,
+          flexShrink: 1,
+        },
+        branchTag: {
+          backgroundColor: colors.accentSoft,
+          borderRadius: radius.pill,
+          paddingVertical: spacing.xs,
+          paddingHorizontal: spacing.md,
+        },
+        branchTagText: {
+          color: colors.primary,
+          fontSize: fontSizes.caption,
+          fontWeight: fontWeights.bold,
+          letterSpacing: letterSpacing.wide,
+          textTransform: 'uppercase',
+        },
+        branchAddress: {
+          color: colors.textMuted,
+          fontSize: fontSizes.body,
+          lineHeight: lineHeights.body,
+        },
+        mapBox: {
+          backgroundColor: colors.surfaceMuted,
+          borderRadius: radius.md,
+          padding: spacing.lg,
+          alignItems: 'center',
+          marginTop: spacing.md,
+        },
+        mapBoxMobile: {
+          padding: 0,
+          alignItems: 'stretch',
+          overflow: 'hidden',
+        },
+        mapIcon: {
+          fontSize: fontSizes.title,
+          marginBottom: spacing.xs,
+        },
+        mapLink: {
+          color: colors.primary,
+          fontSize: fontSizes.small,
+          fontWeight: fontWeights.semibold,
+        },
+        mobileMapLink: {
+          minHeight: layout.minTouchTarget,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: spacing.sm,
+          paddingHorizontal: spacing.md,
+        },
+        mobileInfoPanel: {
+          padding: spacing.md,
+        },
+        mobileInfoRow: {
+          flexDirection: 'row',
+          alignItems: 'flex-start',
+          gap: spacing.md,
+          paddingVertical: spacing.sm,
+        },
+        mobileInfoRowBorder: {
+          borderTopWidth: borderWidth.thin,
+          borderTopColor: colors.border,
+          paddingTop: spacing.md,
+          marginTop: spacing.xs,
+        },
+        mobileInfoIcon: {
+          width: 40,
+          height: 40,
+          borderRadius: radius.pill,
+          backgroundColor: colors.accentSoft,
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+          ...shadows.sm,
+        },
+        mobileInfoContent: {
+          flex: 1,
+        },
+        mobileInfoTitle: {
+          color: colors.text,
+          fontSize: fontSizes.small,
+          lineHeight: lineHeights.small,
+          fontWeight: fontWeights.bold,
+          marginBottom: spacing.xs,
+        },
+        mobileInfoText: {
+          color: colors.textMuted,
+          fontSize: fontSizes.caption,
+          lineHeight: lineHeights.caption,
+        },
+      }),
+    [colors, shadows],
+  );
 
   return (
     <View>
@@ -343,223 +577,3 @@ export default function ContactScreen({ onNavigate, onFaqLayout }: ContactScreen
   );
 }
 
-const styles = StyleSheet.create({
-  quickSection: {
-    paddingVertical: spacing.lg,
-  },
-  quickSectionMobile: {
-    paddingVertical: spacing.md,
-  },
-  mobileSection: {
-    paddingVertical: spacing.lg,
-  },
-  mobileQuickCards: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  mobileQuickCard: {
-    flex: 1,
-    minWidth: 0,
-    minHeight: 132,
-    alignItems: 'center',
-    paddingHorizontal: spacing.xs,
-    paddingVertical: spacing.sm,
-  },
-  mobileQuickIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: radius.pill,
-    backgroundColor: colors.accentSoft,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.xs,
-  },
-  mobileQuickTitle: {
-    color: colors.text,
-    fontSize: fontSizes.caption,
-    fontWeight: fontWeights.bold,
-    textAlign: 'center',
-    marginBottom: spacing.xs,
-  },
-  mobileQuickLink: {
-    minHeight: 32,
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  mobileQuickLinkText: {
-    color: colors.primary,
-    fontSize: 11,
-    lineHeight: 15,
-    fontWeight: fontWeights.semibold,
-    textAlign: 'center',
-  },
-  mobileQuickText: {
-    color: colors.textMuted,
-    fontSize: 11,
-    lineHeight: 16,
-    textAlign: 'center',
-    marginTop: spacing.sm,
-  },
-  mobileActionPressed: {
-    opacity: 0.82,
-  },
-  infoSection: {
-    paddingVertical: spacing.md,
-  },
-  quickCard: {
-    alignItems: 'center',
-    padding: spacing.md,
-  },
-  quickIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: radius.pill,
-    backgroundColor: colors.accentSoft,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.md,
-  },
-  quickTitle: {
-    color: colors.text,
-    fontSize: fontSizes.bodyLarge,
-    fontWeight: fontWeights.bold,
-    marginBottom: spacing.sm,
-  },
-  quickText: {
-    color: colors.textMuted,
-    fontSize: fontSizes.body,
-    lineHeight: lineHeights.body,
-    textAlign: 'center',
-  },
-  quickLink: {
-    color: colors.primary,
-    fontSize: fontSizes.body,
-    fontWeight: fontWeights.semibold,
-  },
-  linkRow: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: 44,
-  },
-  branchCard: {
-    padding: spacing.xl,
-  },
-  branchCardMobile: {
-    padding: spacing.md,
-  },
-  branchHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: spacing.sm,
-    marginBottom: spacing.md,
-  },
-  branchName: {
-    color: colors.primary,
-    fontSize: fontSizes.subtitle,
-    fontWeight: fontWeights.bold,
-    flexShrink: 1,
-  },
-  branchTag: {
-    backgroundColor: colors.accentSoft,
-    borderRadius: radius.pill,
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.md,
-  },
-  branchTagText: {
-    color: colors.primary,
-    fontSize: fontSizes.caption,
-    fontWeight: fontWeights.bold,
-    letterSpacing: letterSpacing.wide,
-    textTransform: 'uppercase',
-  },
-  branchAddress: {
-    color: colors.textMuted,
-    fontSize: fontSizes.body,
-    lineHeight: lineHeights.body,
-  },
-  mapBox: {
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.md,
-    padding: spacing.lg,
-    alignItems: 'center',
-    marginTop: spacing.md,
-  },
-  mapBoxMobile: {
-    padding: 0,
-    alignItems: 'stretch',
-    overflow: 'hidden',
-  },
-  mapIcon: {
-    fontSize: fontSizes.title,
-    marginBottom: spacing.xs,
-  },
-  mapIframe: {
-    width: '100%',
-    height: 220,
-    borderWidth: 0,
-    borderRadius: radius.md,
-    overflow: 'hidden',
-    minHeight: 220,
-  },
-  mapIframeMobile: {
-    height: 150,
-    minHeight: 150,
-    borderRadius: 0,
-    pointerEvents: 'none',
-  },
-  mapLink: {
-    color: colors.primary,
-    fontSize: fontSizes.small,
-    fontWeight: fontWeights.semibold,
-  },
-  mobileMapLink: {
-    minHeight: layout.minTouchTarget,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.md,
-  },
-  mobileInfoPanel: {
-    padding: spacing.md,
-  },
-  mobileInfoRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: spacing.md,
-    paddingVertical: spacing.sm,
-  },
-  mobileInfoRowBorder: {
-    borderTopWidth: borderWidth.thin,
-    borderTopColor: colors.border,
-    paddingTop: spacing.md,
-    marginTop: spacing.xs,
-  },
-  mobileInfoIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.pill,
-    backgroundColor: colors.accentSoft,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-    ...shadows.sm,
-  },
-  mobileInfoContent: {
-    flex: 1,
-  },
-  mobileInfoTitle: {
-    color: colors.text,
-    fontSize: fontSizes.small,
-    lineHeight: lineHeights.small,
-    fontWeight: fontWeights.bold,
-    marginBottom: spacing.xs,
-  },
-  mobileInfoText: {
-    color: colors.textMuted,
-    fontSize: fontSizes.caption,
-    lineHeight: lineHeights.caption,
-  },
-});

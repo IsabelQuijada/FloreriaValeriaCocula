@@ -1,15 +1,14 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Pressable, StyleProp, StyleSheet, Text, ViewStyle } from 'react-native';
 import { useHover } from '../hooks/useHover';
+import { useTheme } from '../hooks/useTheme';
 import {
   borderWidth,
-  colors,
   fontSizes,
   fontWeights,
   layout,
   letterSpacing,
   radius,
-  shadows,
   spacing,
   webTransition,
 } from '../theme';
@@ -36,6 +35,82 @@ export default function Button({
   style,
 }: ButtonProps) {
   const { hovered, hoverProps } = useHover();
+  const { colors, shadows } = useTheme();
+
+  const { styles, variantStyles, pressedStyles, hoverStyles, labelStyles, hoverLabelStyles } =
+    useMemo(() => {
+      const variantStyles: Record<ButtonVariant, ViewStyle> = {
+        primary: { backgroundColor: colors.primary },
+        outline: {
+          borderWidth: borderWidth.thick,
+          borderColor: colors.primary,
+          backgroundColor: colors.secondaryButton,
+        },
+        soft: { backgroundColor: colors.sand },
+      };
+
+      const pressedStyles: Record<ButtonVariant, ViewStyle> = {
+        primary: { backgroundColor: colors.primaryDark },
+        outline: { backgroundColor: colors.backgroundAlt },
+        soft: { opacity: 0.85 },
+      };
+
+      const hoverStyles: Record<ButtonVariant, ViewStyle> = {
+        primary: {
+          backgroundColor: colors.primaryDark,
+          transform: [{ translateY: -2 }],
+          ...shadows.md,
+        },
+        outline: {
+          backgroundColor: colors.primary,
+          transform: [{ translateY: -2 }],
+          ...shadows.sm,
+        },
+        soft: {
+          backgroundColor: colors.backgroundAlt,
+          transform: [{ translateY: -2 }],
+          ...shadows.sm,
+        },
+      };
+
+      const styles = StyleSheet.create({
+        base: {
+          minHeight: layout.minTouchTarget,
+          paddingVertical: spacing.sm + spacing.xs,
+          paddingHorizontal: spacing.lg,
+          borderRadius: radius.pill,
+          alignItems: 'center',
+          justifyContent: 'center',
+          alignSelf: 'flex-start',
+        },
+        disabled: {
+          backgroundColor: colors.disabledBg,
+          borderColor: colors.disabledBg,
+        },
+        label: {
+          fontSize: fontSizes.body,
+          fontWeight: fontWeights.semibold,
+          letterSpacing: letterSpacing.slight,
+        },
+        labelDisabled: {
+          color: colors.disabledText,
+        },
+      });
+
+      const labelStyles = StyleSheet.create({
+        primary: { color: colors.textOnDark },
+        outline: { color: colors.primary },
+        soft: { color: colors.textOnLight },
+      });
+
+      const hoverLabelStyles = StyleSheet.create({
+        primary: { color: colors.white },
+        outline: { color: colors.white },
+        soft: { color: colors.primary },
+      });
+
+      return { styles, variantStyles, pressedStyles, hoverStyles, labelStyles, hoverLabelStyles };
+    }, [colors, shadows]);
 
   return (
     <Pressable
@@ -69,73 +144,3 @@ export default function Button({
     </Pressable>
   );
 }
-
-const variantStyles: Record<ButtonVariant, ViewStyle> = {
-  primary: { backgroundColor: colors.primary },
-  outline: {
-    borderWidth: borderWidth.thick,
-    borderColor: colors.primary,
-    backgroundColor: colors.secondaryButton,
-  },
-  soft: { backgroundColor: colors.sand },
-};
-
-const pressedStyles: Record<ButtonVariant, ViewStyle> = {
-  primary: { backgroundColor: colors.primaryDark },
-  outline: { backgroundColor: colors.backgroundAlt },
-  soft: { opacity: 0.85 },
-};
-
-const hoverStyles: Record<ButtonVariant, ViewStyle> = {
-  primary: {
-    backgroundColor: colors.primaryDark,
-    transform: [{ translateY: -2 }],
-    ...shadows.md,
-  },
-  outline: {
-    backgroundColor: colors.primary,
-    transform: [{ translateY: -2 }],
-    ...shadows.sm,
-  },
-  soft: {
-    backgroundColor: colors.backgroundAlt,
-    transform: [{ translateY: -2 }],
-    ...shadows.sm,
-  },
-};
-
-const styles = StyleSheet.create({
-  base: {
-    minHeight: layout.minTouchTarget,
-    paddingVertical: spacing.sm + spacing.xs,
-    paddingHorizontal: spacing.lg,
-    borderRadius: radius.pill,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'flex-start',
-  },
-  disabled: {
-    backgroundColor: colors.disabledBg,
-    borderColor: colors.disabledBg,
-  },
-  label: {
-    fontSize: fontSizes.body,
-    fontWeight: fontWeights.semibold,
-    letterSpacing: letterSpacing.slight,
-  },
-  labelDisabled: {
-    color: colors.disabledText,
-  },
-});
-
-const labelStyles = StyleSheet.create({
-  primary: { color: colors.textOnDark },
-  outline: { color: colors.primary },
-  soft: { color: colors.text },
-});
-
-const hoverLabelStyles = StyleSheet.create({
-  primary: { color: colors.white },
-  outline: { color: colors.white },
-  soft: { color: colors.primary },
-});

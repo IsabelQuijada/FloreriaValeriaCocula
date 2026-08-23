@@ -1,13 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { BRAND, CONTACT_INFO, NAV_ITEMS, ScreenName } from '../data/content';
 import { useBreakpoint } from '../hooks/useBreakpoint';
 import { useHoverKey } from '../hooks/useHover';
+import { useTheme } from '../hooks/useTheme';
 import { openExternalUrl } from '../utils/links';
 import {
   borderWidth,
-  colors,
   fonts,
   fontSizes,
   fontWeights,
@@ -52,6 +52,227 @@ export default function NavBar({ current, onNavigate }: NavBarProps) {
   const { isMobile, isDesktop } = useBreakpoint();
   const { isHovered, hoverProps } = useHoverKey();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { colors, scheme } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        container: {
+          backgroundColor: colors.surface,
+          borderBottomWidth: borderWidth.thin,
+          borderBottomColor: colors.border,
+        },
+        ribbon: {
+          backgroundColor: colors.ribbon,
+          paddingHorizontal: layout.gutter,
+        },
+        ribbonInner: {
+          width: '100%',
+          maxWidth: layout.navigationMaxWidth,
+          alignSelf: 'center',
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: spacing.md,
+        },
+        ribbonInnerMobile: {
+          gap: 0,
+          justifyContent: 'space-between',
+        },
+        phoneButton: {
+          minHeight: 36,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: spacing.xs,
+          paddingHorizontal: spacing.sm,
+        },
+        phoneButtonMobile: {
+          minHeight: layout.minTouchTarget,
+          paddingHorizontal: spacing.xs,
+          gap: spacing.xxs,
+        },
+        phoneButtonHovered: {
+          backgroundColor: colors.sand,
+          borderRadius: radius.pill,
+          transform: [{ translateY: -2 }],
+        },
+        phoneLabel: {
+          color: colors.textOnDark,
+          fontSize: fontSizes.caption,
+          fontWeight: fontWeights.semibold,
+          letterSpacing: letterSpacing.slight,
+        },
+        phoneLabelHovered: {
+          color: colors.textOnLight,
+        },
+        phoneLabelMobile: {
+          fontSize: 12,
+          letterSpacing: 0,
+        },
+        separator: {
+          color: colors.textOnDark,
+          fontSize: fontSizes.caption,
+          marginHorizontal: spacing.xs,
+        },
+        separatorMobile: {
+          marginHorizontal: 0,
+          opacity: 0.72,
+        },
+        bar: {
+          width: '100%',
+          maxWidth: layout.navigationMaxWidth,
+          alignSelf: 'center',
+          paddingHorizontal: layout.gutter,
+          paddingVertical: spacing.sm,
+          gap: spacing.sm,
+        },
+        barMobile: {
+          paddingVertical: spacing.xs,
+        },
+        barDesktop: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.lg,
+          paddingVertical: spacing.md,
+        },
+        barTop: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: spacing.md,
+        },
+        brand: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          flexShrink: 0,
+          minHeight: layout.minTouchTarget,
+        },
+        brandHovered: {
+          opacity: 0.78,
+        },
+        brandLogo: {
+          width: 91,
+          height: 48,
+          marginRight: spacing.sm,
+        },
+        brandLogoDesktop: {
+          width: 104,
+          height: 54,
+          marginRight: spacing.md,
+        },
+        brandName: {
+          color: colors.text,
+          fontSize: fontSizes.subtitle,
+          fontFamily: fonts.heading,
+          letterSpacing: letterSpacing.wide,
+        },
+        brandNameDesktop: {
+          fontSize: fontSizes.titleSmall,
+          letterSpacing: letterSpacing.slight,
+        },
+        menuButton: {
+          width: layout.minTouchTarget,
+          height: layout.minTouchTarget,
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: radius.pill,
+        },
+        mobileMenu: {
+          borderTopWidth: borderWidth.thin,
+          borderTopColor: colors.border,
+          paddingTop: spacing.sm,
+          paddingBottom: spacing.md,
+        },
+        mobileItem: {
+          minHeight: layout.minTouchTarget,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingHorizontal: spacing.sm,
+          borderRadius: radius.sm,
+        },
+        mobileItemActive: {
+          backgroundColor: colors.accentSoft,
+        },
+        mobileItemPressed: {
+          backgroundColor: colors.backgroundAlt,
+        },
+        mobileItemLabel: {
+          color: colors.text,
+          fontFamily: fonts.heading,
+          fontSize: fontSizes.bodyLarge,
+        },
+        mobileOrder: {
+          marginTop: spacing.sm,
+          alignItems: 'stretch',
+        },
+        menuScroll: {
+          flexGrow: 1,
+          flexShrink: 1,
+        },
+        menu: {
+          alignItems: 'center',
+          gap: spacing.md,
+          flexGrow: 1,
+        },
+        menuDesktop: {
+          justifyContent: 'center',
+          gap: spacing.xl,
+        },
+        item: {
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: layout.minTouchTarget,
+        },
+        itemLabel: {
+          color: colors.text,
+          fontSize: fontSizes.bodyLarge,
+          fontFamily: fonts.heading,
+          letterSpacing: letterSpacing.slight,
+        },
+        itemLabelDesktop: {
+          fontSize: 24,
+          letterSpacing: letterSpacing.slight,
+        },
+        itemLabelActive: {
+          color: colors.accent,
+        },
+        itemUnderline: {
+          height: 2,
+          alignSelf: 'stretch',
+          backgroundColor: 'transparent',
+          marginTop: spacing.xxs,
+          borderRadius: radius.sm,
+        },
+        itemUnderlineActive: {
+          backgroundColor: colors.accent,
+        },
+        orderButton: {
+          minHeight: layout.minTouchTarget,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: spacing.sm,
+          backgroundColor: colors.primary,
+          paddingHorizontal: spacing.lg,
+          borderRadius: radius.pill,
+        },
+        orderButtonPressed: {
+          backgroundColor: colors.primaryDark,
+        },
+        orderButtonHovered: {
+          backgroundColor: colors.primaryDark,
+          transform: [{ translateY: -2 }],
+        },
+        orderLabel: {
+          color: colors.textOnDark,
+          fontSize: fontSizes.body,
+          fontWeight: fontWeights.semibold,
+          letterSpacing: letterSpacing.slight,
+        },
+      }),
+    [colors],
+  );
 
   const navigate = (screen: ScreenName) => {
     setMenuOpen(false);
@@ -166,7 +387,7 @@ export default function NavBar({ current, onNavigate }: NavBarProps) {
                   <Ionicons
                     name={link.icon as any}
                     size={isMobile && link.id === 'whatsapp' ? 19 : 14}
-                    color={isHovered(link.id) ? colors.primaryDark : colors.textOnDark}
+                    color={isHovered(link.id) ? colors.textOnLight : colors.textOnDark}
                   />
                 ) : null}
                 {!(isMobile && link.id === 'whatsapp') ? (
@@ -212,7 +433,7 @@ export default function NavBar({ current, onNavigate }: NavBarProps) {
               <Ionicons
                 name={menuOpen ? 'close' : 'menu'}
                 size={28}
-                color={colors.primaryDark}
+                color={scheme === 'dark' ? colors.primary : colors.primaryDark}
               />
             </Pressable>
           </View>
@@ -255,220 +476,3 @@ export default function NavBar({ current, onNavigate }: NavBarProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.surface,
-    borderBottomWidth: borderWidth.thin,
-    borderBottomColor: colors.border,
-  },
-  ribbon: {
-    backgroundColor: colors.ribbon,
-    paddingHorizontal: layout.gutter,
-  },
-  ribbonInner: {
-    width: '100%',
-    maxWidth: layout.navigationMaxWidth,
-    alignSelf: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  ribbonInnerMobile: {
-    gap: 0,
-    justifyContent: 'space-between',
-  },
-  phoneButton: {
-    minHeight: 36,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.xs,
-    paddingHorizontal: spacing.sm,
-  },
-  phoneButtonMobile: {
-    minHeight: layout.minTouchTarget,
-    paddingHorizontal: spacing.xs,
-    gap: spacing.xxs,
-  },
-  phoneButtonHovered: {
-    backgroundColor: colors.sand,
-    borderRadius: radius.pill,
-    transform: [{ translateY: -2 }],
-  },
-  phoneLabel: {
-    color: colors.textOnDark,
-    fontSize: fontSizes.caption,
-    fontWeight: fontWeights.semibold,
-    letterSpacing: letterSpacing.slight,
-  },
-  phoneLabelHovered: {
-    color: colors.primaryDark,
-  },
-  phoneLabelMobile: {
-    fontSize: 12,
-    letterSpacing: 0,
-  },
-  separator: {
-    color: colors.textOnDark,
-    fontSize: fontSizes.caption,
-    marginHorizontal: spacing.xs,
-  },
-  separatorMobile: {
-    marginHorizontal: 0,
-    opacity: 0.72,
-  },
-  bar: {
-    width: '100%',
-    maxWidth: layout.navigationMaxWidth,
-    alignSelf: 'center',
-    paddingHorizontal: layout.gutter,
-    paddingVertical: spacing.sm,
-    gap: spacing.sm,
-  },
-  barMobile: {
-    paddingVertical: spacing.xs,
-  },
-  barDesktop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.lg,
-    paddingVertical: spacing.md,
-  },
-  barTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: spacing.md,
-  },
-  brand: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexShrink: 0,
-    minHeight: layout.minTouchTarget,
-  },
-  brandHovered: {
-    opacity: 0.78,
-  },
-  brandLogo: {
-    width: 91,
-    height: 48,
-    marginRight: spacing.sm,
-  },
-  brandLogoDesktop: {
-    width: 104,
-    height: 54,
-    marginRight: spacing.md,
-  },
-  brandName: {
-    color: colors.text,
-    fontSize: fontSizes.subtitle,
-    fontFamily: fonts.heading,
-    letterSpacing: letterSpacing.wide,
-  },
-  brandNameDesktop: {
-    fontSize: fontSizes.titleSmall,
-    letterSpacing: letterSpacing.slight,
-  },
-  menuButton: {
-    width: layout.minTouchTarget,
-    height: layout.minTouchTarget,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: radius.pill,
-  },
-  mobileMenu: {
-    borderTopWidth: borderWidth.thin,
-    borderTopColor: colors.border,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.md,
-  },
-  mobileItem: {
-    minHeight: layout.minTouchTarget,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.sm,
-    borderRadius: radius.sm,
-  },
-  mobileItemActive: {
-    backgroundColor: colors.accentSoft,
-  },
-  mobileItemPressed: {
-    backgroundColor: colors.backgroundAlt,
-  },
-  mobileItemLabel: {
-    color: colors.text,
-    fontFamily: fonts.heading,
-    fontSize: fontSizes.bodyLarge,
-  },
-  mobileOrder: {
-    marginTop: spacing.sm,
-    alignItems: 'stretch',
-  },
-  menuScroll: {
-    flexGrow: 1,
-    flexShrink: 1,
-  },
-  menu: {
-    alignItems: 'center',
-    gap: spacing.md,
-    flexGrow: 1,
-  },
-  menuDesktop: {
-    justifyContent: 'center',
-    gap: spacing.xl,
-  },
-  item: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: layout.minTouchTarget,
-  },
-  itemLabel: {
-    color: colors.text,
-    fontSize: fontSizes.bodyLarge,
-    fontFamily: fonts.heading,
-    letterSpacing: letterSpacing.slight,
-  },
-  itemLabelDesktop: {
-    fontSize: 24,
-    letterSpacing: letterSpacing.slight,
-  },
-  itemLabelActive: {
-    color: colors.accent,
-  },
-  itemUnderline: {
-    height: 2,
-    alignSelf: 'stretch',
-    backgroundColor: 'transparent',
-    marginTop: spacing.xxs,
-    borderRadius: radius.sm,
-  },
-  itemUnderlineActive: {
-    backgroundColor: colors.accent,
-  },
-  orderButton: {
-    minHeight: layout.minTouchTarget,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    backgroundColor: colors.primary,
-    paddingHorizontal: spacing.lg,
-    borderRadius: radius.pill,
-  },
-  orderButtonPressed: {
-    backgroundColor: colors.primaryDark,
-  },
-  orderButtonHovered: {
-    backgroundColor: colors.primaryDark,
-    transform: [{ translateY: -2 }],
-  },
-  orderLabel: {
-    color: colors.textOnDark,
-    fontSize: fontSizes.body,
-    fontWeight: fontWeights.semibold,
-    letterSpacing: letterSpacing.slight,
-  },
-});

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Button from '../components/Button';
 import CardGrid from '../components/CardGrid';
@@ -6,21 +6,48 @@ import FeatureCard from '../components/FeatureCard';
 import Section from '../components/Section';
 import SectionTitle from '../components/SectionTitle';
 import { CONTACT_INFO, ScreenName, SERVICES } from '../data/content';
+import { useTheme } from '../hooks/useTheme';
 import { openExternalUrl } from '../utils/links';
-import {
-  colors,
-  fontSizes,
-  fontWeights,
-  lineHeights,
-  radius,
-  spacing,
-} from '../theme';
+import { fontSizes, fontWeights, lineHeights, radius, spacing } from '../theme';
 
 interface ServicesScreenProps {
   onNavigate: (screen: ScreenName) => void;
 }
 
 export default function ServicesScreen({ onNavigate }: ServicesScreenProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        grid: {
+          marginBottom: spacing.xxl,
+        },
+        deliveryBox: {
+          backgroundColor: colors.primaryDark,
+          borderRadius: radius.lg,
+          padding: spacing.xl,
+          alignItems: 'center',
+          alignSelf: 'center',
+          width: '100%',
+          maxWidth: 720,
+        },
+        deliveryTitle: {
+          color: colors.textOnDark,
+          fontSize: fontSizes.subtitle,
+          fontWeight: fontWeights.bold,
+          marginBottom: spacing.md,
+          textAlign: 'center',
+        },
+        deliveryText: {
+          color: colors.textOnDarkMuted,
+          fontSize: fontSizes.bodyLarge,
+          lineHeight: lineHeights.bodyLarge,
+          textAlign: 'center',
+          marginBottom: spacing.lg,
+        },
+      }),
+    [colors],
+  );
   return (
     <Section>
       <SectionTitle
@@ -57,32 +84,3 @@ export default function ServicesScreen({ onNavigate }: ServicesScreenProps) {
     </Section>
   );
 }
-
-const styles = StyleSheet.create({
-  grid: {
-    marginBottom: spacing.xxl,
-  },
-  deliveryBox: {
-    backgroundColor: colors.primaryDark,
-    borderRadius: radius.lg,
-    padding: spacing.xl,
-    alignItems: 'center',
-    alignSelf: 'center',
-    width: '100%',
-    maxWidth: 720,
-  },
-  deliveryTitle: {
-    color: colors.textOnDark,
-    fontSize: fontSizes.subtitle,
-    fontWeight: fontWeights.bold,
-    marginBottom: spacing.md,
-    textAlign: 'center',
-  },
-  deliveryText: {
-    color: colors.textOnDarkMuted,
-    fontSize: fontSizes.bodyLarge,
-    lineHeight: lineHeights.bodyLarge,
-    textAlign: 'center',
-    marginBottom: spacing.lg,
-  },
-});

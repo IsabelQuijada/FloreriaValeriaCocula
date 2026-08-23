@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   Image,
   ImageSourcePropType,
@@ -10,9 +10,9 @@ import {
 } from 'react-native';
 import { useBreakpoint } from '../hooks/useBreakpoint';
 import { useHover } from '../hooks/useHover';
+import { useTheme } from '../hooks/useTheme';
 import {
   borderWidth,
-  colors,
   fonts,
   fontSizes,
   fontWeights,
@@ -20,8 +20,8 @@ import {
   letterSpacing,
   lineHeights,
   radius,
-  shadows,
   spacing,
+  ThemeColors,
   webPhotoScrim,
   webTransition,
 } from '../theme';
@@ -101,6 +101,8 @@ interface OccasionCardProps {
 
 function OccasionCard({ occasion, isTablet, isDesktop, onSelect }: OccasionCardProps) {
   const { hovered: isHovered, hoverProps } = useHover();
+  const { colors, shadows } = useTheme();
+  const styles = useMemo(() => createStyles(colors, shadows.md), [colors, shadows]);
 
   return (
     <Pressable
@@ -175,7 +177,7 @@ export default function OccasionsGallery({ onSelect }: OccasionsGalleryProps) {
   ));
 
   return (
-    <Section wide style={!isTablet && styles.sectionMobile}>
+    <Section wide style={!isTablet && layoutStyles.sectionMobile}>
       <SectionTitle
         kicker="Catálogo"
         title="Ocasiones especiales"
@@ -183,12 +185,12 @@ export default function OccasionsGallery({ onSelect }: OccasionsGalleryProps) {
         compact={!isTablet}
       />
 
-      <View style={[styles.grid, !isTablet && styles.gridMobile]}>{cards}</View>
+      <View style={[layoutStyles.grid, !isTablet && layoutStyles.gridMobile]}>{cards}</View>
     </Section>
   );
 }
 
-const styles = StyleSheet.create({
+const layoutStyles = StyleSheet.create({
   sectionMobile: {
     paddingVertical: spacing.lg,
   },
@@ -200,139 +202,144 @@ const styles = StyleSheet.create({
   gridMobile: {
     gap: spacing.sm,
   },
-  card: {
-    width: 280,
-    aspectRatio: 3 / 4,
-    borderRadius: radius.md,
-    overflow: 'hidden',
-    backgroundColor: colors.primaryDark,
-    ...shadows.md,
-  },
-  cardTablet: {
-    width: undefined,
-    flexBasis: '47%',
-    flexGrow: 1,
-  },
-  cardMobile: {
-    width: undefined,
-    flexBasis: '47%',
-    flexGrow: 1,
-    aspectRatio: 4 / 5,
-    borderRadius: radius.sm,
-  },
-  cardDesktop: {
-    flexBasis: '22%',
-  },
-  cardPressed: {
-    opacity: 0.92,
-    transform: [{ scale: 0.99 }],
-  },
-  cardHovered: {
-    transform: [{ translateY: -6 }],
-    shadowOpacity: 0.18,
-    shadowRadius: 18,
-    elevation: 7,
-  },
-  image: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    overflow: 'hidden',
-  },
-  imageAsset: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-  },
-  imageAssetHovered: {
-    transform: [{ scale: 1.025 }],
-  },
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    backgroundColor: colors.overlayNeutral,
-  },
-  overlayHovered: {
-    opacity: 0.9,
-  },
-  cardContent: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    padding: spacing.lg,
-  },
-  cardContentMobile: {
-    alignItems: 'center',
-    padding: spacing.sm,
-  },
-  cardTitle: {
-    color: colors.white,
-    fontFamily: fonts.heading,
-    fontSize: fontSizes.subtitle,
-    lineHeight: lineHeights.subtitle,
-    letterSpacing: letterSpacing.slight,
-    textAlign: 'center',
-    marginBottom: spacing.xs,
-  },
-  cardTitleMobile: {
-    fontSize: fontSizes.bodyLarge,
-    lineHeight: lineHeights.bodyLarge,
-    textAlign: 'center',
-    marginBottom: spacing.xxs,
-  },
-  cardSubtitle: {
-    color: colors.textOnDark,
-    fontSize: fontSizes.small,
-    lineHeight: lineHeights.small,
-    textAlign: 'center',
-    marginBottom: spacing.md,
-  },
-  cardSubtitleMobile: {
-    fontSize: fontSizes.caption,
-    lineHeight: lineHeights.caption,
-    textAlign: 'center',
-    marginBottom: spacing.sm,
-  },
-  cardAction: {
-    minHeight: layout.minTouchTarget,
-    minWidth: 160,
-    borderWidth: borderWidth.thin,
-    borderColor: colors.white,
-    borderRadius: radius.pill,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: spacing.lg,
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  cardActionHovered: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
-  cardActionMobile: {
-    width: '100%',
-    minWidth: 0,
-    minHeight: 40,
-    paddingHorizontal: spacing.sm,
-  },
-  cardActionText: {
-    color: colors.white,
-    fontSize: fontSizes.caption,
-    fontWeight: fontWeights.bold,
-    letterSpacing: letterSpacing.wider,
-    textTransform: 'uppercase',
-  },
-  cardActionTextHovered: {
-    color: colors.white,
-  },
-  cardActionTextMobile: {
-    fontSize: 10,
-    letterSpacing: letterSpacing.wide,
-  },
 });
+
+function createStyles(colors: ThemeColors, cardShadow: object) {
+  return StyleSheet.create({
+    card: {
+      width: 280,
+      aspectRatio: 3 / 4,
+      borderRadius: radius.md,
+      overflow: 'hidden',
+      backgroundColor: colors.primaryDark,
+      ...cardShadow,
+    },
+    cardTablet: {
+      width: undefined,
+      flexBasis: '47%',
+      flexGrow: 1,
+    },
+    cardMobile: {
+      width: undefined,
+      flexBasis: '47%',
+      flexGrow: 1,
+      aspectRatio: 4 / 5,
+      borderRadius: radius.sm,
+    },
+    cardDesktop: {
+      flexBasis: '22%',
+    },
+    cardPressed: {
+      opacity: 0.92,
+      transform: [{ scale: 0.99 }],
+    },
+    cardHovered: {
+      transform: [{ translateY: -6 }],
+      shadowOpacity: 0.18,
+      shadowRadius: 18,
+      elevation: 7,
+    },
+    image: {
+      flex: 1,
+      justifyContent: 'flex-end',
+      overflow: 'hidden',
+    },
+    imageAsset: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+    },
+    imageAssetHovered: {
+      transform: [{ scale: 1.025 }],
+    },
+    overlay: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      backgroundColor: colors.overlayNeutral,
+    },
+    overlayHovered: {
+      opacity: 0.9,
+    },
+    cardContent: {
+      flex: 1,
+      justifyContent: 'flex-end',
+      alignItems: 'center',
+      padding: spacing.lg,
+    },
+    cardContentMobile: {
+      alignItems: 'center',
+      padding: spacing.sm,
+    },
+    cardTitle: {
+      color: colors.white,
+      fontFamily: fonts.heading,
+      fontSize: fontSizes.subtitle,
+      lineHeight: lineHeights.subtitle,
+      letterSpacing: letterSpacing.slight,
+      textAlign: 'center',
+      marginBottom: spacing.xs,
+    },
+    cardTitleMobile: {
+      fontSize: fontSizes.bodyLarge,
+      lineHeight: lineHeights.bodyLarge,
+      textAlign: 'center',
+      marginBottom: spacing.xxs,
+    },
+    cardSubtitle: {
+      color: colors.textOnDark,
+      fontSize: fontSizes.small,
+      lineHeight: lineHeights.small,
+      textAlign: 'center',
+      marginBottom: spacing.md,
+    },
+    cardSubtitleMobile: {
+      fontSize: fontSizes.caption,
+      lineHeight: lineHeights.caption,
+      textAlign: 'center',
+      marginBottom: spacing.sm,
+    },
+    cardAction: {
+      minHeight: layout.minTouchTarget,
+      minWidth: 160,
+      borderWidth: borderWidth.thin,
+      borderColor: colors.white,
+      borderRadius: radius.pill,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: spacing.lg,
+      flexDirection: 'row',
+      gap: spacing.sm,
+    },
+    cardActionHovered: {
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
+    },
+    cardActionMobile: {
+      width: '100%',
+      minWidth: 0,
+      minHeight: 40,
+      paddingHorizontal: spacing.sm,
+    },
+    cardActionText: {
+      color: colors.white,
+      fontSize: fontSizes.caption,
+      fontWeight: fontWeights.bold,
+      letterSpacing: letterSpacing.wider,
+      textTransform: 'uppercase',
+    },
+    cardActionTextHovered: {
+      color: colors.white,
+    },
+    cardActionTextMobile: {
+      fontSize: 10,
+      letterSpacing: letterSpacing.wide,
+    },
+  });
+}

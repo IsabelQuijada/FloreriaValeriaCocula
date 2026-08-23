@@ -1,10 +1,11 @@
 import { FontAwesome } from '@expo/vector-icons';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { Animated, Pressable, StyleSheet } from 'react-native';
 import { CONTACT_INFO } from '../data/content';
 import { useBreakpoint } from '../hooks/useBreakpoint';
 import { useHover } from '../hooks/useHover';
-import { colors, radius, shadows, spacing } from '../theme';
+import { useTheme } from '../hooks/useTheme';
+import { radius, spacing } from '../theme';
 import { openExternalUrl } from '../utils/links';
 
 /**
@@ -16,7 +17,45 @@ import { openExternalUrl } from '../utils/links';
 export default function WhatsAppFab() {
   const { isMobile } = useBreakpoint();
   const { hovered, hoverProps } = useHover();
+  const { colors, shadows } = useTheme();
   const pulse = useRef(new Animated.Value(1)).current;
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        wrapper: {
+          position: 'absolute',
+          right: spacing.md,
+          bottom: spacing.md,
+          zIndex: 10,
+        },
+        wrapperMobile: {
+          right: spacing.sm,
+          bottom: spacing.sm,
+        },
+        fab: {
+          width: 56,
+          height: 56,
+          borderRadius: radius.pill,
+          backgroundColor: colors.whatsapp,
+          alignItems: 'center',
+          justifyContent: 'center',
+          ...shadows.lg,
+        },
+        fabMobile: {
+          width: 48,
+          height: 48,
+        },
+        fabHovered: {
+          backgroundColor: colors.whatsappDark,
+          transform: [{ scale: 1.08 }],
+        },
+        fabPressed: {
+          backgroundColor: colors.whatsappDark,
+          transform: [{ scale: 0.96 }],
+        },
+      }),
+    [colors, shadows],
+  );
 
   useEffect(() => {
     const animation = Animated.sequence([
@@ -55,37 +94,3 @@ export default function WhatsAppFab() {
     </Animated.View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrapper: {
-    position: 'absolute',
-    right: spacing.md,
-    bottom: spacing.md,
-    zIndex: 10,
-  },
-  wrapperMobile: {
-    right: spacing.sm,
-    bottom: spacing.sm,
-  },
-  fab: {
-    width: 56,
-    height: 56,
-    borderRadius: radius.pill,
-    backgroundColor: colors.whatsapp,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...shadows.lg,
-  },
-  fabMobile: {
-    width: 48,
-    height: 48,
-  },
-  fabHovered: {
-    backgroundColor: colors.whatsappDark,
-    transform: [{ scale: 1.08 }],
-  },
-  fabPressed: {
-    backgroundColor: colors.whatsappDark,
-    transform: [{ scale: 0.96 }],
-  },
-});

@@ -29,19 +29,9 @@ import { CATEGORIES, getCategoryBySlug } from '../data/categories';
 import { CONTACT_INFO, ScreenName, whatsappProductUrl } from '../data/content';
 import { useBreakpoint } from '../hooks/useBreakpoint';
 import { useProductQuickView } from '../hooks/useProductQuickView';
+import { useTheme } from '../hooks/useTheme';
 import { openExternalUrl } from '../utils/links';
-import {
-  borderWidth,
-  colors,
-  fontSizes,
-  fontWeights,
-  layout,
-  lineHeights,
-  radius,
-  shadows,
-  spacing,
-  textPresets,
-} from '../theme';
+import { borderWidth, fontSizes, fontWeights, layout, lineHeights, radius, spacing } from '../theme';
 
 /** Productos que se agregan al grid con cada "Ver más". */
 const PAGE_SIZE = 24;
@@ -56,6 +46,265 @@ export default function CatalogScreen({
   initialCategorySlug = 'all',
 }: CatalogScreenProps) {
   const { isDesktop, isMobile } = useBreakpoint();
+  const { colors, shadows, textPresets } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        desktopLayout: {
+          flexDirection: 'row',
+          alignItems: 'flex-start',
+          gap: spacing.xl,
+        },
+        sidebar: {
+          width: 264,
+          flexShrink: 0,
+          gap: spacing.xxs,
+        },
+        sidebarKicker: {
+          ...textPresets.kicker,
+          marginTop: spacing.md,
+          marginBottom: spacing.xs,
+        },
+        searchBox: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.sm,
+          borderWidth: borderWidth.thin,
+          borderColor: colors.border,
+          borderRadius: radius.pill,
+          backgroundColor: colors.surface,
+          paddingHorizontal: spacing.md,
+          minHeight: layout.minTouchTarget,
+        },
+        searchInput: {
+          flex: 1,
+          color: colors.text,
+          fontSize: fontSizes.small,
+          paddingVertical: 0,
+          ...Platform.select({
+            web: {
+              outlineStyle: 'none',
+            } as object,
+          }),
+        },
+        searchBoxFocused: {
+          borderColor: colors.focus,
+        },
+        filterRow: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: spacing.sm,
+          minHeight: 40,
+          paddingHorizontal: spacing.sm,
+          borderRadius: radius.sm,
+        },
+        filterRowIndented: {
+          paddingLeft: spacing.md,
+        },
+        filterRowActive: {
+          backgroundColor: colors.accentSoft,
+        },
+        filterRowLabel: {
+          color: colors.text,
+          fontSize: fontSizes.small,
+          flexShrink: 1,
+        },
+        filterRowLabelActive: {
+          color: colors.primary,
+          fontWeight: fontWeights.semibold,
+        },
+        filterRowCount: {
+          color: colors.textMuted,
+          fontSize: fontSizes.caption,
+        },
+        filterRowCountActive: {
+          color: colors.primary,
+        },
+        subList: {
+          borderLeftWidth: borderWidth.thin,
+          borderLeftColor: colors.border,
+          marginLeft: spacing.sm,
+          marginBottom: spacing.xs,
+        },
+        chipsBlock: {
+          gap: spacing.sm,
+          marginBottom: spacing.lg,
+        },
+        chipsRow: {
+          gap: spacing.sm,
+          paddingVertical: spacing.xxs,
+        },
+        chip: {
+          minHeight: layout.minTouchTarget,
+          justifyContent: 'center',
+          paddingHorizontal: spacing.lg,
+          borderRadius: radius.pill,
+          borderWidth: borderWidth.thin,
+          borderColor: colors.primary,
+          backgroundColor: colors.surface,
+        },
+        chipActive: {
+          backgroundColor: colors.primary,
+        },
+        chipLabel: {
+          color: colors.primary,
+          fontSize: fontSizes.small,
+          fontWeight: fontWeights.semibold,
+        },
+        chipLabelActive: {
+          color: colors.textOnDark,
+        },
+        subChip: {
+          minHeight: 40,
+          justifyContent: 'center',
+          paddingHorizontal: spacing.md,
+          borderRadius: radius.pill,
+          backgroundColor: colors.accentSoft,
+        },
+        subChipActive: {
+          backgroundColor: colors.primaryDark,
+        },
+        subChipLabel: {
+          color: colors.primary,
+          fontSize: fontSizes.caption,
+          fontWeight: fontWeights.semibold,
+        },
+        subChipLabelActive: {
+          color: colors.textOnDark,
+        },
+        mobileFilterBar: {
+          gap: spacing.sm,
+          marginBottom: spacing.lg,
+        },
+        filterTrigger: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.sm,
+          minHeight: layout.minTouchTarget,
+          paddingHorizontal: spacing.md,
+          borderRadius: radius.pill,
+          borderWidth: borderWidth.thin,
+          borderColor: colors.primary,
+          backgroundColor: colors.surface,
+        },
+        filterTriggerLabel: {
+          flex: 1,
+          color: colors.primary,
+          fontSize: fontSizes.small,
+          fontWeight: fontWeights.semibold,
+        },
+        filterBadge: {
+          minWidth: 20,
+          height: 20,
+          borderRadius: radius.pill,
+          backgroundColor: colors.primary,
+          alignItems: 'center',
+          justifyContent: 'center',
+          paddingHorizontal: spacing.xxs,
+        },
+        filterBadgeText: {
+          color: colors.textOnDark,
+          fontSize: fontSizes.caption,
+          fontWeight: fontWeights.bold,
+        },
+        sheetBackdrop: {
+          flex: 1,
+          backgroundColor: colors.overlayDark,
+          justifyContent: 'flex-end',
+        },
+        sheetPanel: {
+          backgroundColor: colors.surface,
+          borderTopLeftRadius: radius.lg,
+          borderTopRightRadius: radius.lg,
+          maxHeight: '80%',
+          paddingTop: spacing.sm,
+          paddingHorizontal: spacing.lg,
+          paddingBottom: spacing.lg,
+          ...shadows.lg,
+        },
+        sheetHandle: {
+          width: 40,
+          height: 4,
+          borderRadius: radius.pill,
+          backgroundColor: colors.border,
+          alignSelf: 'center',
+          marginBottom: spacing.md,
+        },
+        sheetHeader: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: spacing.sm,
+        },
+        sheetTitle: {
+          color: colors.text,
+          fontSize: fontSizes.bodyLarge,
+          fontWeight: fontWeights.semibold,
+        },
+        sheetListContent: {
+          gap: spacing.xxs,
+          paddingBottom: spacing.md,
+        },
+        sheetFooter: {
+          paddingTop: spacing.sm,
+          borderTopWidth: borderWidth.thin,
+          borderTopColor: colors.border,
+        },
+        sheetApplyButton: {
+          alignSelf: 'stretch',
+        },
+        results: {
+          flex: 1,
+        },
+        mobileGrid: {
+          justifyContent: 'space-between',
+        },
+        mobileCatalogCard: {
+          width: '48%',
+          maxWidth: '48%',
+          flexBasis: '48%',
+          flexGrow: 0,
+        },
+        resultsHeader: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          marginBottom: spacing.md,
+        },
+        clearButton: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.xs,
+          minHeight: 36,
+          paddingHorizontal: spacing.sm,
+          borderRadius: radius.pill,
+          backgroundColor: colors.accentSoft,
+        },
+        clearLabel: {
+          color: colors.primary,
+          fontSize: fontSizes.caption,
+          fontWeight: fontWeights.semibold,
+        },
+        orderNotice: {
+          alignSelf: 'center',
+          maxWidth: layout.textMaxWidth,
+          marginBottom: spacing.lg,
+        },
+        emptyState: {
+          color: colors.textMuted,
+          fontSize: fontSizes.body,
+          lineHeight: lineHeights.body,
+          textAlign: 'center',
+          paddingVertical: spacing.xl,
+        },
+        loadMore: {
+          alignItems: 'center',
+          marginTop: spacing.xl,
+        },
+      }),
+    [colors, shadows, textPresets],
+  );
   const [categorySlug, setCategorySlug] = useState(
     getCategoryBySlug(initialCategorySlug) ? initialCategorySlug : 'all',
   );
@@ -428,257 +677,3 @@ export default function CatalogScreen({
   );
 }
 
-const styles = StyleSheet.create({
-  desktopLayout: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: spacing.xl,
-  },
-  sidebar: {
-    width: 264,
-    flexShrink: 0,
-    gap: spacing.xxs,
-  },
-  sidebarKicker: {
-    ...textPresets.kicker,
-    marginTop: spacing.md,
-    marginBottom: spacing.xs,
-  },
-  searchBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    borderWidth: borderWidth.thin,
-    borderColor: colors.border,
-    borderRadius: radius.pill,
-    backgroundColor: colors.surface,
-    paddingHorizontal: spacing.md,
-    minHeight: layout.minTouchTarget,
-  },
-  searchInput: {
-    flex: 1,
-    color: colors.text,
-    fontSize: fontSizes.small,
-    paddingVertical: 0,
-    ...Platform.select({
-      web: {
-        outlineStyle: 'none',
-      } as object,
-    }),
-  },
-  searchBoxFocused: {
-    borderColor: colors.focus,
-  },
-  filterRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: spacing.sm,
-    minHeight: 40,
-    paddingHorizontal: spacing.sm,
-    borderRadius: radius.sm,
-  },
-  filterRowIndented: {
-    paddingLeft: spacing.md,
-  },
-  filterRowActive: {
-    backgroundColor: colors.accentSoft,
-  },
-  filterRowLabel: {
-    color: colors.text,
-    fontSize: fontSizes.small,
-    flexShrink: 1,
-  },
-  filterRowLabelActive: {
-    color: colors.primary,
-    fontWeight: fontWeights.semibold,
-  },
-  filterRowCount: {
-    color: colors.textMuted,
-    fontSize: fontSizes.caption,
-  },
-  filterRowCountActive: {
-    color: colors.primary,
-  },
-  subList: {
-    borderLeftWidth: borderWidth.thin,
-    borderLeftColor: colors.border,
-    marginLeft: spacing.sm,
-    marginBottom: spacing.xs,
-  },
-  chipsBlock: {
-    gap: spacing.sm,
-    marginBottom: spacing.lg,
-  },
-  chipsRow: {
-    gap: spacing.sm,
-    paddingVertical: spacing.xxs,
-  },
-  chip: {
-    minHeight: layout.minTouchTarget,
-    justifyContent: 'center',
-    paddingHorizontal: spacing.lg,
-    borderRadius: radius.pill,
-    borderWidth: borderWidth.thin,
-    borderColor: colors.primary,
-    backgroundColor: colors.surface,
-  },
-  chipActive: {
-    backgroundColor: colors.primary,
-  },
-  chipLabel: {
-    color: colors.primary,
-    fontSize: fontSizes.small,
-    fontWeight: fontWeights.semibold,
-  },
-  chipLabelActive: {
-    color: colors.textOnDark,
-  },
-  subChip: {
-    minHeight: 40,
-    justifyContent: 'center',
-    paddingHorizontal: spacing.md,
-    borderRadius: radius.pill,
-    backgroundColor: colors.accentSoft,
-  },
-  subChipActive: {
-    backgroundColor: colors.primaryDark,
-  },
-  subChipLabel: {
-    color: colors.primary,
-    fontSize: fontSizes.caption,
-    fontWeight: fontWeights.semibold,
-  },
-  subChipLabelActive: {
-    color: colors.textOnDark,
-  },
-  mobileFilterBar: {
-    gap: spacing.sm,
-    marginBottom: spacing.lg,
-  },
-  filterTrigger: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    minHeight: layout.minTouchTarget,
-    paddingHorizontal: spacing.md,
-    borderRadius: radius.pill,
-    borderWidth: borderWidth.thin,
-    borderColor: colors.primary,
-    backgroundColor: colors.surface,
-  },
-  filterTriggerLabel: {
-    flex: 1,
-    color: colors.primary,
-    fontSize: fontSizes.small,
-    fontWeight: fontWeights.semibold,
-  },
-  filterBadge: {
-    minWidth: 20,
-    height: 20,
-    borderRadius: radius.pill,
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: spacing.xxs,
-  },
-  filterBadgeText: {
-    color: colors.textOnDark,
-    fontSize: fontSizes.caption,
-    fontWeight: fontWeights.bold,
-  },
-  sheetBackdrop: {
-    flex: 1,
-    backgroundColor: colors.overlayDark,
-    justifyContent: 'flex-end',
-  },
-  sheetPanel: {
-    backgroundColor: colors.surface,
-    borderTopLeftRadius: radius.lg,
-    borderTopRightRadius: radius.lg,
-    maxHeight: '80%',
-    paddingTop: spacing.sm,
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.lg,
-    ...shadows.lg,
-  },
-  sheetHandle: {
-    width: 40,
-    height: 4,
-    borderRadius: radius.pill,
-    backgroundColor: colors.border,
-    alignSelf: 'center',
-    marginBottom: spacing.md,
-  },
-  sheetHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: spacing.sm,
-  },
-  sheetTitle: {
-    color: colors.text,
-    fontSize: fontSizes.bodyLarge,
-    fontWeight: fontWeights.semibold,
-  },
-  sheetListContent: {
-    gap: spacing.xxs,
-    paddingBottom: spacing.md,
-  },
-  sheetFooter: {
-    paddingTop: spacing.sm,
-    borderTopWidth: borderWidth.thin,
-    borderTopColor: colors.border,
-  },
-  sheetApplyButton: {
-    alignSelf: 'stretch',
-  },
-  results: {
-    flex: 1,
-  },
-  mobileGrid: {
-    justifyContent: 'space-between',
-  },
-  mobileCatalogCard: {
-    width: '48%',
-    maxWidth: '48%',
-    flexBasis: '48%',
-    flexGrow: 0,
-  },
-  resultsHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    marginBottom: spacing.md,
-  },
-  clearButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-    minHeight: 36,
-    paddingHorizontal: spacing.sm,
-    borderRadius: radius.pill,
-    backgroundColor: colors.accentSoft,
-  },
-  clearLabel: {
-    color: colors.primary,
-    fontSize: fontSizes.caption,
-    fontWeight: fontWeights.semibold,
-  },
-  orderNotice: {
-    alignSelf: 'center',
-    maxWidth: layout.textMaxWidth,
-    marginBottom: spacing.lg,
-  },
-  emptyState: {
-    color: colors.textMuted,
-    fontSize: fontSizes.body,
-    lineHeight: lineHeights.body,
-    textAlign: 'center',
-    paddingVertical: spacing.xl,
-  },
-  loadMore: {
-    alignItems: 'center',
-    marginTop: spacing.xl,
-  },
-});

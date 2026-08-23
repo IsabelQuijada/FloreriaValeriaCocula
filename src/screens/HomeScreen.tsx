@@ -21,10 +21,10 @@ import {
 import { getRandomFavorites } from '../data/favorites';
 import { useBreakpoint } from '../hooks/useBreakpoint';
 import { useProductQuickView } from '../hooks/useProductQuickView';
+import { useTheme } from '../hooks/useTheme';
 import { openExternalUrl } from '../utils/links';
 import {
   borderWidth,
-  colors,
   fonts,
   fontSizes,
   fontWeights,
@@ -32,7 +32,6 @@ import {
   letterSpacing,
   lineHeights,
   radius,
-  shadows,
   spacing,
   webBerryGradient,
   webGlassBlur,
@@ -52,6 +51,171 @@ export default function HomeScreen({
   onFavoritesLayout,
 }: HomeScreenProps) {
   const { isMobile, isTablet } = useBreakpoint();
+  const { colors, shadows } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        screen: {
+          width: '100%',
+          alignSelf: 'stretch',
+        },
+        servicesSectionMobile: {
+          paddingVertical: spacing.lg,
+        },
+        favoritesSectionMobile: {
+          paddingVertical: spacing.lg,
+        },
+        mobileBenefits: {
+          width: '100%',
+          backgroundColor: colors.surface,
+          borderWidth: borderWidth.thin,
+          borderColor: colors.border,
+          borderRadius: radius.md,
+          paddingHorizontal: spacing.md,
+          ...shadows.sm,
+        },
+        mobileBenefitRow: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.md,
+          paddingVertical: spacing.md,
+        },
+        mobileBenefitRowBorder: {
+          borderBottomWidth: borderWidth.hairline,
+          borderBottomColor: colors.border,
+        },
+        mobileBenefitCopy: {
+          flex: 1,
+        },
+        mobileBenefitTitle: {
+          color: colors.text,
+          fontSize: fontSizes.body,
+          fontWeight: fontWeights.bold,
+          lineHeight: lineHeights.body,
+          marginBottom: spacing.xxs,
+        },
+        mobileBenefitDescription: {
+          color: colors.textMuted,
+          fontSize: fontSizes.small,
+          lineHeight: lineHeights.small,
+        },
+        hero: {
+          width: '100%',
+          alignSelf: 'stretch',
+          minHeight: 520,
+          overflow: 'hidden',
+        },
+        heroImage: {
+          width: '100%',
+          height: '100%',
+        },
+        heroWide: {
+          minHeight: 650,
+        },
+        heroOverlay: {
+          flex: 1,
+          justifyContent: 'center',
+          paddingHorizontal: layout.gutter,
+          paddingVertical: spacing.xxl,
+        },
+        heroOverlayMobile: {
+          justifyContent: 'flex-end',
+          paddingHorizontal: spacing.md,
+          paddingVertical: spacing.lg,
+        },
+        heroContentBoundary: {
+          width: '100%',
+          maxWidth: layout.navigationMaxWidth,
+          alignSelf: 'center',
+        },
+        heroContentCard: {
+          width: '100%',
+          maxWidth: 600,
+          backgroundColor: colors.heroPanel,
+          borderRadius: radius.lg,
+          borderWidth: borderWidth.thin,
+          borderColor: 'rgba(255, 255, 255, 0.65)',
+          padding: spacing.lg,
+          alignItems: 'flex-start',
+          ...shadows.lg,
+        },
+        heroContentCardWide: {
+          padding: spacing.xl,
+        },
+        heroContentCardMobile: {
+          padding: spacing.md,
+        },
+        heroKicker: {
+          color: colors.primary,
+          fontFamily: fonts.accentItalic,
+          fontSize: fontSizes.subtitle,
+          lineHeight: lineHeights.subtitle,
+          letterSpacing: letterSpacing.slight,
+          marginBottom: spacing.sm,
+          textAlign: 'left',
+        },
+        heroTitle: {
+          color: colors.accentStrong,
+          fontFamily: fonts.headingBold,
+          fontSize: fontSizes.titleLarge,
+          lineHeight: lineHeights.titleLarge,
+          textAlign: 'left',
+          marginBottom: spacing.md,
+        },
+        heroTitleWide: {
+          fontSize: fontSizes.hero,
+          lineHeight: lineHeights.hero,
+        },
+        heroSubtitle: {
+          color: colors.textMuted,
+          fontSize: fontSizes.bodyLarge,
+          textAlign: 'left',
+          lineHeight: lineHeights.bodyLarge,
+          maxWidth: layout.heroTextMaxWidth,
+          marginBottom: spacing.lg,
+        },
+        heroButtons: {
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          gap: spacing.md,
+          justifyContent: 'flex-start',
+        },
+        heroButtonsMobile: {
+          width: '100%',
+          gap: spacing.sm,
+        },
+        heroButtonMobile: {
+          width: '100%',
+          alignSelf: 'stretch',
+        },
+        banner: {
+          backgroundColor: colors.accent,
+          paddingVertical: spacing.md,
+          paddingHorizontal: layout.gutter,
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: spacing.sm,
+        },
+        bannerText: {
+          color: colors.textOnDark,
+          fontSize: fontSizes.small,
+          fontWeight: fontWeights.bold,
+          letterSpacing: letterSpacing.slight,
+          textAlign: 'center',
+        },
+        bannerMobile: {
+          minHeight: layout.minTouchTarget,
+          paddingVertical: spacing.sm,
+          paddingHorizontal: spacing.md,
+        },
+        bannerTextMobile: {
+          fontSize: fontSizes.small,
+          flexShrink: 1,
+        },
+      }),
+    [colors, shadows],
+  );
   const highlights = ['s2', 's1', 's3'].map(
     (serviceId) => SERVICES.find((service) => service.id === serviceId)!,
   );
@@ -204,164 +368,3 @@ export default function HomeScreen({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  screen: {
-    width: '100%',
-    alignSelf: 'stretch',
-  },
-  servicesSectionMobile: {
-    paddingVertical: spacing.lg,
-  },
-  favoritesSectionMobile: {
-    paddingVertical: spacing.lg,
-  },
-  mobileBenefits: {
-    width: '100%',
-    backgroundColor: colors.surface,
-    borderWidth: borderWidth.thin,
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
-    ...shadows.sm,
-  },
-  mobileBenefitRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    paddingVertical: spacing.md,
-  },
-  mobileBenefitRowBorder: {
-    borderBottomWidth: borderWidth.hairline,
-    borderBottomColor: colors.border,
-  },
-  mobileBenefitCopy: {
-    flex: 1,
-  },
-  mobileBenefitTitle: {
-    color: colors.text,
-    fontSize: fontSizes.body,
-    fontWeight: fontWeights.bold,
-    lineHeight: lineHeights.body,
-    marginBottom: spacing.xxs,
-  },
-  mobileBenefitDescription: {
-    color: colors.textMuted,
-    fontSize: fontSizes.small,
-    lineHeight: lineHeights.small,
-  },
-  hero: {
-    width: '100%',
-    alignSelf: 'stretch',
-    minHeight: 520,
-    overflow: 'hidden',
-  },
-  heroImage: {
-    width: '100%',
-    height: '100%',
-  },
-  heroWide: {
-    minHeight: 650,
-  },
-  heroOverlay: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: layout.gutter,
-    paddingVertical: spacing.xxl,
-  },
-  heroOverlayMobile: {
-    justifyContent: 'flex-end',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.lg,
-  },
-  heroContentBoundary: {
-    width: '100%',
-    maxWidth: layout.navigationMaxWidth,
-    alignSelf: 'center',
-  },
-  heroContentCard: {
-    width: '100%',
-    maxWidth: 600,
-    backgroundColor: colors.heroPanel,
-    borderRadius: radius.lg,
-    borderWidth: borderWidth.thin,
-    borderColor: 'rgba(255, 255, 255, 0.65)',
-    padding: spacing.lg,
-    alignItems: 'flex-start',
-    ...shadows.lg,
-  },
-  heroContentCardWide: {
-    padding: spacing.xl,
-  },
-  heroContentCardMobile: {
-    padding: spacing.md,
-  },
-  heroKicker: {
-    color: colors.primary,
-    fontFamily: fonts.accentItalic,
-    fontSize: fontSizes.subtitle,
-    lineHeight: lineHeights.subtitle,
-    letterSpacing: letterSpacing.slight,
-    marginBottom: spacing.sm,
-    textAlign: 'left',
-  },
-  heroTitle: {
-    color: colors.primaryDark,
-    fontFamily: fonts.headingBold,
-    fontSize: fontSizes.titleLarge,
-    lineHeight: lineHeights.titleLarge,
-    textAlign: 'left',
-    marginBottom: spacing.md,
-  },
-  heroTitleWide: {
-    fontSize: fontSizes.hero,
-    lineHeight: lineHeights.hero,
-  },
-  heroSubtitle: {
-    color: colors.textMuted,
-    fontSize: fontSizes.bodyLarge,
-    textAlign: 'left',
-    lineHeight: lineHeights.bodyLarge,
-    maxWidth: layout.heroTextMaxWidth,
-    marginBottom: spacing.lg,
-  },
-  heroButtons: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.md,
-    justifyContent: 'flex-start',
-  },
-  heroButtonsMobile: {
-    width: '100%',
-    gap: spacing.sm,
-  },
-  heroButtonMobile: {
-    width: '100%',
-    alignSelf: 'stretch',
-  },
-  banner: {
-    backgroundColor: colors.accent,
-    paddingVertical: spacing.md,
-    paddingHorizontal: layout.gutter,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  bannerText: {
-    color: colors.textOnDark,
-    fontSize: fontSizes.small,
-    fontWeight: fontWeights.bold,
-    letterSpacing: letterSpacing.slight,
-    textAlign: 'center',
-  },
-  bannerMobile: {
-    minHeight: layout.minTouchTarget,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-  },
-  bannerTextMobile: {
-    fontSize: fontSizes.small,
-    flexShrink: 1,
-  },
-});

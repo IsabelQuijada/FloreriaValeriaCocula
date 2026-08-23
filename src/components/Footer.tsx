@@ -1,13 +1,13 @@
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { BRAND, CONTACT_INFO, HERO, ScreenName } from '../data/content';
 import { useBreakpoint } from '../hooks/useBreakpoint';
 import { useHover, useHoverKey } from '../hooks/useHover';
+import { useTheme } from '../hooks/useTheme';
 import { openExternalUrl } from '../utils/links';
 import {
   borderWidth,
-  colors,
   fonts,
   fontSizes,
   fontWeights,
@@ -16,6 +16,7 @@ import {
   lineHeights,
   radius,
   spacing,
+  ThemeColors,
   webBerryGradient,
   webTransition,
 } from '../theme';
@@ -57,9 +58,37 @@ interface ContactLinkProps {
 
 function ContactLink({ icon, label, onPress }: ContactLinkProps) {
   const { hovered, hoverProps } = useHover();
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        contactRow: {
+          minHeight: 44,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.md,
+        },
+        contactText: {
+          color: colors.primary,
+          fontSize: fontSizes.body,
+          lineHeight: lineHeights.body,
+          flexShrink: 1,
+        },
+        contactRowHovered: {
+          transform: [{ translateX: 5 }],
+        },
+        contactTextHovered: {
+          color: colors.primaryEmphasis,
+        },
+        pressed: {
+          opacity: 0.6,
+        },
+      }),
+    [colors],
+  );
   const content = (
     <>
-      <Ionicons name={icon} size={20} color={hovered ? colors.primaryDark : colors.primary} />
+      <Ionicons name={icon} size={20} color={hovered ? colors.primaryEmphasis : colors.primary} />
       <Text style={[styles.contactText, hovered && styles.contactTextHovered]}>{label}</Text>
     </>
   );
@@ -86,6 +115,8 @@ function ContactLink({ icon, label, onPress }: ContactLinkProps) {
 export default function Footer({ onNavigate }: FooterProps) {
   const { isMobile, isDesktop } = useBreakpoint();
   const { isHovered, hoverProps } = useHoverKey();
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
 
   if (isMobile) {
     return (
@@ -288,7 +319,7 @@ export default function Footer({ onNavigate }: FooterProps) {
               <Ionicons
                 name={item.icon}
                 size={20}
-                color={isHovered(`link-${item.screen}`) ? colors.primary : colors.primaryDark}
+                color={isHovered(`link-${item.screen}`) ? colors.primary : colors.accentStrong}
               />
               <Text
                 style={[
@@ -312,345 +343,215 @@ export default function Footer({ onNavigate }: FooterProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.sand,
-  },
-  mobileContainer: {
-    backgroundColor: colors.sand,
-  },
-  mobileFooter: {
-    backgroundColor: colors.sand,
-    borderTopLeftRadius: radius.lg,
-    borderTopRightRadius: radius.lg,
-    borderTopWidth: borderWidth.thin,
-    borderTopColor: colors.champagne,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.xl,
-    overflow: 'hidden',
-  },
-  mobileGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    columnGap: spacing.lg,
-    rowGap: spacing.xl,
-  },
-  mobileGridSection: {
-    flexBasis: '46%',
-    flexGrow: 1,
-  },
-  mobileSectionTitle: {
-    color: colors.primary,
-    fontFamily: fonts.heading,
-    fontSize: fontSizes.subtitle,
-    lineHeight: lineHeights.subtitle,
-    letterSpacing: letterSpacing.slight,
-  },
-  mobileTitleAccent: {
-    width: spacing.lg,
-    height: borderWidth.thin,
-    backgroundColor: colors.champagne,
-    marginTop: spacing.xxs,
-    marginBottom: spacing.sm,
-  },
-  mobileTextLink: {
-    minHeight: layout.minTouchTarget,
-    justifyContent: 'center',
-  },
-  mobileContactLink: {
-    minHeight: layout.minTouchTarget,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  mobileSocials: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  mobileSocialButton: {
-    width: layout.minTouchTarget,
-    height: layout.minTouchTarget,
-    borderWidth: borderWidth.thin,
-    borderColor: colors.champagne,
-    borderRadius: radius.pill,
-    backgroundColor: colors.secondaryButton,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  mobileCopyright: {
-    color: colors.textOnDark,
-    backgroundColor: colors.primary,
-    fontSize: fontSizes.caption,
-    lineHeight: lineHeights.caption,
-    textAlign: 'center',
-    paddingVertical: spacing.sm,
-    paddingHorizontal: layout.gutter,
-  },
-  mobileBrand: {
-    alignItems: 'center',
-  },
-  mobileTagline: {
-    color: colors.primary,
-    fontFamily: fonts.accentItalic,
-    fontSize: fontSizes.body,
-    lineHeight: lineHeights.body,
-  },
-  mobileActions: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  mobileAction: {
-    flex: 1,
-    minHeight: layout.minTouchTarget,
-    borderWidth: borderWidth.thin,
-    borderColor: colors.primary,
-    borderRadius: radius.pill,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-  },
-  mobileActionPrimary: {
-    backgroundColor: colors.primary,
-  },
-  mobileActionText: {
-    color: colors.primary,
-    fontSize: fontSizes.small,
-    fontWeight: fontWeights.semibold,
-  },
-  mobileActionTextPrimary: {
-    color: colors.textOnDark,
-    fontSize: fontSizes.small,
-    fontWeight: fontWeights.semibold,
-  },
-  mobileDetails: {
-    borderTopWidth: borderWidth.thin,
-    borderBottomWidth: borderWidth.thin,
-    borderColor: colors.borderStrong,
-    paddingVertical: spacing.xs,
-  },
-  mobileDetailRow: {
-    minHeight: layout.minTouchTarget,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  mobileDetailText: {
-    flex: 1,
-    color: colors.textMuted,
-    fontSize: fontSizes.small,
-    lineHeight: lineHeights.small,
-  },
-  mobileQuickLinks: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.xs,
-  },
-  mobileExploreLabel: {
-    color: colors.primaryDark,
-    fontSize: fontSizes.caption,
-    fontWeight: fontWeights.bold,
-    letterSpacing: letterSpacing.wider,
-    textTransform: 'uppercase',
-    marginBottom: spacing.xs,
-  },
-  mobileQuickLink: {
-    flexBasis: '48%',
-    flexGrow: 1,
-    minHeight: layout.minTouchTarget,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: spacing.xs,
-    paddingHorizontal: spacing.sm,
-  },
-  mobileQuickLinkText: {
-    color: colors.textMuted,
-    fontSize: fontSizes.small,
-    lineHeight: lineHeights.small,
-    flexShrink: 1,
-  },
-  footerContent: {
-    width: '100%',
-    maxWidth: layout.navigationMaxWidth,
-    alignSelf: 'center',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    paddingHorizontal: layout.gutterWide,
-    paddingVertical: spacing.xl,
-  },
-  footerContentMobile: {
-    paddingHorizontal: layout.gutter,
-    paddingVertical: spacing.lg,
-  },
-  panel: {
-    flexGrow: 1,
-    flexBasis: 280,
-    minHeight: 190,
-    paddingHorizontal: 0,
-    paddingVertical: spacing.md,
-    justifyContent: 'center',
-  },
-  panelDesktop: {
-    paddingHorizontal: spacing.xl,
-  },
-  panelMobile: {
-    flexBasis: '100%',
-    minHeight: 0,
-    paddingVertical: spacing.lg,
-  },
-  separatedPanel: {
-    borderTopWidth: borderWidth.thin,
-    borderTopColor: colors.borderStrong,
-  },
-  borderedPanelDesktop: {
-    borderTopWidth: 0,
-    borderRightWidth: borderWidth.thin,
-    borderRightColor: colors.borderStrong,
-  },
-  socialPanel: {
-    alignItems: 'center',
-  },
-  linksPanelDesktop: {
-    borderTopWidth: 0,
-  },
-  brandPanel: {
-    justifyContent: 'flex-start',
-  },
-  brandRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    marginBottom: spacing.xs,
-  },
-  brandName: {
-    color: colors.text,
-    fontFamily: fonts.heading,
-    fontSize: fontSizes.subtitle,
-    letterSpacing: letterSpacing.wide,
-  },
-  brandTagline: {
-    color: colors.primary,
-    fontFamily: fonts.accentItalic,
-    fontSize: fontSizes.bodyLarge,
-    lineHeight: lineHeights.bodyLarge,
-    marginBottom: spacing.sm,
-  },
-  brandDescription: {
-    color: colors.textMuted,
-    fontSize: fontSizes.small,
-    lineHeight: lineHeights.small,
-  },
-  contactRow: {
-    minHeight: 44,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  contactText: {
-    color: colors.primary,
-    fontSize: fontSizes.body,
-    lineHeight: lineHeights.body,
-    flexShrink: 1,
-  },
-  contactRowHovered: {
-    transform: [{ translateX: 5 }],
-  },
-  contactTextHovered: {
-    color: colors.primaryDark,
-  },
-  eyebrow: {
-    color: colors.primaryDark,
-    fontSize: fontSizes.small,
-    fontWeight: fontWeights.bold,
-    letterSpacing: letterSpacing.wider,
-    textTransform: 'uppercase',
-    marginBottom: spacing.sm,
-  },
-  socialRow: {
-    flexDirection: 'row',
-    gap: spacing.md,
-    marginBottom: spacing.md,
-  },
-  socialButton: {
-    width: layout.minTouchTarget,
-    height: layout.minTouchTarget,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: borderWidth.thin,
-    borderColor: colors.primary,
-    borderRadius: radius.pill,
-  },
-  socialButtonHovered: {
-    backgroundColor: colors.primary,
-    transform: [{ translateY: -3 }],
-  },
-  galleryButton: {
-    minHeight: 42,
-    backgroundColor: colors.primary,
-    borderRadius: radius.sm,
-    paddingHorizontal: spacing.lg,
-    justifyContent: 'center',
-  },
-  galleryPressed: {
-    backgroundColor: colors.primaryDark,
-  },
-  galleryHovered: {
-    backgroundColor: colors.primaryDark,
-    transform: [{ translateY: -2 }],
-  },
-  galleryLabel: {
-    color: colors.textOnDark,
-    fontSize: fontSizes.small,
-    fontWeight: fontWeights.bold,
-    letterSpacing: letterSpacing.wide,
-    textTransform: 'uppercase',
-  },
-  quickLink: {
-    minHeight: 44,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  quickLinkText: {
-    color: colors.text,
-    fontSize: fontSizes.body,
-    lineHeight: lineHeights.body,
-  },
-  quickLinkHovered: {
-    transform: [{ translateX: 5 }],
-  },
-  quickLinkTextHovered: {
-    color: colors.primary,
-  },
-  pressed: {
-    opacity: 0.6,
-  },
-  bottomBar: {
-    backgroundColor: colors.primary,
-    paddingVertical: spacing.md,
-    paddingHorizontal: layout.gutter,
-    alignItems: 'center',
-  },
-  bottomBarMobile: {
-    paddingVertical: spacing.sm,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: spacing.sm,
-  },
-  mobileBottomSocials: {
-    flexDirection: 'row',
-  },
-  mobileBottomSocialButton: {
-    width: layout.minTouchTarget,
-    height: layout.minTouchTarget,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  copyright: {
-    color: colors.textOnDark,
-    fontSize: fontSizes.caption,
-    lineHeight: lineHeights.caption,
-    textAlign: 'center',
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: {
+      backgroundColor: colors.footerBg,
+    },
+    mobileContainer: {
+      backgroundColor: colors.footerBg,
+    },
+    mobileFooter: {
+      backgroundColor: colors.footerBg,
+      borderTopLeftRadius: radius.lg,
+      borderTopRightRadius: radius.lg,
+      borderTopWidth: borderWidth.thin,
+      borderTopColor: colors.champagne,
+      paddingHorizontal: spacing.lg,
+      paddingVertical: spacing.xl,
+      overflow: 'hidden',
+    },
+    mobileGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      columnGap: spacing.lg,
+      rowGap: spacing.xl,
+    },
+    mobileGridSection: {
+      flexBasis: '46%',
+      flexGrow: 1,
+    },
+    mobileSectionTitle: {
+      color: colors.primary,
+      fontFamily: fonts.heading,
+      fontSize: fontSizes.subtitle,
+      lineHeight: lineHeights.subtitle,
+      letterSpacing: letterSpacing.slight,
+    },
+    mobileTitleAccent: {
+      width: spacing.lg,
+      height: borderWidth.thin,
+      backgroundColor: colors.champagne,
+      marginTop: spacing.xxs,
+      marginBottom: spacing.sm,
+    },
+    mobileTextLink: {
+      minHeight: layout.minTouchTarget,
+      justifyContent: 'center',
+    },
+    mobileContactLink: {
+      minHeight: layout.minTouchTarget,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.sm,
+    },
+    mobileSocials: {
+      flexDirection: 'row',
+      gap: spacing.sm,
+    },
+    mobileSocialButton: {
+      width: layout.minTouchTarget,
+      height: layout.minTouchTarget,
+      borderWidth: borderWidth.thin,
+      borderColor: colors.champagne,
+      borderRadius: radius.pill,
+      backgroundColor: colors.secondaryButton,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    mobileCopyright: {
+      color: colors.textOnDark,
+      backgroundColor: colors.primary,
+      fontSize: fontSizes.caption,
+      lineHeight: lineHeights.caption,
+      textAlign: 'center',
+      paddingVertical: spacing.sm,
+      paddingHorizontal: layout.gutter,
+    },
+    mobileQuickLinkText: {
+      color: colors.textMuted,
+      fontSize: fontSizes.small,
+      lineHeight: lineHeights.small,
+      flexShrink: 1,
+    },
+    footerContent: {
+      width: '100%',
+      maxWidth: layout.navigationMaxWidth,
+      alignSelf: 'center',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      paddingHorizontal: layout.gutterWide,
+      paddingVertical: spacing.xl,
+    },
+    footerContentMobile: {
+      paddingHorizontal: layout.gutter,
+      paddingVertical: spacing.lg,
+    },
+    panel: {
+      flexGrow: 1,
+      flexBasis: 280,
+      minHeight: 190,
+      paddingHorizontal: 0,
+      paddingVertical: spacing.md,
+      justifyContent: 'center',
+    },
+    panelDesktop: {
+      paddingHorizontal: spacing.xl,
+    },
+    panelMobile: {
+      flexBasis: '100%',
+      minHeight: 0,
+      paddingVertical: spacing.lg,
+    },
+    separatedPanel: {
+      borderTopWidth: borderWidth.thin,
+      borderTopColor: colors.borderStrong,
+    },
+    borderedPanelDesktop: {
+      borderTopWidth: 0,
+      borderRightWidth: borderWidth.thin,
+      borderRightColor: colors.borderStrong,
+    },
+    socialPanel: {
+      alignItems: 'center',
+    },
+    linksPanelDesktop: {
+      borderTopWidth: 0,
+    },
+    brandPanel: {
+      justifyContent: 'flex-start',
+    },
+    brandRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.sm,
+      marginBottom: spacing.xs,
+    },
+    brandName: {
+      color: colors.text,
+      fontFamily: fonts.heading,
+      fontSize: fontSizes.subtitle,
+      letterSpacing: letterSpacing.wide,
+    },
+    brandTagline: {
+      color: colors.primary,
+      fontFamily: fonts.accentItalic,
+      fontSize: fontSizes.bodyLarge,
+      lineHeight: lineHeights.bodyLarge,
+      marginBottom: spacing.sm,
+    },
+    brandDescription: {
+      color: colors.textMuted,
+      fontSize: fontSizes.small,
+      lineHeight: lineHeights.small,
+    },
+    eyebrow: {
+      color: colors.accentStrong,
+      fontSize: fontSizes.small,
+      fontWeight: fontWeights.bold,
+      letterSpacing: letterSpacing.wider,
+      textTransform: 'uppercase',
+      marginBottom: spacing.sm,
+    },
+    socialRow: {
+      flexDirection: 'row',
+      gap: spacing.md,
+      marginBottom: spacing.md,
+    },
+    socialButton: {
+      width: layout.minTouchTarget,
+      height: layout.minTouchTarget,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: borderWidth.thin,
+      borderColor: colors.primary,
+      borderRadius: radius.pill,
+    },
+    socialButtonHovered: {
+      backgroundColor: colors.primary,
+      transform: [{ translateY: -3 }],
+    },
+    quickLink: {
+      minHeight: 44,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.md,
+    },
+    quickLinkText: {
+      color: colors.text,
+      fontSize: fontSizes.body,
+      lineHeight: lineHeights.body,
+    },
+    quickLinkHovered: {
+      transform: [{ translateX: 5 }],
+    },
+    quickLinkTextHovered: {
+      color: colors.primary,
+    },
+    pressed: {
+      opacity: 0.6,
+    },
+    bottomBar: {
+      backgroundColor: colors.primary,
+      paddingVertical: spacing.md,
+      paddingHorizontal: layout.gutter,
+      alignItems: 'center',
+    },
+    copyright: {
+      color: colors.textOnDark,
+      fontSize: fontSizes.caption,
+      lineHeight: lineHeights.caption,
+      textAlign: 'center',
+    },
+  });
+}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import Card from '../components/Card';
 import CardGrid from '../components/CardGrid';
@@ -8,17 +8,8 @@ import SectionTitle from '../components/SectionTitle';
 import TrustStrip from '../components/TrustStrip';
 import { ScreenName } from '../data/content';
 import { useBreakpoint } from '../hooks/useBreakpoint';
-import {
-  colors,
-  fonts,
-  fontSizes,
-  fontWeights,
-  layout,
-  lineHeights,
-  radius,
-  shadows,
-  spacing,
-} from '../theme';
+import { useTheme } from '../hooks/useTheme';
+import { fonts, fontSizes, fontWeights, lineHeights, radius, spacing } from '../theme';
 
 interface AboutScreenProps {
   onNavigate: (screen: ScreenName) => void;
@@ -81,6 +72,193 @@ const TEAM_MEMBERS = [
 
 export default function AboutScreen({ onNavigate }: AboutScreenProps) {
   const { isMobile } = useBreakpoint();
+  const { colors, shadows } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        storyRow: {
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          gap: spacing.xl,
+          justifyContent: 'center',
+        },
+        storyRowMobile: {
+          gap: spacing.lg,
+        },
+        storyBody: {
+          flexGrow: 1,
+          flexBasis: 420,
+          maxWidth: 720,
+          justifyContent: 'center',
+        },
+        storyBodyMobile: {
+          width: '100%',
+          flexBasis: 'auto',
+        },
+        storyImage: {
+          flexGrow: 1,
+          flexBasis: 380,
+          maxWidth: 560,
+          height: 500,
+          alignSelf: 'center',
+          borderRadius: radius.lg,
+          backgroundColor: colors.surfaceMuted,
+          ...shadows.md,
+        },
+        storyImageMobile: {
+          width: '100%',
+          flexBasis: 'auto',
+          maxWidth: 420,
+          height: undefined,
+          aspectRatio: 1,
+        },
+        storyTitle: {
+          color: colors.accent,
+          fontFamily: fonts.heading,
+          fontSize: fontSizes.title,
+          lineHeight: lineHeights.title,
+          marginBottom: spacing.md,
+        },
+        storyIntro: {
+          color: colors.primary,
+          fontSize: fontSizes.bodyLarge,
+          lineHeight: lineHeights.bodyLarge + 4,
+          fontWeight: fontWeights.medium,
+          marginBottom: spacing.md,
+        },
+        storyText: {
+          color: colors.textMuted,
+          fontSize: fontSizes.body,
+          lineHeight: lineHeights.body + 2,
+          marginBottom: spacing.md,
+        },
+        valueAccentBar: {
+          height: 4,
+          backgroundColor: colors.primaryLight,
+        },
+        valuesGridMobile: {
+          justifyContent: 'space-between',
+        },
+        valueCardMobile: {
+          width: '48%',
+          maxWidth: '48%',
+          flexBasis: '48%',
+          flexGrow: 0,
+        },
+        valueBody: {
+          padding: spacing.lg,
+          alignItems: 'center',
+        },
+        valueBodyMobile: {
+          padding: spacing.sm,
+        },
+        valueImageWrap: {
+          width: 120,
+          height: 120,
+          borderRadius: radius.pill,
+          overflow: 'hidden',
+          backgroundColor: colors.accentSoft,
+          marginBottom: spacing.md,
+          ...shadows.md,
+        },
+        valueImageWrapMobile: {
+          width: 64,
+          height: 64,
+          marginBottom: spacing.sm,
+        },
+        valueImage: {
+          width: '100%',
+          height: '100%',
+        },
+        valueTitle: {
+          color: colors.accent,
+          fontFamily: fonts.heading,
+          fontSize: fontSizes.subtitle,
+          lineHeight: lineHeights.subtitle,
+          marginBottom: spacing.sm,
+          textAlign: 'center',
+        },
+        valueTitleMobile: {
+          fontSize: fontSizes.bodyLarge,
+          lineHeight: lineHeights.bodyLarge,
+          marginBottom: spacing.xs,
+        },
+        valueText: {
+          color: colors.textMuted,
+          fontSize: fontSizes.body,
+          lineHeight: lineHeights.body,
+          textAlign: 'center',
+        },
+        valueTextMobile: {
+          fontSize: fontSizes.caption,
+          lineHeight: lineHeights.caption,
+        },
+        teamCard: {
+          alignItems: 'center',
+          padding: spacing.xl,
+        },
+        teamCardMobile: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.md,
+          padding: spacing.md,
+        },
+        teamImageWrap: {
+          width: 220,
+          height: 220,
+          borderRadius: radius.pill,
+          overflow: 'hidden',
+          backgroundColor: colors.surfaceMuted,
+          marginBottom: spacing.md,
+        },
+        teamImageWrapMobile: {
+          width: 88,
+          height: 88,
+          marginBottom: 0,
+          flexShrink: 0,
+        },
+        teamImage: {
+          width: '100%',
+          height: '100%',
+        },
+        teamInfo: {
+          alignItems: 'center',
+        },
+        teamInfoMobile: {
+          flex: 1,
+          alignItems: 'flex-start',
+        },
+        teamName: {
+          color: colors.primary,
+          fontSize: fontSizes.bodyLarge,
+          fontWeight: fontWeights.bold,
+          marginBottom: spacing.xs,
+          textAlign: 'center',
+        },
+        teamRole: {
+          color: colors.primary,
+          fontSize: fontSizes.small,
+          fontWeight: fontWeights.semibold,
+          marginBottom: spacing.sm,
+          textAlign: 'center',
+        },
+        teamTextMobile: {
+          textAlign: 'left',
+        },
+        teamDescription: {
+          color: colors.textMuted,
+          fontSize: fontSizes.body,
+          lineHeight: lineHeights.body,
+          textAlign: 'center',
+        },
+        teamDescriptionMobile: {
+          fontSize: fontSizes.small,
+          lineHeight: lineHeights.small,
+          textAlign: 'left',
+        },
+      }),
+    [colors, shadows],
+  );
   const storyImage = (
     <Image
       source={require('../../assets/nosotros-fundadora.jpeg')}
@@ -215,186 +393,3 @@ export default function AboutScreen({ onNavigate }: AboutScreenProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  storyRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.xl,
-    justifyContent: 'center',
-  },
-  storyRowMobile: {
-    gap: spacing.lg,
-  },
-  storyBody: {
-    flexGrow: 1,
-    flexBasis: 420,
-    maxWidth: 720,
-    justifyContent: 'center',
-  },
-  storyBodyMobile: {
-    width: '100%',
-    flexBasis: 'auto',
-  },
-  storyImage: {
-    flexGrow: 1,
-    flexBasis: 380,
-    maxWidth: 560,
-    height: 500,
-    alignSelf: 'center',
-    borderRadius: radius.lg,
-    backgroundColor: colors.surfaceMuted,
-    ...shadows.md,
-  },
-  storyImageMobile: {
-    width: '100%',
-    flexBasis: 'auto',
-    maxWidth: 420,
-    height: undefined,
-    aspectRatio: 1,
-  },
-  storyTitle: {
-    color: colors.accent,
-    fontFamily: fonts.heading,
-    fontSize: fontSizes.title,
-    lineHeight: lineHeights.title,
-    marginBottom: spacing.md,
-  },
-  storyIntro: {
-    color: colors.primary,
-    fontSize: fontSizes.bodyLarge,
-    lineHeight: lineHeights.bodyLarge + 4,
-    fontWeight: fontWeights.medium,
-    marginBottom: spacing.md,
-  },
-  storyText: {
-    color: colors.textMuted,
-    fontSize: fontSizes.body,
-    lineHeight: lineHeights.body + 2,
-    marginBottom: spacing.md,
-  },
-  valueAccentBar: {
-    height: 4,
-    backgroundColor: colors.primaryLight,
-  },
-  valuesGridMobile: {
-    justifyContent: 'space-between',
-  },
-  valueCardMobile: {
-    width: '48%',
-    maxWidth: '48%',
-    flexBasis: '48%',
-    flexGrow: 0,
-  },
-  valueBody: {
-    padding: spacing.lg,
-    alignItems: 'center',
-  },
-  valueBodyMobile: {
-    padding: spacing.sm,
-  },
-  valueImageWrap: {
-    width: 120,
-    height: 120,
-    borderRadius: radius.pill,
-    overflow: 'hidden',
-    backgroundColor: colors.accentSoft,
-    marginBottom: spacing.md,
-    ...shadows.md,
-  },
-  valueImageWrapMobile: {
-    width: 64,
-    height: 64,
-    marginBottom: spacing.sm,
-  },
-  valueImage: {
-    width: '100%',
-    height: '100%',
-  },
-  valueTitle: {
-    color: colors.accent,
-    fontFamily: fonts.heading,
-    fontSize: fontSizes.subtitle,
-    lineHeight: lineHeights.subtitle,
-    marginBottom: spacing.sm,
-    textAlign: 'center',
-  },
-  valueTitleMobile: {
-    fontSize: fontSizes.bodyLarge,
-    lineHeight: lineHeights.bodyLarge,
-    marginBottom: spacing.xs,
-  },
-  valueText: {
-    color: colors.textMuted,
-    fontSize: fontSizes.body,
-    lineHeight: lineHeights.body,
-    textAlign: 'center',
-  },
-  valueTextMobile: {
-    fontSize: fontSizes.caption,
-    lineHeight: lineHeights.caption,
-  },
-  teamCard: {
-    alignItems: 'center',
-    padding: spacing.xl,
-  },
-  teamCardMobile: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    padding: spacing.md,
-  },
-  teamImageWrap: {
-    width: 220,
-    height: 220,
-    borderRadius: radius.pill,
-    overflow: 'hidden',
-    backgroundColor: colors.surfaceMuted,
-    marginBottom: spacing.md,
-  },
-  teamImageWrapMobile: {
-    width: 88,
-    height: 88,
-    marginBottom: 0,
-    flexShrink: 0,
-  },
-  teamImage: {
-    width: '100%',
-    height: '100%',
-  },
-  teamInfo: {
-    alignItems: 'center',
-  },
-  teamInfoMobile: {
-    flex: 1,
-    alignItems: 'flex-start',
-  },
-  teamName: {
-    color: colors.primary,
-    fontSize: fontSizes.bodyLarge,
-    fontWeight: fontWeights.bold,
-    marginBottom: spacing.xs,
-    textAlign: 'center',
-  },
-  teamRole: {
-    color: colors.primary,
-    fontSize: fontSizes.small,
-    fontWeight: fontWeights.semibold,
-    marginBottom: spacing.sm,
-    textAlign: 'center',
-  },
-  teamTextMobile: {
-    textAlign: 'left',
-  },
-  teamDescription: {
-    color: colors.textMuted,
-    fontSize: fontSizes.body,
-    lineHeight: lineHeights.body,
-    textAlign: 'center',
-  },
-  teamDescriptionMobile: {
-    fontSize: fontSizes.small,
-    lineHeight: lineHeights.small,
-    textAlign: 'left',
-  },
-});

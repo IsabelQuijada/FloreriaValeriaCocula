@@ -8,7 +8,9 @@
       name="description"
       content="Florería Valeria — arreglos florales artesanales, flores frescas y detalles únicos en Cocula, Jalisco. Entrega a domicilio todos los días."
     />
-    <meta name="theme-color" content="#FBF5F4" />
+    <meta name="theme-color" content="#FBF5F4" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1B0E14" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light dark" />
     <title>%WEB_TITLE%</title>
     <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
     <style id="expo-reset">
@@ -26,6 +28,14 @@
         display: flex;
         height: 100%;
         flex: 1;
+      }
+      /* Evita el destello de fondo claro antes de que React monte. */
+      @media (prefers-color-scheme: dark) {
+        html,
+        body,
+        #root {
+          background-color: #1b0e14;
+        }
       }
     </style>
   </head>

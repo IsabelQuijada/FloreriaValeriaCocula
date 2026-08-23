@@ -1,20 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Image, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { ProductCardData } from './ProductCard';
 import Button from './Button';
 import { useBreakpoint } from '../hooks/useBreakpoint';
-import {
-  colors,
-  fontSizes,
-  fontWeights,
-  layout,
-  lineHeights,
-  radius,
-  shadows,
-  spacing,
-  textPresets,
-} from '../theme';
+import { useTheme } from '../hooks/useTheme';
+import { fontSizes, fontWeights, layout, lineHeights, radius, spacing } from '../theme';
 
 interface ProductModalProps {
   /** Producto a mostrar; null cierra el modal. */
@@ -38,6 +29,121 @@ export default function ProductModal({
   canNext,
 }: ProductModalProps) {
   const { isMobile } = useBreakpoint();
+  const { colors, shadows, textPresets } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        backdrop: {
+          flex: 1,
+          backgroundColor: colors.overlayDark,
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: spacing.md,
+        },
+        modal: {
+          backgroundColor: colors.surface,
+          borderRadius: radius.lg,
+          overflow: 'hidden',
+          width: '100%',
+          maxWidth: 860,
+          maxHeight: '90%',
+          ...shadows.lg,
+        },
+        modalMobile: {
+          maxWidth: 420,
+        },
+        rowContent: {
+          flexDirection: 'row',
+        },
+        imagePanel: {
+          flex: 1,
+          aspectRatio: 4 / 5,
+          backgroundColor: colors.surfaceMuted,
+        },
+        imagePanelMobile: {
+          aspectRatio: 1,
+        },
+        image: {
+          width: '100%',
+          height: '100%',
+        },
+        infoPanel: {
+          flex: 1,
+          padding: spacing.lg,
+          justifyContent: 'center',
+          alignItems: 'flex-start',
+        },
+        badge: {
+          backgroundColor: colors.accentSoft,
+          borderRadius: radius.pill,
+          paddingVertical: spacing.xs,
+          paddingHorizontal: spacing.md,
+          marginBottom: spacing.sm,
+        },
+        badgeText: {
+          ...textPresets.badge,
+        },
+        name: {
+          color: colors.primary,
+          fontSize: fontSizes.subtitle,
+          lineHeight: lineHeights.subtitle,
+          fontWeight: fontWeights.bold,
+          marginBottom: spacing.sm,
+        },
+        description: {
+          color: colors.textMuted,
+          fontSize: fontSizes.body,
+          lineHeight: lineHeights.body,
+          marginBottom: spacing.lg,
+        },
+        contactButton: {
+          alignSelf: 'stretch',
+        },
+        closeButton: {
+          position: 'absolute',
+          top: spacing.sm,
+          right: spacing.sm,
+          zIndex: 2,
+          width: layout.minTouchTarget,
+          height: layout.minTouchTarget,
+          borderRadius: radius.pill,
+          backgroundColor: colors.surface,
+          alignItems: 'center',
+          justifyContent: 'center',
+          ...shadows.md,
+        },
+        navButton: {
+          position: 'absolute',
+          top: '50%',
+          transform: [{ translateY: -layout.minTouchTarget / 2 }],
+          width: layout.minTouchTarget,
+          height: layout.minTouchTarget,
+          borderWidth: 1,
+          borderColor: colors.primary,
+          borderRadius: radius.pill,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: colors.secondaryButton,
+          zIndex: 3,
+          ...shadows.sm,
+        },
+        navButtonLeft: {
+          left: spacing.sm,
+        },
+        navButtonRight: {
+          right: spacing.sm,
+        },
+        navButtonPressed: {
+          backgroundColor: colors.heroPanel,
+        },
+        navButtonDisabled: {
+          borderColor: colors.borderStrong,
+          backgroundColor: colors.heroPanel,
+          opacity: 0.55,
+        },
+      }),
+    [colors, shadows, textPresets],
+  );
 
   if (!product) return null;
 
@@ -129,114 +235,3 @@ export default function ProductModal({
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    backgroundColor: colors.overlayDark,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: spacing.md,
-  },
-  modal: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
-    overflow: 'hidden',
-    width: '100%',
-    maxWidth: 860,
-    maxHeight: '90%',
-    ...shadows.lg,
-  },
-  modalMobile: {
-    maxWidth: 420,
-  },
-  rowContent: {
-    flexDirection: 'row',
-  },
-  imagePanel: {
-    flex: 1,
-    aspectRatio: 4 / 5,
-    backgroundColor: colors.surfaceMuted,
-  },
-  imagePanelMobile: {
-    aspectRatio: 1,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-  },
-  infoPanel: {
-    flex: 1,
-    padding: spacing.lg,
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-  },
-  badge: {
-    backgroundColor: colors.accentSoft,
-    borderRadius: radius.pill,
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.md,
-    marginBottom: spacing.sm,
-  },
-  badgeText: {
-    ...textPresets.badge,
-  },
-  name: {
-    color: colors.primary,
-    fontSize: fontSizes.subtitle,
-    lineHeight: lineHeights.subtitle,
-    fontWeight: fontWeights.bold,
-    marginBottom: spacing.sm,
-  },
-  description: {
-    color: colors.textMuted,
-    fontSize: fontSizes.body,
-    lineHeight: lineHeights.body,
-    marginBottom: spacing.lg,
-  },
-  contactButton: {
-    alignSelf: 'stretch',
-  },
-  closeButton: {
-    position: 'absolute',
-    top: spacing.sm,
-    right: spacing.sm,
-    zIndex: 2,
-    width: layout.minTouchTarget,
-    height: layout.minTouchTarget,
-    borderRadius: radius.pill,
-    backgroundColor: colors.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...shadows.md,
-  },
-  navButton: {
-    position: 'absolute',
-    top: '50%',
-    transform: [{ translateY: -layout.minTouchTarget / 2 }],
-    width: layout.minTouchTarget,
-    height: layout.minTouchTarget,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    borderRadius: radius.pill,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.secondaryButton,
-    zIndex: 3,
-    ...shadows.sm,
-  },
-  navButtonLeft: {
-    left: spacing.sm,
-  },
-  navButtonRight: {
-    right: spacing.sm,
-  },
-  navButtonPressed: {
-    backgroundColor: colors.heroPanel,
-  },
-  navButtonDisabled: {
-    borderColor: colors.borderStrong,
-    backgroundColor: colors.heroPanel,
-    opacity: 0.55,
-  },
-});

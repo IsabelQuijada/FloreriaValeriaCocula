@@ -1,13 +1,35 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import Card from '../components/Card';
 import CardGrid from '../components/CardGrid';
 import Section from '../components/Section';
 import SectionTitle from '../components/SectionTitle';
 import { GALLERY_IMAGES } from '../data/content';
-import { colors, fontSizes, spacing } from '../theme';
+import { useTheme } from '../hooks/useTheme';
+import { fontSizes, spacing } from '../theme';
 
 export default function GalleryScreen() {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        image: {
+          width: '100%',
+          height: 260,
+          backgroundColor: colors.surfaceMuted,
+        },
+        captionBar: {
+          paddingVertical: spacing.sm,
+          paddingHorizontal: spacing.md,
+        },
+        caption: {
+          color: colors.textMuted,
+          fontSize: fontSizes.body,
+          fontStyle: 'italic',
+        },
+      }),
+    [colors],
+  );
   return (
     <Section>
       <SectionTitle
@@ -34,20 +56,3 @@ export default function GalleryScreen() {
     </Section>
   );
 }
-
-const styles = StyleSheet.create({
-  image: {
-    width: '100%',
-    height: 260,
-    backgroundColor: colors.surfaceMuted,
-  },
-  captionBar: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-  },
-  caption: {
-    color: colors.textMuted,
-    fontSize: fontSizes.body,
-    fontStyle: 'italic',
-  },
-});

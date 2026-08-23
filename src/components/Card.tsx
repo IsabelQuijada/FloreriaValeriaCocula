@@ -1,7 +1,8 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useMemo } from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { useBreakpoint } from '../hooks/useBreakpoint';
-import { borderWidth, colors, radius, shadows, spacing, webTransition } from '../theme';
+import { useTheme } from '../hooks/useTheme';
+import { borderWidth, radius, spacing, webTransition } from '../theme';
 
 interface CardProps {
   children: ReactNode;
@@ -26,6 +27,28 @@ export default function Card({
   style,
 }: CardProps) {
   const { isMobile } = useBreakpoint();
+  const { colors, shadows } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        card: {
+          backgroundColor: colors.surface,
+          borderRadius: radius.md,
+          borderWidth: borderWidth.thin,
+          borderColor: colors.border,
+          overflow: 'hidden',
+        },
+        padded: {
+          padding: spacing.lg,
+        },
+        mobileGridCard: {
+          width: '100%',
+          maxWidth: '100%',
+          flexBasis: 'auto',
+        },
+      }),
+    [colors],
+  );
   return (
     <View
       style={[
@@ -43,21 +66,3 @@ export default function Card({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    borderWidth: borderWidth.thin,
-    borderColor: colors.border,
-    overflow: 'hidden',
-  },
-  padded: {
-    padding: spacing.lg,
-  },
-  mobileGridCard: {
-    width: '100%',
-    maxWidth: '100%',
-    flexBasis: 'auto',
-  },
-});

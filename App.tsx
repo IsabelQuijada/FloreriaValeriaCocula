@@ -5,11 +5,12 @@ import {
   useFonts,
 } from '@expo-google-fonts/cormorant-garamond';
 import { StatusBar } from 'expo-status-bar';
-import React, { useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import Footer from './src/components/Footer';
 import NavBar from './src/components/NavBar';
 import WhatsAppFab from './src/components/WhatsAppFab';
+import { ThemeProvider, useTheme } from './src/hooks/useTheme';
 import { ScreenName } from './src/navigation/routes';
 import { useHashNavigation } from './src/navigation/useHashNavigation';
 import AboutScreen from './src/screens/AboutScreen';
@@ -18,7 +19,6 @@ import CatalogScreen from './src/screens/CatalogScreen';
 import ContactScreen from './src/screens/ContactScreen';
 import FaqScreen from './src/screens/FaqScreen';
 import HomeScreen from './src/screens/HomeScreen';
-import { colors } from './src/theme';
 
 interface ScreenProps {
   onNavigate: (screen: ScreenName) => void;
@@ -37,13 +37,51 @@ export default function App() {
     CormorantGaramond_600SemiBold,
     CormorantGaramond_700Bold,
   });
+
+  return (
+    <ThemeProvider>
+      <AppShell />
+    </ThemeProvider>
+  );
+}
+
+function AppShell() {
   const scrollRef = useRef<ScrollView>(null);
   const { route, navigate, openCategory, registerScrollTarget } =
     useHashNavigation(scrollRef);
+  const { colors, scheme } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: colors.surface,
+        },
+        scroll: {
+          flex: 1,
+          backgroundColor: colors.background,
+        },
+        content: {
+          flexGrow: 1,
+        },
+      }),
+    [colors],
+  );
+
+  // Sincroniza el color de fondo del documento y la barra de tema en web
+  // para evitar destellos de color al alternar entre claro y oscuro.
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    document.documentElement.style.backgroundColor = colors.background;
+    document.body.style.backgroundColor = colors.background;
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute('content', colors.background);
+  }, [colors]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar style="dark" />
+      <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
       <NavBar current={route.name} onNavigate={navigate} />
       <ScrollView ref={scrollRef} style={styles.scroll} contentContainerStyle={styles.content}>
         {route.name === 'Home' ? (
@@ -72,17 +110,3 @@ export default function App() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.surface,
-  },
-  scroll: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  content: {
-    flexGrow: 1,
-  },
-});
