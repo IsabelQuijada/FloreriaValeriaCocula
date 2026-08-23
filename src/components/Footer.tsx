@@ -1,6 +1,6 @@
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import React, { useMemo } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { BRAND, CONTACT_INFO, HERO, ScreenName } from '../data/content';
 import { useBreakpoint } from '../hooks/useBreakpoint';
 import { useHover, useHoverKey } from '../hooks/useHover';
@@ -218,10 +218,10 @@ export default function Footer({ onNavigate }: FooterProps) {
           ]}
         >
           <View style={styles.brandRow}>
-            <Ionicons
-              name="flower-outline"
-              size={24}
-              color={colors.primary}
+            <Image
+              source={require('../../assets/floreria-valeria-logo.png')}
+              style={styles.brandLogo}
+              resizeMode="contain"
               accessibilityElementsHidden
               importantForAccessibility="no"
             />
@@ -476,6 +476,10 @@ function createStyles(colors: ThemeColors) {
       alignItems: 'center',
       gap: spacing.sm,
       marginBottom: spacing.xs,
+    },
+    brandLogo: {
+      width: 91,
+      height: 48,
     },
     brandName: {
       color: colors.text,
