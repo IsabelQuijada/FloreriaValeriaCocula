@@ -573,7 +573,7 @@ export default function ContactScreen({ onNavigate, onFaqLayout }: ContactScreen
       </View>
 
       {/* Llamada a la acción final */}
-      <CtaRibbon onNavigate={onNavigate} background="alt" showMobileCatalogLink={false} />
+      <CtaRibbon onNavigate={onNavigate} background="alt" />
     </View>
   );
 }

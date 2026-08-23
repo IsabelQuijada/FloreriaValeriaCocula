@@ -1,4 +1,3 @@
-import { Ionicons } from '@expo/vector-icons';
 import React, { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { CONTACT_INFO, ScreenName } from '../data/content';
@@ -13,22 +12,15 @@ import Section from './Section';
 interface CtaRibbonProps {
   onNavigate: (screen: ScreenName) => void;
   background?: 'alt' | 'blush';
-  /** En mobile, oculta el link "Ver catálogo" (útil cuando la página ya lo ofrece más arriba). */
-  showMobileCatalogLink?: boolean;
 }
 
 /**
  * Cinta de llamada a la acción compartida por todas las páginas:
  * contactar por WhatsApp o ir al catálogo.
  */
-export default function CtaRibbon({
-  onNavigate,
-  background = 'blush',
-  showMobileCatalogLink = true,
-}: CtaRibbonProps) {
+export default function CtaRibbon({ onNavigate, background = 'blush' }: CtaRibbonProps) {
   const { isMobile } = useBreakpoint();
   const faqHover = useHover();
-  const catalogHover = useHover();
   const { colors } = useTheme();
   const styles = useMemo(
     () =>
@@ -78,23 +70,6 @@ export default function CtaRibbon({
           width: '100%',
           alignSelf: 'stretch',
         },
-        catalogLink: {
-          minHeight: layout.minTouchTarget,
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: spacing.sm,
-          alignSelf: 'center',
-          paddingHorizontal: spacing.md,
-        },
-        catalogLinkText: {
-          color: colors.primary,
-          fontSize: fontSizes.body,
-          fontWeight: fontWeights.semibold,
-        },
-        catalogLinkTextHovered: {
-          color: colors.primaryEmphasis,
-        },
         faqLink: {
           minHeight: layout.minTouchTarget,
           justifyContent: 'center',
@@ -138,33 +113,7 @@ export default function CtaRibbon({
             onPress={() => openExternalUrl(CONTACT_INFO.whatsappUrl)}
             style={isMobile && styles.buttonMobile}
           />
-          {isMobile ? (
-            showMobileCatalogLink ? (
-              <Pressable
-                onPress={() => onNavigate('Shop')}
-                {...catalogHover.hoverProps}
-                accessibilityRole="button"
-                accessibilityLabel="Ver catálogo"
-                style={styles.catalogLink}
-              >
-                <Text
-                  style={[
-                    styles.catalogLinkText,
-                    catalogHover.hovered && styles.catalogLinkTextHovered,
-                  ]}
-                >
-                  Ver catálogo
-                </Text>
-                <Ionicons
-                  name="arrow-forward"
-                  size={18}
-                  color={catalogHover.hovered ? colors.primaryEmphasis : colors.primary}
-                  accessibilityElementsHidden
-                  importantForAccessibility="no"
-                />
-              </Pressable>
-            ) : null
-          ) : (
+          {isMobile ? null : (
             <Button
               label="Ver catálogo"
               variant="outline"

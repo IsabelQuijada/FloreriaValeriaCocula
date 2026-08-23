@@ -364,7 +364,7 @@ export default function HomeScreen({
       <OccasionsGallery onSelect={onSelectCategory} />
 
       {/* Llamada a la acción final */}
-      <CtaRibbon onNavigate={onNavigate} showMobileCatalogLink={false} />
+      <CtaRibbon onNavigate={onNavigate} />
     </View>
   );
 }
