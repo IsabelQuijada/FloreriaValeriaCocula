@@ -57,8 +57,10 @@ export const getHashRoute = (): HashRouteResult => {
       return { route: { name: 'Contact' }, scrollTarget: null };
     case 'about':
       return { route: { name: 'About' }, scrollTarget: null };
-    case 'blog':
-      return { route: { name: 'Blog' }, scrollTarget: null };
+    // Deshabilitado: sección de blog sin uso actualmente. No permitir acceso
+    // directo vía #/blog; cae al caso 'default' y redirige a Home.
+    // case 'blog':
+    //   return { route: { name: 'Blog' }, scrollTarget: null };
     case 'faq':
       return { route: { name: 'Contact' }, scrollTarget: 'faq' };
     default:

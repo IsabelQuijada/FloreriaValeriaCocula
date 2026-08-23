@@ -29,7 +29,7 @@ const SOCIAL_LINKS = [
 
 const QUICK_LINKS: { icon: React.ComponentProps<typeof Ionicons>['name']; label: string; screen: ScreenName }[] = [
   { icon: 'help-circle-outline', label: 'Preguntas frecuentes', screen: 'FAQ' },
-  { icon: 'book-outline', label: 'Blog y consejos', screen: 'Blog' },
+  // { icon: 'book-outline', label: 'Blog y consejos', screen: 'Blog' }, // Deshabilitado: sección sin uso actualmente
   { icon: 'heart-outline', label: 'Nuestra historia', screen: 'About' },
   { icon: 'chatbubble-outline', label: 'Contáctanos', screen: 'Contact' },
 ];
@@ -38,7 +38,7 @@ const MOBILE_INFO_LINKS: { label: string; screen: ScreenName }[] = [
   { label: 'Catálogo', screen: 'Shop' },
   { label: 'Favoritas', screen: 'Favorites' },
   { label: 'Preguntas frecuentes', screen: 'FAQ' },
-  { label: 'Blog y consejos', screen: 'Blog' },
+  // { label: 'Blog y consejos', screen: 'Blog' }, // Deshabilitado: sección sin uso actualmente
 ];
 
 const MOBILE_ABOUT_LINKS: { label: string; screen: ScreenName }[] = [
