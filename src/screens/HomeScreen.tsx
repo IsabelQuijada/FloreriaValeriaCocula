@@ -7,6 +7,7 @@ import CtaRibbon from '../components/CtaRibbon';
 import FeatureCard from '../components/FeatureCard';
 import FloralServiceIcon from '../components/FloralServiceIcon';
 import OccasionsGallery from '../components/OccasionsGallery';
+import { ProductCardData } from '../components/ProductCard';
 import ProductCarousel from '../components/ProductCarousel';
 import ProductModal from '../components/ProductModal';
 import Section from '../components/Section';
@@ -222,9 +223,13 @@ export default function HomeScreen({
   const favorites = useMemo(() => getRandomFavorites(15), []);
   const quickView = useProductQuickView(favorites);
 
-  const handleFavoriteContact = (productName: string) => {
+  const handleFavoriteContact = (product: ProductCardData) => {
     quickView.close();
-    openExternalUrl(whatsappProductUrl(productName));
+    openExternalUrl(whatsappProductUrl(product.name), {
+      source: 'home_favorites',
+      itemName: product.name,
+      itemCategory: product.badge,
+    });
   };
 
   return (
@@ -345,14 +350,14 @@ export default function HomeScreen({
           />
           <ProductCarousel
             products={favorites}
-            onContact={(product) => handleFavoriteContact(product.name)}
+            onContact={handleFavoriteContact}
             onSelectProduct={(_, index) => quickView.open(index)}
           />
         </Section>
         <ProductModal
           product={quickView.selected}
           onClose={quickView.close}
-          onContact={(product) => handleFavoriteContact(product.name)}
+          onContact={handleFavoriteContact}
           onPrev={quickView.goPrev}
           onNext={quickView.goNext}
           canPrev={quickView.canPrev}

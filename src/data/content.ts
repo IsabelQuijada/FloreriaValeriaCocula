@@ -258,6 +258,13 @@ export const CONTACT_INFO = {
   instagramUrl: 'https://www.instagram.com/coculafloreriavaleria/',
 };
 
+/** Aviso simple de recolección de datos (LFPDPPP), mostrado una vez por visitante. */
+export const COOKIE_NOTICE = {
+  message:
+    'Usamos datos de navegación para entender qué arreglos visitan más nuestros clientes y mejorar el sitio.',
+  acceptLabel: 'Entendido',
+};
+
 export const HERO = {
   tagline: 'El color de tus sentimientos',
   title: 'Florería Valeria',

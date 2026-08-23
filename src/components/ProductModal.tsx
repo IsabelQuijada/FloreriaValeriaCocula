@@ -1,10 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Image, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { ProductCardData } from './ProductCard';
 import Button from './Button';
 import { useBreakpoint } from '../hooks/useBreakpoint';
 import { useTheme } from '../hooks/useTheme';
+import { logViewItem } from '../utils/analytics';
 import { fontSizes, fontWeights, layout, lineHeights, radius, spacing } from '../theme';
 
 interface ProductModalProps {
@@ -144,6 +145,10 @@ export default function ProductModal({
       }),
     [colors, shadows, textPresets],
   );
+
+  useEffect(() => {
+    if (product) logViewItem(product);
+  }, [product]);
 
   if (!product) return null;
 

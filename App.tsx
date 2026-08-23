@@ -7,12 +7,14 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import CookieNotice from './src/components/CookieNotice';
 import Footer from './src/components/Footer';
 import NavBar from './src/components/NavBar';
 import WhatsAppFab from './src/components/WhatsAppFab';
 import { ThemeProvider, useTheme } from './src/hooks/useTheme';
 import { ScreenName } from './src/navigation/routes';
 import { usePathNavigation } from './src/navigation/usePathNavigation';
+import { initAnalytics } from './src/utils/analytics';
 import AboutScreen from './src/screens/AboutScreen';
 import BlogScreen from './src/screens/BlogScreen';
 import CatalogScreen from './src/screens/CatalogScreen';
@@ -79,6 +81,10 @@ function AppShell() {
       ?.setAttribute('content', colors.background);
   }, [colors]);
 
+  useEffect(() => {
+    initAnalytics();
+  }, []);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
@@ -107,6 +113,7 @@ function AppShell() {
         <Footer onNavigate={navigate} />
       </ScrollView>
       <WhatsAppFab />
+      <CookieNotice />
     </SafeAreaView>
   );
 }

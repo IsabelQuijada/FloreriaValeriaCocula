@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Modal,
   Platform,
@@ -30,6 +30,7 @@ import { CONTACT_INFO, ScreenName, whatsappProductUrl } from '../data/content';
 import { useBreakpoint } from '../hooks/useBreakpoint';
 import { useProductQuickView } from '../hooks/useProductQuickView';
 import { useTheme } from '../hooks/useTheme';
+import { logViewCategory } from '../utils/analytics';
 import { openExternalUrl } from '../utils/links';
 import { borderWidth, fontSizes, fontWeights, layout, lineHeights, radius, spacing } from '../theme';
 
@@ -329,6 +330,11 @@ export default function CatalogScreen({
   const subcategories = activeCategory?.subcategories ?? [];
   const hasActiveFilters = categorySlug !== 'all' || query.trim() !== '';
 
+  useEffect(() => {
+    logViewCategory(categorySlug, subcategorySlug, filtered.length);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categorySlug, subcategorySlug]);
+
   const resetResults = () => {
     setVisibleCount(PAGE_SIZE);
     quickView.close();
@@ -360,7 +366,11 @@ export default function CatalogScreen({
   const handleContact = (product: ProductCardData) => {
     setContacted(product);
     quickView.close();
-    openExternalUrl(whatsappProductUrl(product.name));
+    openExternalUrl(whatsappProductUrl(product.name), {
+      source: 'catalog_product',
+      itemName: product.name,
+      itemCategory: product.badge,
+    });
   };
 
   const searchBox = (
