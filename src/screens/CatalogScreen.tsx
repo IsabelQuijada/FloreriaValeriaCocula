@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useMemo, useState } from 'react';
 import {
+  Modal,
   Platform,
   Pressable,
   ScrollView,
@@ -37,6 +38,7 @@ import {
   layout,
   lineHeights,
   radius,
+  shadows,
   spacing,
   textPresets,
 } from '../theme';
@@ -62,6 +64,7 @@ export default function CatalogScreen({
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [contacted, setContacted] = useState<ProductCardData | null>(null);
+  const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
 
   const categoryCounts = getCategoryCounts();
   const subcategoryCounts = getSubcategoryCounts();
@@ -160,10 +163,9 @@ export default function CatalogScreen({
     </Pressable>
   );
 
-  const sidebar = (
-    <View style={styles.sidebar}>
-      {searchBox}
-      <Text style={styles.sidebarKicker}>Categorías</Text>
+  /** Lista de categorías y subcategorías, compartida entre el sidebar desktop y el sheet mobile. */
+  const categoryList = (
+    <>
       {filterRow('Todos los productos', ALL_CATALOG.length, categorySlug === 'all', () =>
         handleSelectCategory('all'),
       )}
@@ -190,6 +192,83 @@ export default function CatalogScreen({
           ) : null}
         </View>
       ))}
+    </>
+  );
+
+  const sidebar = (
+    <View style={styles.sidebar}>
+      {searchBox}
+      <Text style={styles.sidebarKicker}>Categorías</Text>
+      {categoryList}
+    </View>
+  );
+
+  const activeSubcategory =
+    subcategorySlug !== 'all' ? subcategories.find((sub) => sub.slug === subcategorySlug) : undefined;
+  const filterTriggerLabel = activeSubcategory?.name ?? activeCategory?.name ?? 'Filtrar por categoría';
+
+  const mobileFilterBar = (
+    <View style={styles.mobileFilterBar}>
+      {searchBox}
+      <Pressable
+        onPress={() => setIsFilterSheetOpen(true)}
+        accessibilityRole="button"
+        accessibilityLabel="Abrir filtros de categoría"
+        style={styles.filterTrigger}
+      >
+        <Ionicons name="options-outline" size={18} color={colors.primary} />
+        <Text style={styles.filterTriggerLabel} numberOfLines={1}>
+          {filterTriggerLabel}
+        </Text>
+        {hasActiveFilters && categorySlug !== 'all' ? (
+          <View style={styles.filterBadge}>
+            <Text style={styles.filterBadgeText}>1</Text>
+          </View>
+        ) : null}
+      </Pressable>
+
+      <Modal
+        visible={isFilterSheetOpen}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setIsFilterSheetOpen(false)}
+      >
+        <Pressable
+          style={styles.sheetBackdrop}
+          onPress={() => setIsFilterSheetOpen(false)}
+          accessibilityLabel="Cerrar filtros"
+        >
+          <Pressable
+            style={styles.sheetPanel}
+            onPress={(event) => event.stopPropagation()}
+            accessibilityViewIsModal
+            accessibilityLabel="Filtrar por categoría"
+          >
+            <View style={styles.sheetHandle} />
+            <View style={styles.sheetHeader}>
+              <Text accessibilityRole="header" style={styles.sheetTitle}>
+                Filtrar por categoría
+              </Text>
+              <Pressable
+                onPress={() => setIsFilterSheetOpen(false)}
+                accessibilityRole="button"
+                accessibilityLabel="Cerrar"
+                hitSlop={spacing.sm}
+              >
+                <Ionicons name="close" size={22} color={colors.primary} />
+              </Pressable>
+            </View>
+            <ScrollView contentContainerStyle={styles.sheetListContent}>{categoryList}</ScrollView>
+            <View style={styles.sheetFooter}>
+              <Button
+                label={`Ver ${filtered.length} ${filtered.length === 1 ? 'resultado' : 'resultados'}`}
+                onPress={() => setIsFilterSheetOpen(false)}
+                style={styles.sheetApplyButton}
+              />
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 
@@ -313,12 +392,17 @@ export default function CatalogScreen({
         <SectionTitle
           kicker="Catálogo"
           title="Todos nuestros arreglos"
-          subtitle="Explora el catálogo completo por ocasión, filtra por tipo de arreglo o busca por nombre."
+          subtitle="Explora nuestros arreglos, encuentra el que hable por ti y escríbenos para hacerlo realidad. Como trabajamos con flor fresca de temporada, precio y disponibilidad los confirmamos juntos, contigo."
         />
 
         {isDesktop ? (
           <View style={styles.desktopLayout}>
             {sidebar}
+            {results}
+          </View>
+        ) : isMobile ? (
+          <View>
+            {mobileFilterBar}
             {results}
           </View>
         ) : (
@@ -467,6 +551,87 @@ const styles = StyleSheet.create({
   },
   subChipLabelActive: {
     color: colors.textOnDark,
+  },
+  mobileFilterBar: {
+    gap: spacing.sm,
+    marginBottom: spacing.lg,
+  },
+  filterTrigger: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    minHeight: layout.minTouchTarget,
+    paddingHorizontal: spacing.md,
+    borderRadius: radius.pill,
+    borderWidth: borderWidth.thin,
+    borderColor: colors.primary,
+    backgroundColor: colors.surface,
+  },
+  filterTriggerLabel: {
+    flex: 1,
+    color: colors.primary,
+    fontSize: fontSizes.small,
+    fontWeight: fontWeights.semibold,
+  },
+  filterBadge: {
+    minWidth: 20,
+    height: 20,
+    borderRadius: radius.pill,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: spacing.xxs,
+  },
+  filterBadgeText: {
+    color: colors.textOnDark,
+    fontSize: fontSizes.caption,
+    fontWeight: fontWeights.bold,
+  },
+  sheetBackdrop: {
+    flex: 1,
+    backgroundColor: colors.overlayDark,
+    justifyContent: 'flex-end',
+  },
+  sheetPanel: {
+    backgroundColor: colors.surface,
+    borderTopLeftRadius: radius.lg,
+    borderTopRightRadius: radius.lg,
+    maxHeight: '80%',
+    paddingTop: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.lg,
+    ...shadows.lg,
+  },
+  sheetHandle: {
+    width: 40,
+    height: 4,
+    borderRadius: radius.pill,
+    backgroundColor: colors.border,
+    alignSelf: 'center',
+    marginBottom: spacing.md,
+  },
+  sheetHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: spacing.sm,
+  },
+  sheetTitle: {
+    color: colors.text,
+    fontSize: fontSizes.bodyLarge,
+    fontWeight: fontWeights.semibold,
+  },
+  sheetListContent: {
+    gap: spacing.xxs,
+    paddingBottom: spacing.md,
+  },
+  sheetFooter: {
+    paddingTop: spacing.sm,
+    borderTopWidth: borderWidth.thin,
+    borderTopColor: colors.border,
+  },
+  sheetApplyButton: {
+    alignSelf: 'stretch',
   },
   results: {
     flex: 1,

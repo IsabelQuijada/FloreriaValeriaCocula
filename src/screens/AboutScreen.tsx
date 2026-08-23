@@ -211,7 +211,7 @@ export default function AboutScreen({ onNavigate }: AboutScreenProps) {
       </Section>
 
       {/* Llamada a la acción final */}
-      <CtaRibbon onNavigate={onNavigate} background="alt" />
+      <CtaRibbon onNavigate={onNavigate} background="alt" showMobileCatalogLink={false} />
     </View>
   );
 }

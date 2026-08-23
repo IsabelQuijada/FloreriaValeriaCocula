@@ -20,13 +20,19 @@ import Section from './Section';
 interface CtaRibbonProps {
   onNavigate: (screen: ScreenName) => void;
   background?: 'alt' | 'blush';
+  /** En mobile, oculta el link "Ver catálogo" (útil cuando la página ya lo ofrece más arriba). */
+  showMobileCatalogLink?: boolean;
 }
 
 /**
  * Cinta de llamada a la acción compartida por todas las páginas:
  * contactar por WhatsApp o ir al catálogo.
  */
-export default function CtaRibbon({ onNavigate, background = 'blush' }: CtaRibbonProps) {
+export default function CtaRibbon({
+  onNavigate,
+  background = 'blush',
+  showMobileCatalogLink = true,
+}: CtaRibbonProps) {
   const { isMobile } = useBreakpoint();
   const faqHover = useHover();
   const catalogHover = useHover();
@@ -55,29 +61,31 @@ export default function CtaRibbon({ onNavigate, background = 'blush' }: CtaRibbo
             style={isMobile && styles.buttonMobile}
           />
           {isMobile ? (
-            <Pressable
-              onPress={() => onNavigate('Shop')}
-              {...catalogHover.hoverProps}
-              accessibilityRole="button"
-              accessibilityLabel="Ver catálogo"
-              style={styles.catalogLink}
-            >
-              <Text
-                style={[
-                  styles.catalogLinkText,
-                  catalogHover.hovered && styles.catalogLinkTextHovered,
-                ]}
+            showMobileCatalogLink ? (
+              <Pressable
+                onPress={() => onNavigate('Shop')}
+                {...catalogHover.hoverProps}
+                accessibilityRole="button"
+                accessibilityLabel="Ver catálogo"
+                style={styles.catalogLink}
               >
-                Ver catálogo
-              </Text>
-              <Ionicons
-                name="arrow-forward"
-                size={18}
-                color={catalogHover.hovered ? colors.primaryDark : colors.primary}
-                accessibilityElementsHidden
-                importantForAccessibility="no"
-              />
-            </Pressable>
+                <Text
+                  style={[
+                    styles.catalogLinkText,
+                    catalogHover.hovered && styles.catalogLinkTextHovered,
+                  ]}
+                >
+                  Ver catálogo
+                </Text>
+                <Ionicons
+                  name="arrow-forward"
+                  size={18}
+                  color={catalogHover.hovered ? colors.primaryDark : colors.primary}
+                  accessibilityElementsHidden
+                  importantForAccessibility="no"
+                />
+              </Pressable>
+            ) : null
           ) : (
             <Button
               label="Ver catálogo"

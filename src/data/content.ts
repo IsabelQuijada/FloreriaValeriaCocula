@@ -128,22 +128,28 @@ export const FAQS: FaqItem[] = [
     id: 'f3',
     question: '¿Puedo personalizar mi arreglo?',
     answer:
-      'Por supuesto. Escríbenos por WhatsApp al 33 35 55 89 28 o visítanos en tienda y nuestras diseñadoras crearán algo único para tu ocasión y presupuesto.',
+      'Por supuesto. Escríbenos por WhatsApp al 33 35 55 89 28 o visítanos en tienda y crearemos algo único para tu ocasión y presupuesto.',
   },
   {
     id: 'f4',
+    question: '¿Por qué no muestran los precios en los arreglos?',
+    answer:
+      'Trabajamos con flor fresca de temporada, así que la disponibilidad y el precio de cada flor cambian constantemente. Para darte un precio justo, confirmamos contigo el tamaño, las flores y los detalles del arreglo por WhatsApp al 33 35 55 89 28 antes de cerrar tu pedido.',
+  },
+  {
+    id: 'f5',
     question: '¿Qué métodos de pago aceptan?',
     answer:
       'Aceptamos efectivo y transferencias bancarias. Si necesitas factura, con gusto la expedimos.',
   },
   {
-    id: 'f5',
+    id: 'f6',
     question: '¿Dónde están ubicados?',
     answer:
       'Tenemos dos sucursales en el centro de Cocula, Jalisco: la principal en 5 de Mayo 59 y otra en Ocampo 35, ambas en la Col. Centro, C.P. 48500.',
   },
   {
-    id: 'f6',
+    id: 'f7',
     question: '¿Hacen decoración para eventos?',
     answer:
       'Sí. Diseñamos flores para bodas, XV años, bautizos, eventos religiosos y celebraciones especiales. Contáctanos para una cotización personalizada.',

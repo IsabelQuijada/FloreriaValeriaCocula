@@ -3,8 +3,12 @@
  *
  * Las URLs del catálogo apuntan al asset original (hasta 1200×2134 px).
  * Este helper inserta transformaciones de entrega para servir el tamaño
- * y formato adecuados: `f_auto` (WebP/AVIF según navegador), `q_auto`
- * (compresión perceptual) y `w_·,c_limit` (nunca escala hacia arriba).
+ * y formato adecuados: `e_trim` (recorta el margen transparente sobrante
+ * alrededor del arreglo floral, ya que cada foto original trae una
+ * cantidad distinta de espacio vacío tras quitarle el fondo, lo que hacía
+ * que `resizeMode="cover"` recortara cada card en un punto distinto),
+ * `f_auto` (WebP/AVIF según navegador), `q_auto` (compresión perceptual)
+ * y `w_·,c_limit` (nunca escala hacia arriba).
  */
 
 const UPLOAD_SEGMENT = '/upload/';
@@ -25,5 +29,5 @@ export function optimizedImageUrl(url: string, width = CARD_IMAGE_WIDTH): string
   if (/^[a-z]+_[^/]*\//.test(afterUpload) && !afterUpload.startsWith('v')) {
     return url; // ya tiene transformaciones
   }
-  return `${url.slice(0, index)}${UPLOAD_SEGMENT}f_auto,q_auto,w_${width},c_limit/${afterUpload}`;
+  return `${url.slice(0, index)}${UPLOAD_SEGMENT}e_trim/f_auto,q_auto,w_${width},c_limit/${afterUpload}`;
 }

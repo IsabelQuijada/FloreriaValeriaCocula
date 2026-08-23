@@ -64,7 +64,7 @@ export default function ProductModal({
               <Image
                 source={{ uri: product.image }}
                 style={styles.image}
-                resizeMode="cover"
+                resizeMode="contain"
                 accessible
                 accessibilityLabel={`Foto de ${product.name}`}
               />

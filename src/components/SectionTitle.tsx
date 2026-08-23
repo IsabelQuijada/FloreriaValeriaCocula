@@ -25,15 +25,17 @@ interface SectionTitleProps {
 
 /** Encabezado de sección con kicker, título serif, subtítulo y divisor floral. */
 export default function SectionTitle({ kicker, title, subtitle, compact = false }: SectionTitleProps) {
-  const { isTablet } = useBreakpoint();
+  const { isMobile, isTablet } = useBreakpoint();
   return (
     <View style={[styles.container, compact && styles.containerCompact]}>
       {kicker ? <Text style={styles.kicker}>{kicker}</Text> : null}
       <Text accessibilityRole="header" style={[styles.title, isTablet && styles.titleWide]}>
         {title}
       </Text>
-      {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
-      <View style={styles.divider}>
+      {subtitle ? (
+        <Text style={[styles.subtitle, isMobile && styles.subtitleMobile]}>{subtitle}</Text>
+      ) : null}
+      <View style={[styles.divider, isMobile && styles.dividerMobile]}>
         <View style={styles.dividerLine} />
         <Ionicons
           name="flower-outline"
@@ -81,11 +83,19 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
     maxWidth: layout.textMaxWidth,
   },
+  subtitleMobile: {
+    fontSize: fontSizes.small,
+    lineHeight: lineHeights.small,
+    maxWidth: 300,
+  },
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
     marginTop: spacing.md,
+  },
+  dividerMobile: {
+    marginTop: spacing.sm,
   },
   dividerLine: {
     width: 36,

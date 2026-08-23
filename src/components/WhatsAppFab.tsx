@@ -2,6 +2,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import React, { useEffect, useRef } from 'react';
 import { Animated, Pressable, StyleSheet } from 'react-native';
 import { CONTACT_INFO } from '../data/content';
+import { useBreakpoint } from '../hooks/useBreakpoint';
 import { useHover } from '../hooks/useHover';
 import { colors, radius, shadows, spacing } from '../theme';
 import { openExternalUrl } from '../utils/links';
@@ -13,6 +14,7 @@ import { openExternalUrl } from '../utils/links';
  * discreta para invitar al contacto sin ser intrusivo.
  */
 export default function WhatsAppFab() {
+  const { isMobile } = useBreakpoint();
   const { hovered, hoverProps } = useHover();
   const pulse = useRef(new Animated.Value(1)).current;
 
@@ -33,7 +35,9 @@ export default function WhatsAppFab() {
   }, [pulse]);
 
   return (
-    <Animated.View style={[styles.wrapper, { transform: [{ scale: pulse }] }]}>
+    <Animated.View
+      style={[styles.wrapper, isMobile && styles.wrapperMobile, { transform: [{ scale: pulse }] }]}
+    >
       <Pressable
         onPress={() => openExternalUrl(CONTACT_INFO.whatsappUrl)}
         accessibilityRole="link"
@@ -41,11 +45,12 @@ export default function WhatsAppFab() {
         {...hoverProps}
         style={({ pressed }) => [
           styles.fab,
+          isMobile && styles.fabMobile,
           hovered && styles.fabHovered,
           pressed && styles.fabPressed,
         ]}
       >
-        <FontAwesome name="whatsapp" size={30} color={colors.white} />
+        <FontAwesome name="whatsapp" size={isMobile ? 26 : 30} color={colors.white} />
       </Pressable>
     </Animated.View>
   );
@@ -58,6 +63,10 @@ const styles = StyleSheet.create({
     bottom: spacing.md,
     zIndex: 10,
   },
+  wrapperMobile: {
+    right: spacing.sm,
+    bottom: spacing.sm,
+  },
   fab: {
     width: 56,
     height: 56,
@@ -66,6 +75,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     ...shadows.lg,
+  },
+  fabMobile: {
+    width: 48,
+    height: 48,
   },
   fabHovered: {
     backgroundColor: colors.whatsappDark,

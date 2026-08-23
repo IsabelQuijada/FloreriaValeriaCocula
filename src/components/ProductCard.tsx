@@ -85,7 +85,7 @@ export default function ProductCard({
             webTransition as ImageStyle,
             hovered && onPress != null && styles.imageHovered,
           ]}
-          resizeMode="cover"
+          resizeMode="contain"
           accessible
           accessibilityLabel={`Foto de ${product.name}`}
         />
