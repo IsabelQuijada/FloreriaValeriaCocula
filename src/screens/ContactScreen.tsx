@@ -226,9 +226,10 @@ export default function ContactScreen({ onNavigate, onFaqLayout }: ContactScreen
           paddingVertical: spacing.md,
         },
         quickText: {
-          color: colors.textMuted,
+          color: colors.primary,
           fontSize: fontSizes.body,
           lineHeight: lineHeights.body,
+          fontWeight: fontWeights.semibold,
           textAlign: 'center',
         },
         quickLink: {

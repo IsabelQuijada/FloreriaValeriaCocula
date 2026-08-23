@@ -319,7 +319,7 @@ export default function Footer({ onNavigate }: FooterProps) {
               <Ionicons
                 name={item.icon}
                 size={20}
-                color={isHovered(`link-${item.screen}`) ? colors.primary : colors.accentStrong}
+                color={isHovered(`link-${item.screen}`) ? colors.primaryEmphasis : colors.primary}
               />
               <Text
                 style={[
@@ -482,7 +482,7 @@ function createStyles(colors: ThemeColors) {
       height: 48,
     },
     brandName: {
-      color: colors.text,
+      color: colors.primary,
       fontFamily: fonts.heading,
       fontSize: fontSizes.subtitle,
       letterSpacing: letterSpacing.wide,
@@ -500,7 +500,7 @@ function createStyles(colors: ThemeColors) {
       lineHeight: lineHeights.small,
     },
     eyebrow: {
-      color: colors.accentStrong,
+      color: colors.primary,
       fontSize: fontSizes.small,
       fontWeight: fontWeights.bold,
       letterSpacing: letterSpacing.wider,
@@ -532,7 +532,7 @@ function createStyles(colors: ThemeColors) {
       gap: spacing.md,
     },
     quickLinkText: {
-      color: colors.text,
+      color: colors.primary,
       fontSize: fontSizes.body,
       lineHeight: lineHeights.body,
     },
@@ -540,7 +540,7 @@ function createStyles(colors: ThemeColors) {
       transform: [{ translateX: 5 }],
     },
     quickLinkTextHovered: {
-      color: colors.primary,
+      color: colors.primaryEmphasis,
     },
     pressed: {
       opacity: 0.6,

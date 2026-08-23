@@ -1,6 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useMemo, useState } from 'react';
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import { BRAND, CONTACT_INFO, NAV_ITEMS, ScreenName } from '../data/content';
 import { useBreakpoint } from '../hooks/useBreakpoint';
 import { useHoverKey } from '../hooks/useHover';
@@ -43,6 +51,14 @@ const CONTACT_LINKS = [
   },
 ] as const;
 
+/**
+ * Ancho mínimo para mostrar logo + los 4 links + botón WhatsApp en una sola
+ * fila sin que se recorten. Por debajo de este ancho se usa el menú
+ * hamburguesa, igual que en mobile, en vez de dejar que el ScrollView
+ * horizontal (sin indicador visible) corte el texto silenciosamente.
+ */
+const NAV_COLLAPSE_WIDTH = 900;
+
 interface NavBarProps {
   current: ScreenName;
   onNavigate: (screen: ScreenName) => void;
@@ -50,6 +66,8 @@ interface NavBarProps {
 
 export default function NavBar({ current, onNavigate }: NavBarProps) {
   const { isMobile, isDesktop } = useBreakpoint();
+  const { width } = useWindowDimensions();
+  const showCompactNav = width < NAV_COLLAPSE_WIDTH;
   const { isHovered, hoverProps } = useHoverKey();
   const [menuOpen, setMenuOpen] = useState(false);
   const { colors, scheme } = useTheme();
@@ -163,7 +181,7 @@ export default function NavBar({ current, onNavigate }: NavBarProps) {
         brandName: {
           color: colors.text,
           fontSize: fontSizes.subtitle,
-          fontFamily: fonts.heading,
+          fontFamily: fonts.headingBold,
           letterSpacing: letterSpacing.wide,
         },
         brandNameDesktop: {
@@ -199,7 +217,7 @@ export default function NavBar({ current, onNavigate }: NavBarProps) {
         },
         mobileItemLabel: {
           color: colors.text,
-          fontFamily: fonts.heading,
+          fontFamily: fonts.headingBold,
           fontSize: fontSizes.bodyLarge,
         },
         mobileOrder: {
@@ -212,7 +230,7 @@ export default function NavBar({ current, onNavigate }: NavBarProps) {
         },
         menu: {
           alignItems: 'center',
-          gap: spacing.md,
+          gap: spacing.lg,
           flexGrow: 1,
         },
         menuDesktop: {
@@ -227,7 +245,7 @@ export default function NavBar({ current, onNavigate }: NavBarProps) {
         itemLabel: {
           color: colors.text,
           fontSize: fontSizes.bodyLarge,
-          fontFamily: fonts.heading,
+          fontFamily: fonts.headingBold,
           letterSpacing: letterSpacing.slight,
         },
         itemLabelDesktop: {
@@ -413,13 +431,13 @@ export default function NavBar({ current, onNavigate }: NavBarProps) {
       </View>
 
       {/* Barra principal */}
-      {isDesktop ? (
+      {!showCompactNav ? (
         <View style={[styles.bar, styles.barDesktop]}>
           {brand}
           {menu}
           {orderButton}
         </View>
-      ) : isMobile ? (
+      ) : (
         <View style={[styles.bar, styles.barMobile]}>
           <View style={styles.barTop}>
             {brand}
@@ -463,14 +481,6 @@ export default function NavBar({ current, onNavigate }: NavBarProps) {
               <View style={styles.mobileOrder}>{orderButton}</View>
             </View>
           ) : null}
-        </View>
-      ) : (
-        <View style={styles.bar}>
-          <View style={styles.barTop}>
-            {brand}
-            {orderButton}
-          </View>
-          {menu}
         </View>
       )}
     </View>
