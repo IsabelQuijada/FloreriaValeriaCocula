@@ -166,7 +166,7 @@ export default function NavBar({ current, onNavigate }: NavBarProps) {
           minHeight: layout.minTouchTarget,
         },
         brandHovered: {
-          opacity: 0.78,
+          transform: [{ translateY: -2 }],
         },
         brandLogo: {
           width: 91,
@@ -183,6 +183,9 @@ export default function NavBar({ current, onNavigate }: NavBarProps) {
           fontSize: fontSizes.subtitle,
           fontFamily: fonts.headingBold,
           letterSpacing: letterSpacing.wide,
+        },
+        brandNameHovered: {
+          color: colors.primaryEmphasis,
         },
         brandNameDesktop: {
           fontSize: fontSizes.titleSmall,
@@ -303,7 +306,7 @@ export default function NavBar({ current, onNavigate }: NavBarProps) {
       accessibilityRole="button"
       accessibilityLabel={`${BRAND.name}, ir al inicio`}
       {...hoverProps('brand')}
-      style={[styles.brand, isHovered('brand') && styles.brandHovered]}
+      style={[styles.brand, webTransition, isHovered('brand') && styles.brandHovered]}
     >
       <Image
         source={require('../../assets/floreria-valeria-logo.png')}
@@ -313,7 +316,11 @@ export default function NavBar({ current, onNavigate }: NavBarProps) {
         importantForAccessibility="no"
       />
       <Text
-        style={[styles.brandName, isDesktop && styles.brandNameDesktop]}
+        style={[
+          styles.brandName,
+          isDesktop && styles.brandNameDesktop,
+          isHovered('brand') && styles.brandNameHovered,
+        ]}
         numberOfLines={1}
       >
         {BRAND.name}

@@ -1,15 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useMemo, useState } from 'react';
-import {
-  Modal,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Button from '../components/Button';
 import CardGrid from '../components/CardGrid';
 import CtaRibbon from '../components/CtaRibbon';
@@ -65,31 +56,6 @@ export default function CatalogScreen({
           ...textPresets.kicker,
           marginTop: spacing.md,
           marginBottom: spacing.xs,
-        },
-        searchBox: {
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: spacing.sm,
-          borderWidth: borderWidth.thin,
-          borderColor: colors.border,
-          borderRadius: radius.pill,
-          backgroundColor: colors.surface,
-          paddingHorizontal: spacing.md,
-          minHeight: layout.minTouchTarget,
-        },
-        searchInput: {
-          flex: 1,
-          color: colors.text,
-          fontSize: fontSizes.small,
-          paddingVertical: 0,
-          ...Platform.select({
-            web: {
-              outlineStyle: 'none',
-            } as object,
-          }),
-        },
-        searchBoxFocused: {
-          borderColor: colors.focus,
         },
         filterRow: {
           flexDirection: 'row',
@@ -310,8 +276,6 @@ export default function CatalogScreen({
     getCategoryBySlug(initialCategorySlug) ? initialCategorySlug : 'all',
   );
   const [subcategorySlug, setSubcategorySlug] = useState('all');
-  const [query, setQuery] = useState('');
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [contacted, setContacted] = useState<ProductCardData | null>(null);
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
@@ -320,15 +284,15 @@ export default function CatalogScreen({
   const subcategoryCounts = getSubcategoryCounts();
 
   const filtered = useMemo(
-    () => filterCatalog({ categorySlug, subcategorySlug, query }),
-    [categorySlug, subcategorySlug, query],
+    () => filterCatalog({ categorySlug, subcategorySlug }),
+    [categorySlug, subcategorySlug],
   );
 
   const visible = filtered.slice(0, visibleCount);
   const quickView = useProductQuickView(visible);
   const activeCategory = categorySlug !== 'all' ? getCategoryBySlug(categorySlug) : undefined;
   const subcategories = activeCategory?.subcategories ?? [];
-  const hasActiveFilters = categorySlug !== 'all' || query.trim() !== '';
+  const hasActiveFilters = categorySlug !== 'all';
 
   useEffect(() => {
     logViewCategory(categorySlug, subcategorySlug, filtered.length);
@@ -351,15 +315,9 @@ export default function CatalogScreen({
     resetResults();
   };
 
-  const handleQuery = (text: string) => {
-    setQuery(text);
-    resetResults();
-  };
-
   const handleClearFilters = () => {
     setCategorySlug('all');
     setSubcategorySlug('all');
-    setQuery('');
     resetResults();
   };
 
@@ -372,32 +330,6 @@ export default function CatalogScreen({
       itemCategory: product.badge,
     });
   };
-
-  const searchBox = (
-    <View style={[styles.searchBox, isSearchFocused && styles.searchBoxFocused]}>
-      <Ionicons name="search-outline" size={18} color={colors.textMuted} />
-      <TextInput
-        value={query}
-        onChangeText={handleQuery}
-        placeholder="Buscar arreglos"
-        placeholderTextColor={colors.textMuted}
-        accessibilityLabel="Buscar en el catálogo"
-        onFocus={() => setIsSearchFocused(true)}
-        onBlur={() => setIsSearchFocused(false)}
-        style={styles.searchInput}
-      />
-      {query ? (
-        <Pressable
-          onPress={() => handleQuery('')}
-          accessibilityRole="button"
-          accessibilityLabel="Limpiar búsqueda"
-          hitSlop={spacing.sm}
-        >
-          <Ionicons name="close-circle" size={18} color={colors.textMuted} />
-        </Pressable>
-      ) : null}
-    </View>
-  );
 
   /** Fila del filtro lateral: nombre, contador y estado activo. */
   const filterRow = (
@@ -456,7 +388,6 @@ export default function CatalogScreen({
 
   const sidebar = (
     <View style={styles.sidebar}>
-      {searchBox}
       <Text style={styles.sidebarKicker}>Categorías</Text>
       {categoryList}
     </View>
@@ -468,7 +399,6 @@ export default function CatalogScreen({
 
   const mobileFilterBar = (
     <View style={styles.mobileFilterBar}>
-      {searchBox}
       <Pressable
         onPress={() => setIsFilterSheetOpen(true)}
         accessibilityRole="button"
@@ -533,7 +463,6 @@ export default function CatalogScreen({
 
   const chips = (
     <View style={styles.chipsBlock}>
-      {searchBox}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -610,7 +539,7 @@ export default function CatalogScreen({
 
       {filtered.length === 0 ? (
         <Text style={styles.emptyState}>
-          No encontramos productos con esos filtros. Intenta con otra búsqueda.
+          No encontramos productos con esos filtros. Prueba con otra categoría.
         </Text>
       ) : (
         <>

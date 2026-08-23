@@ -64,39 +64,21 @@ export function getSubcategoryCounts(): Map<string, number> {
   return subcategoryCounts;
 }
 
-/** Ignora acentos y mayúsculas al buscar. */
-export function normalizeSearchText(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '');
-}
-
 export interface CatalogFilter {
   /** Slug de categoría o 'all'. */
   categorySlug: string;
   /** Slug de subcategoría o 'all'. */
   subcategorySlug: string;
-  /** Búsqueda libre sobre nombre y descripción. */
-  query: string;
 }
 
-/** Aplica los filtros del catálogo (categoría, subcategoría y búsqueda). */
-export function filterCatalog({ categorySlug, subcategorySlug, query }: CatalogFilter): Product[] {
+/** Aplica los filtros del catálogo (categoría y subcategoría). */
+export function filterCatalog({ categorySlug, subcategorySlug }: CatalogFilter): Product[] {
   let products = ALL_CATALOG;
   if (categorySlug !== 'all') {
     products = products.filter((p) => p.category === categorySlug);
   }
   if (subcategorySlug !== 'all') {
     products = products.filter((p) => p.subcategory === subcategorySlug);
-  }
-  const term = normalizeSearchText(query.trim());
-  if (term) {
-    products = products.filter(
-      (p) =>
-        normalizeSearchText(p.name).includes(term) ||
-        normalizeSearchText(p.description).includes(term),
-    );
   }
   return products;
 }
