@@ -20,7 +20,8 @@ export const ELEGANTES_DESCRIPTIONS: Record<string, string> = {
   'Ramo13': 'Rosas blancas y follaje verde, un ramo sencillo y elegante que transmite paz y belleza natural.',
   'Ramo14': 'Rosas, lisianthus y asters en tonos pastel, un ramo alegre y elegante para felicitar con estilo.',
   'Ramo15': 'Rosas rojas y alstroemerias blancas, un ramo clásico y elegante para expresar amor sincero.',
-  'ramo16': 'Rosas blancas y lilas con follaje fresco, un ramo elegante y sereno para ocasiones especiales.'
+  'ramo16': 'Rosas blancas y lilas con follaje fresco, un ramo elegante y sereno para ocasiones especiales.',
+  'ramo17': 'Lirios rosados y rosas en tonos blanco, rosa y durazno, con follaje verde y envoltura rosa.'
 };
 
 // Ramos Clásicos Descriptions - Ramo Estilizado
@@ -59,7 +60,14 @@ export const MIX_DESCRIPTIONS: Record<string, string> = {
   'ramo-mix7': 'Gerberas, rosas y crisantemos en tonos rosas, alegre y femenino.',
   'ramo-mix8': 'Rosas amarillas y blancas, alegre y radiante.',
   'ramo-mix9': 'Gerberas, rosas y margaritas en amarillo y blanco, luminoso y fresco.',
-  'ramo-mix10': 'Rosas rojas con corona y mariposas doradas, romántico y especial.'
+  'ramo-mix10': 'Rosas rojas con corona y mariposas doradas, romántico y especial.',
+  'ramo-mix11': 'Rosas rosas y lisianthus morado, acompañados de margaritas, solidago y delicados detalles amarillos, colorido, fresco y alegre.',
+  'ramo-mix12': 'Gerberas en tonos durazno y rosas rosas, acompañadas de margaritas blancas y statice fucsia, fresco, alegre y vibrante.',
+  'ramo-mix13': 'Lirios y gerberas en tonos rosas, acompañados de rosas y margaritas blancas, vistoso, alegre y colorido.',
+  'ramo-mix14': 'Gerberas y rosas en tonos blanco y rosa pálido, acompañadas de pequeñas margaritas, delicado, fresco y luminoso.',
+  'ramo-mix15': 'Lirios y gerberas rosas con crisantemos lila y hortensia verde, exuberante y colorido.',
+  'ramo-mix16': 'Lirios en tonos rosa y rosas rosas, acompañados de mini rosas blancas y follaje verde, exuberante y romántico.',
+  'ramo-mix17': 'Gerberas rojas con astilbe cobrizo y flor de encaje blanca, vibrante y llamativo.'
 };
 
 // Ramos Clásicos Descriptions - Ramo Rosas
@@ -86,7 +94,8 @@ export const TULIPANES_DESCRIPTIONS: Record<string, string> = {
   'ramo-tulipanes6': 'Tulipanes rosas y rosas lilas con follaje. Fino, moderno y lleno de estilo.',
   'ramo-tulipanes7': 'Tulipanes rosados y margaritas lilas en envoltura romántica. Suave, tierno y encantador.',
   'ramo-tulipanes8': 'Tulipanes lila y blancos con toques verdes. Suave, fresco y delicado.',
-  'ramo-tulipanes9': 'Tulipanes rosas y rojos con berries. Vibrante, elegante y lleno de vida.'
+  'ramo-tulipanes9': 'Tulipanes rosas y rojos con berries. Vibrante, elegante y lleno de vida.',
+  'ramo-tulipanes10': 'Tulipanes blancos y rosas bicolor, envueltos en tul rosa con acabado de perlas, delicado y romántico.'
 };
 
 // Bodas de Ensueño Descriptions - Ramos de Novia
@@ -98,7 +107,8 @@ export const BODAS_RAMOS_NOVIA_DESCRIPTIONS: Record<string, string> = {
   'ramo-novia5': 'Cascada de rosas y orquídeas, romántico y sofisticado para momentos inolvidables.',
   'ramo-novia6': 'Cascada de rosas y orquídeas blancas, natural y elegante para bodas modernas.',
   'ramo-novia7': 'Ramo redondo de rosas y margaritas, fresco y alegre para bodas modernas.',
-  'ramo-novia8': 'Ramo etéreo de rosas, alstroemerias y gypsophila, delicado y distinguido.'
+  'ramo-novia8': 'Ramo etéreo de rosas, alstroemerias y gypsophila, delicado y distinguido.',
+  'ramo-novia9': 'Cascada de rosas en tonos naranja y rosa pálido, lirios color durazno y amaranto colgante, cálida, romántica y llamativa.'
 };
 
 // Bodas de Ensueño Descriptions - Arreglos Centros de Mesa
@@ -150,7 +160,10 @@ export const CUMPLEANOS_DESCRIPTIONS: Record<string, string> = {
   'cumpleanos15': 'Rosas blancas y rosas con lazo, delicado y elegante.',
   'cumpleanos16': 'Lirios y rosas en blanco y rosa, fresco y elegante.',
   'cumpleanos17': 'Gerberas amarillas, rosas lilas y mariposas, alegre y original.',
-  'cumpleanos18': 'Rosas, girasoles y gerberas en abanico, colorido y vistoso.'
+  'cumpleanos18': 'Rosas, girasoles y gerberas en abanico, colorido y vistoso.',
+  'cumpleanos19': 'Gerberas en tonos fucsia, rosa y naranja con follaje de eucalipto, vibrante y colorido.',
+  'cumpleanos20': 'Rosas blancas y rosas con gerberas coral, acompañadas de listón "Feliz Cumpleaños", dulce y festivo.',
+  'cumpleanos21': 'Rosas rosas y durazno con lisianthus blanco, crisantemos y flores lilas, delicado y fresco en tonos pastel.'
 };
 
 // Quinceañera Descriptions - Centro de Mesa
@@ -395,11 +408,11 @@ export function getDetailedDescription(cloudinaryId: string): string | null {
 
   // Ramos Clásicos
   if (cloudinaryId.includes('ramos-clasicos')) {
-    if (cloudinaryId.includes('ramoEstilizado')) return ESTILIZADO_DESCRIPTIONS[filename] || null;
-    if (cloudinaryId.includes('ramoGirasoles')) return GIRASOLES_DESCRIPTIONS[filename] || null;
-    if (cloudinaryId.includes('ramoMix'))       return MIX_DESCRIPTIONS[filename] || null;
-    if (cloudinaryId.includes('ramoRosas'))     return ROSAS_DESCRIPTIONS[filename] || null;
-    if (cloudinaryId.includes('ramoTulipanes')) return TULIPANES_DESCRIPTIONS[filename] || null;
+    if (cloudinaryId.includes('ramoEstilizado') || cloudinaryId.includes('ramo-estilizado')) return ESTILIZADO_DESCRIPTIONS[filename] || null;
+    if (cloudinaryId.includes('ramoGirasoles') || cloudinaryId.includes('ramo-girasoles')) return GIRASOLES_DESCRIPTIONS[filename] || null;
+    if (cloudinaryId.includes('ramoMix') || cloudinaryId.includes('ramo-mix'))       return MIX_DESCRIPTIONS[filename] || null;
+    if (cloudinaryId.includes('ramoRosas') || cloudinaryId.includes('ramo-rosas'))     return ROSAS_DESCRIPTIONS[filename] || null;
+    if (cloudinaryId.includes('ramoTulipanes') || cloudinaryId.includes('ramo-tulipanes')) return TULIPANES_DESCRIPTIONS[filename] || null;
   }
 
   // Bodas de Ensueño

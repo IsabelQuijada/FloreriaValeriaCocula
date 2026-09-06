@@ -11,6 +11,28 @@ interface ProductNameSource {
   subcategory: string;
 }
 
+/**
+ * Nombres asignados directamente por `cloudinaryId` para productos dados de
+ * alta después de la asignación inicial por posición. Se resuelven antes que
+ * `BOUQUET_NAME_OFFSETS`/`COMMERCIAL_GROUP_NAMES` y no participan del conteo
+ * por índice, así que agregarlos nunca desplaza ni renombra un producto existente.
+ */
+const MANUAL_NAME_OVERRIDES: Record<string, string> = {
+  'floreria/bodas-de-ensueno/ramosNovia/ramo-novia9': 'Ariadna',
+  'floreria/ramos-clasicos/ramo-mix/ramo-mix11': 'Perla',
+  'floreria/ramos-clasicos/ramo-mix/ramo-mix12': 'Alondra',
+  'floreria/ramos-clasicos/ramo-mix/ramo-mix13': 'Cecilia',
+  'floreria/ramos-clasicos/ramo-mix/ramo-mix14': 'Frida',
+  'floreria/ramos-clasicos/ramo-mix/ramo-mix15': 'Mariel',
+  'floreria/ramos-elegantes/ramo17': 'Mía',
+  'floreria/ramos-clasicos/ramo-mix/ramo-mix16': 'Ivonne',
+  'floreria/ramos-clasicos/ramo-mix/ramo-mix17': 'Xochitl',
+  'floreria/ramos-clasicos/ramo-tulipanes/ramo-tulipanes10': 'Dulce',
+  'floreria/cumpleanos/cumpleanos19': 'Gerberas de Colores',
+  'floreria/cumpleanos/cumpleanos20': 'Rosas y Gerberas para Celebrar',
+  'floreria/cumpleanos/cumpleanos21': 'Rosas y Lisianthus en Tonos Pastel',
+};
+
 const WOMEN_NAMES = [
   'Renata',
   'Valentina',
@@ -346,16 +368,26 @@ function naturalFileName(product: ProductNameSource): string {
 export function createCommercialProductNameMap(
   products: readonly ProductNameSource[],
 ): ReadonlyMap<string, string> {
-  const groups = new Map<string, ProductNameSource[]>();
+  const names = new Map<string, string>();
+  const legacyProducts: ProductNameSource[] = [];
 
   for (const product of products) {
+    const override = MANUAL_NAME_OVERRIDES[product.cloudinaryId];
+    if (override) {
+      names.set(product.cloudinaryId, override);
+    } else {
+      legacyProducts.push(product);
+    }
+  }
+
+  const groups = new Map<string, ProductNameSource[]>();
+
+  for (const product of legacyProducts) {
     const key = `${product.category}|${product.subcategory}`;
     const group = groups.get(key) ?? [];
     group.push(product);
     groups.set(key, group);
   }
-
-  const names = new Map<string, string>();
 
   for (const [key, group] of groups) {
     const sorted = [...group].sort((a, b) =>

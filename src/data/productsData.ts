@@ -1,7 +1,7 @@
 /**
  * Product Data - Auto-generated from Cloudinary Upload
- * Generated: 2026-05-03T09:57:39.226Z
- * Total Products: 273
+ * Generated: 2026-09-06T19:49:11.935Z
+ * Total Products: 293
  */
 
 export interface Product {
@@ -3096,6 +3096,149 @@ export const ALL_PRODUCTS: Product[] = [
     "cloudinaryUrl": "https://res.cloudinary.com/difk1abvo/image/upload/v1782413327/floreria/galeria-funeraria/coronas/Corona33.png",
     "width": 1200,
     "height": 1600
+  },
+  {
+    "id": 281,
+    "cloudinaryId": "floreria/bodas-de-ensueno/ramosNovia/ramo-novia9",
+    "name": "bodas-de-ensueno/ramos-novia 1",
+    "category": "bodas-de-ensueno",
+    "subcategory": "ramos-novia",
+    "description": "Hermoso arreglo floral.",
+    "cloudinaryUrl": "https://res.cloudinary.com/difk1abvo/image/upload/v1788721625/floreria/bodas-de-ensueno/ramosNovia/ramo-novia9.png",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": 282,
+    "cloudinaryId": "floreria/ramos-clasicos/ramo-mix/ramo-mix11",
+    "name": "ramos-clasicos/ramo-mix 1",
+    "category": "ramos-clasicos",
+    "subcategory": "ramo-mix",
+    "description": "Hermoso arreglo floral.",
+    "cloudinaryUrl": "https://res.cloudinary.com/difk1abvo/image/upload/v1788722151/floreria/ramos-clasicos/ramo-mix/ramo-mix11.png",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": 283,
+    "cloudinaryId": "floreria/ramos-clasicos/ramo-mix/ramo-mix12",
+    "name": "ramos-clasicos/ramo-mix 2",
+    "category": "ramos-clasicos",
+    "subcategory": "ramo-mix",
+    "description": "Hermoso arreglo floral.",
+    "cloudinaryUrl": "https://res.cloudinary.com/difk1abvo/image/upload/v1788722153/floreria/ramos-clasicos/ramo-mix/ramo-mix12.png",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": 284,
+    "cloudinaryId": "floreria/ramos-clasicos/ramo-mix/ramo-mix13",
+    "name": "ramos-clasicos/ramo-mix 3",
+    "category": "ramos-clasicos",
+    "subcategory": "ramo-mix",
+    "description": "Hermoso arreglo floral.",
+    "cloudinaryUrl": "https://res.cloudinary.com/difk1abvo/image/upload/v1788722155/floreria/ramos-clasicos/ramo-mix/ramo-mix13.png",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": 285,
+    "cloudinaryId": "floreria/ramos-clasicos/ramo-mix/ramo-mix14",
+    "name": "ramos-clasicos/ramo-mix 4",
+    "category": "ramos-clasicos",
+    "subcategory": "ramo-mix",
+    "description": "Hermoso arreglo floral.",
+    "cloudinaryUrl": "https://res.cloudinary.com/difk1abvo/image/upload/v1788722157/floreria/ramos-clasicos/ramo-mix/ramo-mix14.png",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": 286,
+    "cloudinaryId": "floreria/ramos-clasicos/ramo-mix/ramo-mix15",
+    "name": "ramos-clasicos/ramo-mix 5",
+    "category": "ramos-clasicos",
+    "subcategory": "ramo-mix",
+    "description": "Hermoso arreglo floral.",
+    "cloudinaryUrl": "https://res.cloudinary.com/difk1abvo/image/upload/v1788722160/floreria/ramos-clasicos/ramo-mix/ramo-mix15.png",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": 287,
+    "cloudinaryId": "floreria/ramos-elegantes/ramo17",
+    "name": "ramos-elegantes/ramos-elegantes 1",
+    "category": "ramos-elegantes",
+    "subcategory": "ramos-elegantes",
+    "description": "Hermoso arreglo floral.",
+    "cloudinaryUrl": "https://res.cloudinary.com/difk1abvo/image/upload/v1788722613/floreria/ramos-elegantes/ramo17.png",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": 288,
+    "cloudinaryId": "floreria/ramos-clasicos/ramo-mix/ramo-mix16",
+    "name": "ramos-clasicos/ramo-mix 1",
+    "category": "ramos-clasicos",
+    "subcategory": "ramo-mix",
+    "description": "Hermoso arreglo floral.",
+    "cloudinaryUrl": "https://res.cloudinary.com/difk1abvo/image/upload/v1788723594/floreria/ramos-clasicos/ramo-mix/ramo-mix16.png",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": 289,
+    "cloudinaryId": "floreria/ramos-clasicos/ramo-mix/ramo-mix17",
+    "name": "ramos-clasicos/ramo-mix 2",
+    "category": "ramos-clasicos",
+    "subcategory": "ramo-mix",
+    "description": "Hermoso arreglo floral.",
+    "cloudinaryUrl": "https://res.cloudinary.com/difk1abvo/image/upload/v1788723596/floreria/ramos-clasicos/ramo-mix/ramo-mix17.png",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": 290,
+    "cloudinaryId": "floreria/ramos-clasicos/ramo-tulipanes/ramo-tulipanes10",
+    "name": "ramos-clasicos/ramo-tulipanes 1",
+    "category": "ramos-clasicos",
+    "subcategory": "ramo-tulipanes",
+    "description": "Hermoso arreglo floral.",
+    "cloudinaryUrl": "https://res.cloudinary.com/difk1abvo/image/upload/v1788723789/floreria/ramos-clasicos/ramo-tulipanes/ramo-tulipanes10.png",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": 291,
+    "cloudinaryId": "floreria/cumpleanos/cumpleanos19",
+    "name": "cumpleanos/arreglos-festivos 1",
+    "category": "cumpleanos",
+    "subcategory": "arreglos-festivos",
+    "description": "Hermoso arreglo floral.",
+    "cloudinaryUrl": "https://res.cloudinary.com/difk1abvo/image/upload/v1782156247/floreria/cumpleanos/cumpleanos19.png",
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 292,
+    "cloudinaryId": "floreria/cumpleanos/cumpleanos20",
+    "name": "cumpleanos/arreglos-festivos 2",
+    "category": "cumpleanos",
+    "subcategory": "arreglos-festivos",
+    "description": "Hermoso arreglo floral.",
+    "cloudinaryUrl": "https://res.cloudinary.com/difk1abvo/image/upload/v1782156249/floreria/cumpleanos/cumpleanos20.png",
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 293,
+    "cloudinaryId": "floreria/cumpleanos/cumpleanos21",
+    "name": "cumpleanos/arreglos-festivos 3",
+    "category": "cumpleanos",
+    "subcategory": "arreglos-festivos",
+    "description": "Hermoso arreglo floral.",
+    "cloudinaryUrl": "https://res.cloudinary.com/difk1abvo/image/upload/v1782156251/floreria/cumpleanos/cumpleanos21.png",
+    "width": 960,
+    "height": 1280
   }
 ];
 
