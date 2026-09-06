@@ -49,7 +49,7 @@ export default function App() {
 
 function AppShell() {
   const scrollRef = useRef<ScrollView>(null);
-  const { route, navigate, openCategory, registerScrollTarget } =
+  const { route, navigate, openCategory, syncShopFilters, registerScrollTarget } =
     usePathNavigation(scrollRef);
   const { colors, scheme } = useTheme();
   const styles = useMemo(
@@ -100,6 +100,8 @@ function AppShell() {
           <CatalogScreen
             key={route.categorySlug ?? 'all'}
             initialCategorySlug={route.categorySlug}
+            initialSubcategorySlug={route.subcategorySlug}
+            onFiltersChange={syncShopFilters}
             onNavigate={navigate}
           />
         ) : route.name === 'Contact' ? (

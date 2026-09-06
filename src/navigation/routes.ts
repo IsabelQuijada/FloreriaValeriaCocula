@@ -18,7 +18,7 @@ export type ScreenName = 'Home' | 'Shop' | 'About' | 'Blog' | 'FAQ' | 'Contact' 
  */
 export type Route =
   | { name: Exclude<ScreenName, 'Favorites' | 'Shop'> }
-  | { name: 'Shop'; categorySlug?: string };
+  | { name: 'Shop'; categorySlug?: string; subcategorySlug?: string };
 
 /** Secciones dentro de una pantalla a las que se puede hacer scroll. */
 export type ScrollTarget = 'favorites' | 'faq';
@@ -35,7 +35,7 @@ const parsePath = (path: string): RouteResult => {
   switch (first) {
     case 'catalogo':
       return {
-        route: { name: 'Shop', categorySlug: second },
+        route: { name: 'Shop', categorySlug: second, subcategorySlug: parts[2] },
         scrollTarget: null,
       };
     case 'favoritos':
@@ -67,7 +67,11 @@ export const buildPath = (route: Route, target?: ScrollTarget) => {
   }
 
   if (route.name === 'Shop') {
-    return route.categorySlug ? `/catalogo/${route.categorySlug}` : '/catalogo';
+    if (!route.categorySlug) return '/catalogo';
+    if (!route.subcategorySlug || route.subcategorySlug === 'all') {
+      return `/catalogo/${route.categorySlug}`;
+    }
+    return `/catalogo/${route.categorySlug}/${route.subcategorySlug}`;
   }
 
   if (route.name === 'About') return '/nosotros';

@@ -16,7 +16,7 @@ import {
   getSubcategoryCounts,
   toProductCardData,
 } from '../data/catalog';
-import { CATEGORIES, getCategoryBySlug } from '../data/categories';
+import { CATEGORIES, getCategoryBySlug, getSubcategoryBySlug } from '../data/categories';
 import { CONTACT_INFO, ScreenName, whatsappProductUrl } from '../data/content';
 import { useBreakpoint } from '../hooks/useBreakpoint';
 import { useProductQuickView } from '../hooks/useProductQuickView';
@@ -31,11 +31,15 @@ const PAGE_SIZE = 24;
 interface CatalogScreenProps {
   onNavigate: (screen: ScreenName) => void;
   initialCategorySlug?: string;
+  initialSubcategorySlug?: string;
+  onFiltersChange?: (categorySlug: string, subcategorySlug: string) => void;
 }
 
 export default function CatalogScreen({
   onNavigate,
   initialCategorySlug = 'all',
+  initialSubcategorySlug = 'all',
+  onFiltersChange,
 }: CatalogScreenProps) {
   const { isDesktop, isMobile } = useBreakpoint();
   const { colors, shadows, textPresets } = useTheme();
@@ -275,7 +279,11 @@ export default function CatalogScreen({
   const [categorySlug, setCategorySlug] = useState(
     getCategoryBySlug(initialCategorySlug) ? initialCategorySlug : 'all',
   );
-  const [subcategorySlug, setSubcategorySlug] = useState('all');
+  const [subcategorySlug, setSubcategorySlug] = useState(
+    getSubcategoryBySlug(initialCategorySlug, initialSubcategorySlug)
+      ? initialSubcategorySlug
+      : 'all',
+  );
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [contacted, setContacted] = useState<ProductCardData | null>(null);
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
@@ -296,6 +304,11 @@ export default function CatalogScreen({
 
   useEffect(() => {
     logViewCategory(categorySlug, subcategorySlug, filtered.length);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categorySlug, subcategorySlug]);
+
+  useEffect(() => {
+    onFiltersChange?.(categorySlug, subcategorySlug);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categorySlug, subcategorySlug]);
 

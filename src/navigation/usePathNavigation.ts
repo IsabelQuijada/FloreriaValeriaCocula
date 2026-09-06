@@ -114,5 +114,19 @@ export function usePathNavigation(scrollRef: React.RefObject<ScrollView | null>)
     scrollRef.current?.scrollTo({ y: 0, animated: false });
   };
 
-  return { route, navigate, openCategory, registerScrollTarget };
+  /**
+   * Refleja los filtros del catálogo (categoría/subcategoría) en la URL
+   * sin apilar entradas de historial, para que un refresh de página los
+   * conserve. Se usa `replaceState` porque cada clic en un filtro no debe
+   * generar un paso de "atrás" independiente.
+   */
+  const syncShopFilters = (categorySlug: string, subcategorySlug: string) => {
+    if (Platform.OS !== 'web' || route.name !== 'Shop') return;
+    const nextPath = buildPath({ name: 'Shop', categorySlug, subcategorySlug });
+    if (window.location.pathname !== nextPath) {
+      window.history.replaceState(null, '', nextPath);
+    }
+  };
+
+  return { route, navigate, openCategory, syncShopFilters, registerScrollTarget };
 }
